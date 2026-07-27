@@ -1,0 +1,23 @@
+{
+  "id": "articuno",
+  "dexNumber": 144,
+  "name": "Articuno",
+  "scientificName": null,
+  "category": "legendary",
+  "realm": "earth",
+  "globalPopulation": 15,
+  "censusVerifiedAt": "2026-07-27",
+  "historicPeakPopulation": null,
+  "populationTrend": "stable",
+  "knowledgeStatus": "actively-tracked",
+  "publicAccessStatus": "advisory",
+  "recordStatus": "under-review",
+  "dangerClass": null,
+  "summary": "A critically scarce migratory cryogenic avian species anchored to Baffin Bay and the North Atlantic Arctic system.",
+  "formIds": [],
+  "populationIds": ["articuno-baffin-bay"],
+  "individualIds": [],
+  "lineageIds": [],
+  "assetKey": "pokemon-0144",
+  "updatedAt": "2026-07-27T00:00:00Z"
+}
