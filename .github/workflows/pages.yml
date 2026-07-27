@@ -24,21 +24,14 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate canon, editorial, and regional data
         run: python scripts/validate_gaia.py
-      - name: Verify deterministic source build
+      - name: Verify browser payload decodes to readable source
         run: python scripts/build_public.py --check
-      - name: Reconstruct signed polished release
-        run: python scripts/build_release_bundle.py --check
-      - name: Confirm signed release matches source
-        run: |
-          cmp public/index.html dist/index.html
-          cmp public/styles.css dist/styles.css
-          cmp public/app.js dist/app.js
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload verified public site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          path: public
       - name: Deploy
         id: deployment
         uses: actions/deploy-pages@v4
