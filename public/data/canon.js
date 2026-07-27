@@ -1,3 +1,8 @@
+const gaiaPolish=document.createElement('link');
+gaiaPolish.rel='stylesheet';
+gaiaPolish.href='launch.css';
+document.head.appendChild(gaiaPolish);
+
 window.GAIA_DATA_READY=(async()=>{
   const parts=Array.from({length:7},(_,index)=>`data/canon/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const editorialParts=Array.from({length:3},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
