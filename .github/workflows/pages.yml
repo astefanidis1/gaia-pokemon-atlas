@@ -24,7 +24,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate canon, editorial, and regional data
         run: python scripts/validate_gaia.py
-      - name: Verify deterministic public bundle
+      - name: Verify deterministic public loader
         run: python scripts/build_public.py --check
       - name: Check service worker syntax
         run: node --check public/sw.js
