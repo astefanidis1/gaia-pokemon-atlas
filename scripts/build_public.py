@@ -57,18 +57,30 @@ def main() -> int:
     args = parser.parse_args()
     files = expected_files()
     if args.check:
+        source = source_text()
+        existing_chunks = sorted(CHUNK_DIR.glob("chunk-*.txt")) if CHUNK_DIR.exists() else []
+        expected_names = [f"chunk-{index:02d}.txt" for index in range(1, len(existing_chunks) + 1)]
+        actual_names = [path.name for path in existing_chunks]
         errors=[]
-        for path, expected in files.items():
-            actual=path.read_text(encoding="utf-8") if path.exists() else ""
-            if actual != expected:
-                errors.append(str(path.relative_to(ROOT)))
-        existing=set(CHUNK_DIR.glob("chunk-*.txt")) if CHUNK_DIR.exists() else set()
-        expected_chunks={path for path in files if path.parent == CHUNK_DIR}
-        extras=existing-expected_chunks
-        errors.extend(str(path.relative_to(ROOT)) for path in sorted(extras))
+        if not existing_chunks:
+            errors.append("public/code contains no application payload chunks")
+        elif actual_names != expected_names:
+            errors.append("public/code chunks are not a continuous numbered sequence")
+        else:
+            try:
+                encoded = "".join(path.read_text(encoding="utf-8").strip() for path in existing_chunks)
+                decoded = gzip.decompress(base64.b64decode(encoded, validate=True)).decode("utf-8")
+                if decoded != source:
+                    errors.append("decoded public application payload does not match src/app")
+            except Exception as exc:
+                errors.append(f"public application payload could not be decoded: {exc}")
+        expected_loader = loader(len(existing_chunks))
+        actual_loader = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
+        if actual_loader != expected_loader:
+            errors.append("public/app.js loader does not match the committed chunk count")
         if errors:
-            raise SystemExit("ERROR: public code payload is not synchronized: " + ", ".join(errors))
-        print(f"GAIA public code payload is synchronized ({len(expected_chunks)} chunks)")
+            raise SystemExit("ERROR: " + "; ".join(errors))
+        print(f"GAIA public code payload decodes to the readable source ({len(existing_chunks)} chunks)")
         return 0
     CHUNK_DIR.mkdir(parents=True, exist_ok=True)
     for old in CHUNK_DIR.glob("chunk-*.txt"):
