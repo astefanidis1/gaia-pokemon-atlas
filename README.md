@@ -2,60 +2,69 @@
 
 > **The world is inhabited.**
 
-GAIA Atlas is a fan-made, in-universe global Pokémon surveillance and natural-history platform. It imagines Pokémon as real inhabitants of modern Earth and combines a cinematic globe, exact living populations, ecological ranges, seasonal movement, government intelligence, historical records, and deeply layered lore.
+GAIA Atlas is a fan-made, in-universe global Pokémon surveillance and natural-history platform. It treats Pokémon as real inhabitants of modern Earth and combines a cinematic globe, exact living populations, realistic geographic ranges, canonical seasonal movement, government intelligence, historical records, and layered ecological lore.
 
 The project is operated in-universe by **GAIA — the Geospatial Anomaly Intelligence Agency**.
 
 **Institutional motto:** *Nothing is myth once it leaves a trace.*
 
-## Project status
+## Current foundation build
 
-The original showcase prototype is being preserved while the application is rebuilt around the finalized GAIA product direction.
+The first GAIA rebuild establishes:
 
-Current priorities:
+- the public GAIA identity and agency seal;
+- Globe, GAIA Live, Index, Records, and Field Log navigation;
+- 161 migrated species records;
+- separate species, form, population, location, route, and incident entities;
+- five deterministic real-calendar migration tracks;
+- progressive geographic disclosure by zoom level;
+- exact census totals with verification dates;
+- Public, Advisory, Restricted, and Sealed access states;
+- local Discovered, Observed, and Favorite states;
+- flagship dossier content and selected incident records;
+- quiet fan-project and rights-holder disclosure.
 
-1. Archive the original prototype unchanged.
-2. Establish the canonical species / population / individual data model.
-3. Rebrand the public shell as GAIA Atlas.
-4. Rebuild the experience around Globe, GAIA Live, Index, Records, and Field Log.
-5. Introduce deterministic seasonal tracking and progressive geographic disclosure.
-6. Develop flagship dossiers before expanding toward the complete Pokédex.
+The original feature-rich showcase remains preserved separately and is not the product direction for the public GAIA rebuild.
 
-## Repository structure
+## Run locally
 
-```text
-archive/showcase-prototype/  Original interactive prototype and build tools
-docs/                        Master plan, architecture, and canon methodology
-src/                         GAIA rebuild source code (added during development)
-data/                        Versioned canon records and map geometry
-scripts/                     Validation and build tooling
+```bash
+cd public
+python -m http.server 8000
 ```
 
-## Master plan
+Then open `http://localhost:8000`.
 
-The complete creative, world-building, product, technical, and release specification lives in:
+The app uses MapLibre and OpenFreeMap for the live basemap and remote artwork URLs for Pokémon images. Core Index, Records, and Field Log content remains usable if the basemap is unavailable.
 
-[`docs/GAIA_Atlas_Master_Plan.md`](docs/GAIA_Atlas_Master_Plan.md)
+## Canon architecture
 
-That document is the project’s source of truth. Major changes that contradict it should be recorded explicitly rather than introduced through accidental feature drift.
+The browser release is built from separate canonical entities:
 
-## Founding team
+```text
+Species → permanent Forms → regional Populations → Locations / Ranges
+                                             ↘ deterministic Routes
+Species / populations / individuals ↔ Incidents and Records
+Visitor state remains permanently separate from canon.
+```
 
-- **Alex — Co-Founder:** geospatial tracking, population modeling, and anomalous movement reconstruction; accompanied by Umbreon
-- **Dr. Nia Okafor — Co-Founder:** extraterrestrial biology, Ultra Beasts, and dimensional ecology; accompanied by Xatu
-- **Dr. Elena Varga — Co-Founder:** conservation ecology, population recovery, and human–Pokémon coexistence; accompanied by Meganium
-- **Dr. Kenji Arata — Co-Founder:** mythoarchaeology, ancient civilizations, and legendary historical records; accompanied by Bronzong
+Urshifu demonstrates the form model: one species total of 16, split into seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 
-## Development
+## Structure
 
-The archived prototype is a static web application built with HTML, CSS, JavaScript, MapLibre GL JS, D3, GeoJSON, and Python build/validation scripts. The GAIA rebuild will preserve the best of that work while separating public exploration from private canon-authoring tools.
+```text
+public/                       Public GAIA application
+docs/                         Master plan and architecture
+scripts/                      Migration and validation tools
+archive/showcase-prototype/   Preservation boundary for the pre-GAIA prototype
+```
 
-## Licensing
+## Source of truth
 
-Original source code in this repository is available under the MIT License unless a file states otherwise.
+The full specification is [`docs/GAIA_Atlas_Master_Plan.md`](docs/GAIA_Atlas_Master_Plan.md).
 
-Pokémon names, characters, artwork, and related intellectual property are not covered by the MIT License and remain the property of their respective rights holders. Third-party map data, libraries, and artwork retain their own licenses and terms.
+## Licensing and fan-project notice
 
-## Fan-project notice
+Original code in this repository is available under the MIT License unless stated otherwise. Pokémon names, characters, artwork, and related intellectual property are not covered by that license and remain the property of their respective rights holders.
 
-GAIA Atlas is an independent, non-commercial, fan-made fictional project. Pokémon and related properties belong to their respective rights holders. This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatures Inc., or The Pokémon Company.
+GAIA Atlas is an independent, non-commercial, fan-made fictional project. It is not affiliated with or endorsed by Nintendo, Game Freak, Creatures Inc., or The Pokémon Company.
