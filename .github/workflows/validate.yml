@@ -28,3 +28,4 @@ jobs:
           test -f public/styles.css
           test -f public/assets/gaia-seal.svg
           test -f public/data/canon/chunk-07.txt
+          test -f public/data/canon-corrections.json
