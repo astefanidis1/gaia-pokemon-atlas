@@ -20,6 +20,7 @@
 - Visitor discovery remains a personal record rather than a content lock.
 - Public access classification is distinct from GAIA knowledge status.
 - Population verification dates are distinct from continuously updated seasonal position.
+- Articuno, Zapdos, Moltres, and Lugia now resolve to `Actively Tracked` whenever their canonical current-position routes are active. The correction is versioned separately, applied by the browser loader, and enforced by deployment validation.
 
 ### Preserved
 
