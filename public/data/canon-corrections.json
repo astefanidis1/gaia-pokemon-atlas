@@ -1,0 +1,18 @@
+{
+  "version": "2026-07-27.1",
+  "reason": "Records with canonical current-position routes must use the Actively Tracked knowledge status.",
+  "species": {
+    "species:0144:articuno": {
+      "knowledgeStatus": "Actively Tracked"
+    },
+    "species:0145:zapdos": {
+      "knowledgeStatus": "Actively Tracked"
+    },
+    "species:0146:moltres": {
+      "knowledgeStatus": "Actively Tracked"
+    },
+    "species:0249:lugia": {
+      "knowledgeStatus": "Actively Tracked"
+    }
+  }
+}
