@@ -22,8 +22,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate canon data
+      - name: Validate canon, editorial, and regional data
         run: python scripts/validate_gaia.py
+      - name: Verify deterministic public bundle
+        run: python scripts/build_public.py --check
       - name: Configure Pages
         uses: actions/configure-pages@v5
       - name: Upload public site
