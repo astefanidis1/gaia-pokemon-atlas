@@ -1,0 +1,18 @@
+{
+  "id": "articuno-baffin-bay",
+  "speciesId": "articuno",
+  "name": "Baffin Bay population",
+  "livingPopulation": 15,
+  "censusVerifiedAt": "2026-07-27",
+  "wildPopulation": 15,
+  "captivePopulation": 0,
+  "locationType": "seasonal-aggregation",
+  "primaryLocationId": "baffin-bay",
+  "rangeIds": ["articuno-north-atlantic-seasonal-range"],
+  "routeIds": ["articuno-north-atlantic-route"],
+  "populationTrend": "stable",
+  "publicAccessStatus": "advisory",
+  "recordStatus": "under-review",
+  "summary": "The only living Articuno population recognized by the GAIA Global Census. Individuals disperse through the North Atlantic Arctic and occasionally enter the White Mountains during winter atmospheric events.",
+  "updatedAt": "2026-07-27T00:00:00Z"
+}
