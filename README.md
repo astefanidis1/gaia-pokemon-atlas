@@ -10,7 +10,7 @@ The project is operated in-universe by **GAIA — the Geospatial Anomaly Intelli
 
 ## Current foundation build
 
-The first GAIA rebuild establishes:
+The current GAIA foundation establishes:
 
 - the public GAIA identity and agency seal;
 - Globe, GAIA Live, Index, Records, and Field Log navigation;
@@ -21,7 +21,9 @@ The first GAIA rebuild establishes:
 - exact census totals with verification dates;
 - Public, Advisory, Restricted, and Sealed access states;
 - local Discovered, Observed, and Favorite states;
-- flagship dossier content and selected incident records;
+- twelve launch-quality flagship dossiers with founder notes and linked archive files;
+- the first Regional Field Window: New England Coastal Forest;
+- keyboard search navigation, focus management, reduced-motion support, and a mobile bottom navigation system;
 - quiet fan-project and rights-holder disclosure.
 
 The original feature-rich showcase remains preserved separately and is not the product direction for the public GAIA rebuild.
@@ -35,27 +37,43 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-The app uses MapLibre and OpenFreeMap for the live basemap and remote artwork URLs for Pokémon images. Core Index, Records, and Field Log content remains usable if the basemap is unavailable.
+The app uses MapLibre and OpenFreeMap for the live basemap and remote artwork URLs for Pokémon images. Core Index, Records, regional ecology, and Field Log content remains usable if the basemap or remote artwork is unavailable.
+
+## Development
+
+Readable application source lives in `src/app/*.js`. The compact browser bundle is deterministic and should always be regenerated through:
+
+```bash
+python scripts/build_public.py
+python scripts/validate_gaia.py
+```
+
+CI fails if `public/app.js` does not match the readable source.
 
 ## Canon architecture
-
-The browser release is built from separate canonical entities:
 
 ```text
 Species → permanent Forms → regional Populations → Locations / Ranges
                                              ↘ deterministic Routes
 Species / populations / individuals ↔ Incidents and Records
 Visitor state remains permanently separate from canon.
+
+Signed population canon + versioned corrections
+                         + editorial dossiers / regional field windows
 ```
+
+Editorial and regional layers can deepen the world without silently changing exact census totals.
 
 Urshifu demonstrates the form model: one species total of 16, split into seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 
 ## Structure
 
 ```text
-public/                       Public GAIA application
-docs/                         Master plan and architecture
-scripts/                      Migration and validation tools
+src/                          Readable application source
+public/                       Deployable GAIA application
+data/                         Versioned project data where applicable
+docs/                         Master plan, status, and review guidance
+scripts/                      Deterministic build and validation tools
 archive/showcase-prototype/   Preservation boundary for the pre-GAIA prototype
 ```
 
