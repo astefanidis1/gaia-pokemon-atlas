@@ -1,0 +1,30 @@
+name: Validate GAIA Foundation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [agent/gaia-foundation]
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate canonical data and references
+        run: python scripts/validate_gaia.py
+      - name: Check Python scripts
+        run: python -m compileall -q scripts
+      - name: Check JavaScript syntax
+        run: |
+          node --check public/app.js
+          node --check public/data/canon.js
+      - name: Check required public files
+        run: |
+          test -f public/index.html
+          test -f public/styles.css
+          test -f public/assets/gaia-seal.svg
+          test -f public/data/canon/chunk-07.txt
