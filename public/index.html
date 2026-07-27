@@ -6,7 +6,9 @@
   <meta name="description" content="GAIA Atlas — a fan-made global Pokémon surveillance and natural-history platform." />
   <meta name="theme-color" content="#071019" />
   <meta property="og:title" content="GAIA Atlas" />
-  <meta property="og:description" content="The world is inhabited." />
+  <meta property="og:description" content="The world is inhabited. Explore verified populations, live migration, ecological records, and anomalous contact points." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary" />
   <title>GAIA Atlas</title>
   <link rel="icon" href="assets/gaia-seal.svg" type="image/svg+xml" />
   <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
@@ -14,10 +16,12 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Skip to GAIA Atlas content</a>
   <div id="loading" class="loading" aria-live="polite">
     <img src="assets/gaia-seal.svg" alt="" />
     <strong>Establishing GAIA census link</strong>
-    <span>Reconciling 161 living-species records…</span>
+    <span id="loadingStatus">Reconciling 161 living-species records…</span>
+    <i class="loading-progress" aria-hidden="true"><b></b></i>
   </div>
 
   <div id="app" hidden>
@@ -29,26 +33,26 @@
 
       <div class="search-shell">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.5-4.5m2.5-5.5a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
-        <input id="searchInput" type="search" placeholder="Search species, locations, habitats, or records…" autocomplete="off" />
+        <input id="searchInput" type="search" placeholder="Search species, locations, habitats, or records…" autocomplete="off" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list" />
         <kbd>/</kbd>
         <div id="searchResults" class="search-results" role="listbox"></div>
       </div>
 
       <div class="header-status">
         <span class="signal"><i></i> NETWORK ACTIVE</span>
-        <button id="aboutButton" class="icon-button" aria-label="About GAIA">i</button>
+        <button id="aboutButton" class="icon-button" aria-label="About GAIA" aria-expanded="false">i</button>
       </div>
     </header>
 
     <nav class="primary-nav" aria-label="Primary navigation">
-      <button class="nav-button active" data-view="globe"><span>◉</span>Globe</button>
+      <button class="nav-button active" data-view="globe" aria-current="page"><span>◉</span>Globe</button>
       <button class="nav-button" data-view="live"><span>⌁</span>GAIA Live <i id="liveCount">5</i></button>
       <button class="nav-button" data-view="index"><span>☷</span>Index <i>161</i></button>
       <button class="nav-button" data-view="records"><span>▤</span>Records</button>
       <button class="nav-button" data-view="fieldlog"><span>◇</span>Field Log <i id="fieldCount">0</i></button>
     </nav>
 
-    <main>
+    <main id="mainContent" tabindex="-1">
       <section id="view-globe" class="view active" aria-label="Global surveillance map">
         <div id="map" class="map"></div>
         <div class="map-vignette" aria-hidden="true"></div>
@@ -90,6 +94,17 @@
           <label class="switch-row"><span><b>Range influence</b><small>Display habitat radius on selection</small></span><input id="rangeToggle" type="checkbox" checked /><i></i></label>
 
           <div id="mapStatus" class="map-status"><i></i><span>Preparing surveillance layer…</span></div>
+
+          <div class="map-legend" aria-label="Map symbol legend">
+            <span><i class="legend-live"></i>Live canonical track</span>
+            <span><i class="legend-rare"></i>Rare or singular record</span>
+            <span><i class="legend-restricted"></i>Restricted precision</span>
+          </div>
+
+          <button id="featuredRegionButton" class="region-launch" type="button">
+            <span><b>Regional field window</b><small>New England coastal forest</small></span>
+            <i>Explore →</i>
+          </button>
         </aside>
 
         <div class="realm-summary glass" id="realmSummary">
@@ -138,6 +153,8 @@
         <div id="recordGrid" class="record-grid"></div>
         <div class="incident-heading"><span class="eyebrow">SELECTED INCIDENT ARCHIVE</span><h3>Cross-referenced events</h3></div>
         <div id="incidentGrid" class="incident-grid"></div>
+        <div class="regional-heading"><span class="eyebrow">REGIONAL FIELD WINDOWS</span><h3>Ordinary life, mapped seriously</h3><p>Curated ecology at human scale. Regions are selected manually; GAIA never requests your location.</p></div>
+        <div id="regionGrid" class="region-grid"></div>
       </section>
 
       <section id="view-fieldlog" class="view page-view" aria-label="Personal Field Log">
@@ -161,7 +178,7 @@
       </section>
     </main>
 
-    <aside id="dossier" class="dossier" aria-live="polite" aria-label="Species dossier">
+    <aside id="dossier" class="dossier" aria-live="polite" aria-label="Species dossier" aria-hidden="true" tabindex="-1">
       <button id="closeDossier" class="dossier-close" aria-label="Close dossier">×</button>
       <div class="dossier-visual">
         <div id="dossierHalo" class="dossier-halo"></div>
@@ -198,11 +215,12 @@
 
         <div id="liveBlock" class="live-block" hidden></div>
         <div id="dossierSections" class="dossier-sections"></div>
+        <div id="dossierEditorial" class="dossier-editorial"></div>
         <div id="relatedIncidents" class="related-incidents"></div>
       </div>
     </aside>
 
-    <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle">
+    <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
       <div class="modal-card">
         <button id="closeAbout" class="dossier-close" aria-label="Close">×</button>
         <div class="about-brand"><img src="assets/gaia-seal.svg" alt="GAIA seal" /><div><span class="eyebrow">ABOUT THE AGENCY</span><h2 id="aboutTitle">Nothing is myth once it leaves a trace.</h2></div></div>
@@ -219,8 +237,16 @@
       </div>
     </div>
 
+
+    <div id="regionModal" class="modal region-modal" role="dialog" aria-modal="true" aria-labelledby="regionTitle" aria-hidden="true">
+      <div class="modal-card region-modal-card">
+        <button id="closeRegion" class="dossier-close" aria-label="Close regional field window">×</button>
+        <div id="regionContent"></div>
+      </div>
+    </div>
+
     <div id="toast" class="toast" role="status"></div>
-    <footer>GAIA CIVILIAN ACCESS NETWORK · CANON v1.1 · <button id="footerAbout">Fan-project notice</button></footer>
+    <footer>GAIA CIVILIAN ACCESS NETWORK · CANON v1.2 · <button id="footerAbout">Fan-project notice</button></footer>
   </div>
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
