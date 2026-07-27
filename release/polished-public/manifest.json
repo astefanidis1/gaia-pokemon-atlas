@@ -1,0 +1,11 @@
+{
+  "version": "2026-07-27.2",
+  "archive": "gaia-atlas-polished-public.tar.gz",
+  "sha256": "0d1bb57c5134d1783d63f3c5778cbc35f02db2a17d9ddfdaab7df3dda7b05ad0",
+  "chunkCount": 11,
+  "encodedLength": 84228,
+  "excludedSourceFiles": [
+    "app.source.js",
+    "launch.css"
+  ]
+}
