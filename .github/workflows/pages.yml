@@ -24,11 +24,17 @@ jobs:
       - uses: actions/checkout@v4
       - name: Validate canon, editorial, and regional data
         run: python scripts/validate_gaia.py
-      - name: Verify browser payload decodes to readable source
+      - name: Verify deterministic public bundle
         run: python scripts/build_public.py --check
+      - name: Check service worker syntax
+        run: node --check public/sw.js
+      - name: Stage readable application source
+        run: |
+          mkdir -p public/source
+          cp src/app/*.js public/source/
       - name: Configure Pages
         uses: actions/configure-pages@v5
-      - name: Upload verified public site
+      - name: Upload public site
         uses: actions/upload-pages-artifact@v3
         with:
           path: public

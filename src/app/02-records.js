@@ -13,6 +13,7 @@
     document.body.classList.add('dossier-open');
     $('#dossierImage').src = item.image;
     $('#dossierImage').alt = item.name;
+    $('#dossierImage').dataset.speciesSlug = item.slug;
     $('#dossierEyebrow').textContent = `NATIONAL INDEX #${String(item.dex).padStart(4,'0')} · ${item.category}`;
     $('#dossierName').textContent = item.name;
     $('#dossierSummary').textContent = item.summary || defaultSummary(item);
@@ -147,31 +148,57 @@
     $('#worldDate').textContent = currentUTCLabel();
     const featured = items.find(x => x.item.name === 'Lugia') || items[0];
     $('#liveHero').innerHTML = featured ? liveFeature(featured.item,featured.pos) : '';
-    $('#liveGrid').innerHTML = items.filter(x => x !== featured).map(({item,pos}) => `<article class="live-card" data-open="${item.slug}"><img src="${item.image}" alt="${escapeHTML(item.name)}"><div><span class="eyebrow">${escapeHTML(routePhase(item))}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(pos.currentLabel)} → ${escapeHTML(pos.nextLabel)}</p><div class="track-line"><span>Canonical route</span><strong>${Math.round(pos.progress*100)}%</strong><i><b style="width:${pos.progress*100}%"></b></i></div></div></article>`).join('');
+    $('#liveGrid').innerHTML = items.filter(x => x !== featured).map(({item,pos}) => `<article class="live-card" data-open="${item.slug}"><img src="${item.image}" alt="${escapeHTML(item.name)}" data-species-slug="${item.slug}"><div><span class="eyebrow">${escapeHTML(routePhase(item))}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(pos.currentLabel)} → ${escapeHTML(pos.nextLabel)}</p><div class="track-line"><span>Canonical route</span><strong>${Math.round(pos.progress*100)}%</strong><i><b style="width:${pos.progress*100}%"></b></i></div></div></article>`).join('');
     $$('[data-open]', $('#view-live')).forEach(card => card.addEventListener('click', () => openDossier(findBySlug(card.dataset.open), false)));
   }
 
   function liveFeature(item,pos) {
-    return `<article class="live-feature" data-open="${item.slug}"><div class="art"><div><span class="eyebrow">PRIMARY ACTIVE TRACK</span><strong>${escapeHTML(item.location.locationType)}</strong></div><img src="${item.image}" alt="${escapeHTML(item.name)}"></div><div class="content"><span class="eyebrow">${escapeHTML(routePhase(item))}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.summary || defaultSummary(item))}</p><div class="track-line"><span>${escapeHTML(pos.currentLabel)}</span><strong>${escapeHTML(pos.nextLabel)}</strong><i><b style="width:${pos.progress*100}%"></b></i></div><p><small>${escapeHTML(item.route.depth || item.route.altitude || '')} · ${escapeHTML(item.route.speed || '')}</small></p></div></article>`;
+    return `<article class="live-feature" data-open="${item.slug}"><div class="art"><div><span class="eyebrow">PRIMARY ACTIVE TRACK</span><strong>${escapeHTML(item.location.locationType)}</strong></div><img src="${item.image}" alt="${escapeHTML(item.name)}" data-species-slug="${item.slug}"></div><div class="content"><span class="eyebrow">${escapeHTML(routePhase(item))}</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.summary || defaultSummary(item))}</p><div class="track-line"><span>${escapeHTML(pos.currentLabel)}</span><strong>${escapeHTML(pos.nextLabel)}</strong><i><b style="width:${pos.progress*100}%"></b></i></div><p><small>${escapeHTML(item.route.depth || item.route.altitude || '')} · ${escapeHTML(item.route.speed || '')}</small></p></div></article>`;
   }
 
   function renderIndex() {
     const category = $('#indexCategory').value || 'all';
     const realm = $('#indexRealm').value || 'all';
     const list = species.filter(item => (category === 'all' || item.category === category) && (realm === 'all' || item.location.realm === realm)).sort((a,b) => a.dex-b.dex);
-    $('#indexBody').innerHTML = list.map(item => `<tr data-index-open="${item.slug}"><td>${String(item.dex).padStart(4,'0')}</td><td><div class="species-cell"><img src="${item.image}" alt=""><span><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.knowledgeStatus)}</small></span></div></td><td>${escapeHTML(item.category)}</td><td>${escapeHTML(locationText(item))}</td><td><strong>${fmt(item.globalPopulation)}</strong></td><td><span class="status-pill ${item.accessStatus}">${escapeHTML(item.accessStatus)}</span></td></tr>`).join('');
+    $('#indexBody').innerHTML = list.map(item => `<tr data-index-open="${item.slug}"><td>${String(item.dex).padStart(4,'0')}</td><td><div class="species-cell"><img src="${item.image}" alt="" data-species-slug="${item.slug}"><span><strong>${escapeHTML(item.name)}</strong><small>${escapeHTML(item.knowledgeStatus)}${editorialDossiers[item.slug] ? ' · Full dossier' : ''}</small></span></div></td><td>${escapeHTML(item.category)}</td><td>${escapeHTML(locationText(item))}</td><td><strong>${fmt(item.globalPopulation)}</strong></td><td><span class="status-pill ${item.accessStatus}">${escapeHTML(item.accessStatus)}</span></td></tr>`).join('');
     $$('[data-index-open]').forEach(row => row.addEventListener('click', () => openDossier(findBySlug(row.dataset.indexOpen), false)));
+  }
+
+  function recordMatchesFilter(item) {
+    if (state.recordFilter === 'full') return Boolean(editorialDossiers[item.slug]);
+    if (state.recordFilter === 'live') return Boolean(item.route);
+    if (state.recordFilter === 'restricted') return ['Restricted','Sealed'].includes(item.accessStatus);
+    return true;
+  }
+
+  function renderRecordSpotlight(flagship) {
+    const target = $('#recordSpotlight');
+    const preferred = ['lugia','gengar','mewtwo']
+      .map(findBySlug)
+      .filter(item => item && editorialDossiers[item.slug]);
+    const picks = [...preferred, ...flagship.filter(item => editorialDossiers[item.slug] && !preferred.includes(item))].slice(0,3);
+    target.innerHTML = picks.map((item,index) => {
+      const content = editorialDossiers[item.slug];
+      const archiveCount = content?.archives?.length || 0;
+      return `<button class="spotlight-record tone-${itemTone(item)}" data-record="${item.slug}" style="--record-accent:${colors[item.category] || '#8de9f5'}"><span class="spotlight-index">0${index+1}</span><div><span class="eyebrow">FEATURED FULL DOSSIER</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.summary || defaultSummary(item))}</p><small>${archiveCount} LINKED ARCHIVE FILES · ${escapeHTML(item.accessStatus)} ACCESS</small></div><img src="${item.image}" alt="" data-species-slug="${item.slug}"></button>`;
+    }).join('');
   }
 
   function renderRecords() {
     const requested = (editorial.flagshipOrder || []).map(findBySlug).filter(Boolean);
-    const fallback = species.filter(item => Object.keys(item.dossier || {}).length).sort((a,b) => a.dex-b.dex);
-    const flagship = [...requested, ...fallback.filter(item => !requested.includes(item))];
-    $('#recordGrid').innerHTML = flagship.map(item => {
-      const archiveCount = editorialDossiers[item.slug]?.archives?.length || 0;
-      return `<article class="record-card" data-record="${item.slug}"><img src="${item.image}" alt=""><span class="eyebrow">${escapeHTML(item.accessStatus)} RECORD · ${fmt(item.globalPopulation)} LIVING</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.summary || defaultSummary(item))}</p><small class="record-depth">${editorialDossiers[item.slug] ? `FULL DOSSIER · ${archiveCount} ARCHIVE FILES` : 'CORE RECORD'}</small></article>`;
-    }).join('');
+    const coreOrder = ['moltres','zapdos','kyogre','rayquaza','giratina','arceus','deoxys','genesect','darkrai','necrozma','urshifu','celesteela'];
+    const coreRecords = coreOrder.map(findBySlug).filter(item => item && !requested.includes(item));
+    const flagship = [...requested, ...coreRecords];
+    renderRecordSpotlight(requested);
+    const filtered = flagship.filter(recordMatchesFilter);
+    $('#recordGrid').innerHTML = filtered.length ? filtered.map(item => {
+      const content = editorialDossiers[item.slug];
+      const archiveCount = content?.archives?.length || 0;
+      const depth = content ? `FULL DOSSIER · ${archiveCount} ARCHIVE FILES` : 'CORE RECORD';
+      return `<article class="record-card tone-${itemTone(item)} ${content ? 'full-dossier' : 'core-record'}" data-record="${item.slug}" style="--record-accent:${colors[item.category] || '#8de9f5'}"><div class="record-art"><img src="${item.image}" alt="" data-species-slug="${item.slug}"><i aria-hidden="true"></i></div><span class="eyebrow">${escapeHTML(item.accessStatus)} RECORD · ${fmt(item.globalPopulation)} LIVING</span><h3>${escapeHTML(item.name)}</h3><p>${escapeHTML(item.summary || defaultSummary(item))}</p><small class="record-depth">${depth}</small></article>`;
+    }).join('') : `<div class="record-empty"><span class="eyebrow">NO MATCHING RECORDS</span><h3>This archive filter returned no civilian records.</h3><button data-record-filter-reset>Show all records</button></div>`;
     $$('[data-record]').forEach(card => card.addEventListener('click', () => openDossier(findBySlug(card.dataset.record), false)));
+    $('[data-record-filter-reset]')?.addEventListener('click', () => { state.recordFilter='all'; $$('.record-filters button').forEach(button=>button.classList.toggle('active',button.dataset.recordFilter==='all')); renderRecords(); });
     $('#incidentGrid').innerHTML = incidents.map(event => `<article class="incident-card"><span>${escapeHTML(event.date)} · ${escapeHTML(event.classification)}</span><h4>${escapeHTML(event.title)}</h4><p>${escapeHTML(event.summary)}</p></article>`).join('');
     renderRegionalWindows();
   }
@@ -202,7 +229,7 @@
   function regionSpeciesCard(entry, absent) {
     const item = findBySlug(entry.slug);
     if (!item) return '';
-    return `<button class="region-species-card ${absent ? 'absent' : ''}" data-region-species="${escapeHTML(entry.slug)}"><img src="${item.image}" alt=""><div><span>${escapeHTML(absent ? entry.status : `${entry.presence} · ${entry.frequency}`)}</span><h4>${escapeHTML(item.name)}</h4><p>${escapeHTML(entry.note)}</p></div></button>`;
+    return `<button class="region-species-card ${absent ? 'absent' : ''}" data-region-species="${escapeHTML(entry.slug)}"><img src="${item.image}" alt="" data-species-slug="${item.slug}"><div><span>${escapeHTML(absent ? entry.status : `${entry.presence} · ${entry.frequency}`)}</span><h4>${escapeHTML(item.name)}</h4><p>${escapeHTML(entry.note)}</p></div></button>`;
   }
 
   function closeRegion(restoreFocus = true) {

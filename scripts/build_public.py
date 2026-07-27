@@ -1,94 +1,58 @@
 #!/usr/bin/env python3
-"""Build the compact public JavaScript payload from readable source."""
+"""Build or verify the small public loader for readable GAIA source modules."""
 from __future__ import annotations
 
 import argparse
-import base64
-import gzip
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE_DIR = ROOT / "src" / "app"
 OUTPUT = ROOT / "public" / "app.js"
-CHUNK_DIR = ROOT / "public" / "code"
-CHUNK_SIZE = 6000
+MODULES = [path.name for path in sorted(SOURCE_DIR.glob("*.js"))]
 
 
-def source_text() -> str:
-    return "".join(path.read_text(encoding="utf-8") for path in sorted(SOURCE_DIR.glob("*.js")))
-
-
-def payload_chunks(source: str) -> list[str]:
-    compressed = gzip.compress(source.encode("utf-8"), compresslevel=9, mtime=0)
-    encoded = base64.b64encode(compressed).decode("ascii")
-    return [encoded[index:index + CHUNK_SIZE] for index in range(0, len(encoded), CHUNK_SIZE)]
-
-
-def loader(chunk_count: int) -> str:
+def loader() -> str:
+    module_json = ",".join(repr(name) for name in MODULES)
     return f"""(()=>{{
-  const paths=Array.from({{length:{chunk_count}}},(_,index)=>`code/chunk-${{String(index+1).padStart(2,'0')}}.txt`);
-  Promise.all(paths.map(async path=>{{
-    const response=await fetch(path,{{cache:'no-cache'}});
-    if(!response.ok) throw new Error(`Unable to load GAIA application payload: ${{path}}`);
-    return (await response.text()).trim();
-  }})).then(parts=>{{
-    const bytes=Uint8Array.from(atob(parts.join('')),character=>character.charCodeAt(0));
-    return new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'))).text();
-  }}).then(code=>(0,eval)(code)).catch(error=>{{
+  const modules=[{module_json}];
+  const roots=['source/','../src/app/'];
+  (async()=>{{
+    const parts=[];
+    for(const name of modules){{
+      let loaded=false;
+      for(const root of roots){{
+        try{{
+          const response=await fetch(root+name,{{cache:'no-cache'}});
+          if(response.ok){{parts.push(await response.text());loaded=true;break;}}
+        }}catch{{}}
+      }}
+      if(!loaded) throw new Error(`Unable to load GAIA source module: ${{name}}`);
+    }}
+    (0,eval)(parts.join(''));
+  }})().catch(error=>{{
     console.error(error);
     const loading=document.querySelector('#loading');
-    if(loading) loading.innerHTML='<img src="assets/gaia-seal.svg" alt=""><strong>GAIA application link unavailable</strong><span>The public interface could not be verified. Reload to try again.</span>';
+    if(loading) loading.innerHTML='<img src="assets/gaia-seal.svg" alt=""><strong>GAIA application link unavailable</strong><span>The readable public interface could not be verified. Reload to try again.</span>';
   }});
 }})();
 """
 
 
-def expected_files() -> dict[Path, str]:
-    chunks = payload_chunks(source_text())
-    files = {OUTPUT: loader(len(chunks))}
-    for index, chunk in enumerate(chunks, 1):
-        files[CHUNK_DIR / f"chunk-{index:02d}.txt"] = chunk
-    return files
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--check", action="store_true", help="Fail if public code payload is not current")
+    parser.add_argument("--check", action="store_true", help="Fail if the public loader is not current")
     args = parser.parse_args()
-    files = expected_files()
+    expected = loader()
     if args.check:
-        source = source_text()
-        existing_chunks = sorted(CHUNK_DIR.glob("chunk-*.txt")) if CHUNK_DIR.exists() else []
-        expected_names = [f"chunk-{index:02d}.txt" for index in range(1, len(existing_chunks) + 1)]
-        actual_names = [path.name for path in existing_chunks]
-        errors=[]
-        if not existing_chunks:
-            errors.append("public/code contains no application payload chunks")
-        elif actual_names != expected_names:
-            errors.append("public/code chunks are not a continuous numbered sequence")
-        else:
-            try:
-                encoded = "".join(path.read_text(encoding="utf-8").strip() for path in existing_chunks)
-                decoded = gzip.decompress(base64.b64decode(encoded, validate=True)).decode("utf-8")
-                if decoded != source:
-                    errors.append("decoded public application payload does not match src/app")
-            except Exception as exc:
-                errors.append(f"public application payload could not be decoded: {exc}")
-        expected_loader = loader(len(existing_chunks))
-        actual_loader = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
-        if actual_loader != expected_loader:
-            errors.append("public/app.js loader does not match the committed chunk count")
-        if errors:
-            raise SystemExit("ERROR: " + "; ".join(errors))
-        print(f"GAIA public code payload decodes to the readable source ({len(existing_chunks)} chunks)")
+        actual = OUTPUT.read_text(encoding="utf-8") if OUTPUT.exists() else ""
+        if actual != expected:
+            raise SystemExit("ERROR: public application loader is not synchronized")
+        if not MODULES:
+            raise SystemExit("ERROR: no readable GAIA source modules found")
+        print(f"GAIA public loader references {len(MODULES)} readable source modules")
         return 0
-    CHUNK_DIR.mkdir(parents=True, exist_ok=True)
-    for old in CHUNK_DIR.glob("chunk-*.txt"):
-        old.unlink()
-    for path, content in files.items():
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(content, encoding="utf-8")
-    print(f"Built {len(files)-1} public code chunks from {len(list(SOURCE_DIR.glob('*.js')))} source modules")
+    OUTPUT.write_text(expected, encoding="utf-8")
+    print(f"Built public loader for {len(MODULES)} readable source modules")
     return 0
 
 

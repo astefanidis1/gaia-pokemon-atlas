@@ -50,6 +50,8 @@ window.GAIA_DATA_READY.then(() => {
     searchIndex: -1,
     lastFocus: null,
     activeRegion: null,
+    recordFilter: 'all',
+    minimalMap: false,
   };
 
   const field = loadField();
@@ -177,6 +179,10 @@ window.GAIA_DATA_READY.then(() => {
     });
   }
 
+  function itemTone(item) {
+    return editorialDossiers[item?.slug]?.tone || item?.category?.toLowerCase().replace(/[^a-z]+/g,'-') || 'field';
+  }
+
   function markerElement(item) {
     const element = document.createElement('button');
     element.className = `gaia-marker ${item.route ? 'live' : ''} ${['Restricted','Sealed'].includes(item.accessStatus) ? 'restricted' : ''}`;
@@ -186,8 +192,9 @@ window.GAIA_DATA_READY.then(() => {
     const image = document.createElement('img');
     image.src = item.image;
     image.alt = '';
+    image.dataset.speciesSlug = item.slug;
     image.loading = 'lazy';
-    image.onerror = () => { image.style.opacity = '.18'; };
+    image.decoding = 'async';
     element.appendChild(image);
     if (item.route || item.globalPopulation <= 5) {
       const label = document.createElement('span');
@@ -211,7 +218,7 @@ window.GAIA_DATA_READY.then(() => {
       });
       state.map = map;
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
-      const timeout = setTimeout(() => { if (!state.mapReady) showMapFallback(); }, 9000);
+      const timeout = setTimeout(() => { if (!state.mapReady) activateMinimalMap(); }, 9000);
       map.on('load', () => {
         clearTimeout(timeout);
         state.mapReady = true;
@@ -224,6 +231,33 @@ window.GAIA_DATA_READY.then(() => {
       map.on('error', event => {
         if (!state.mapReady && event?.error) setMapStatus('Basemap reconnecting…');
       });
+    } catch {
+      showMapFallback();
+    }
+  }
+
+  function minimalMapStyle() {
+    return {
+      version: 8,
+      sources: {},
+      layers: [{ id:'gaia-local-background', type:'background', paint:{ 'background-color':'#050b11' } }]
+    };
+  }
+
+  function activateMinimalMap() {
+    if (!state.map || state.minimalMap) return showMapFallback();
+    state.minimalMap = true;
+    setMapStatus('External basemap unavailable · opening local globe mode');
+    try {
+      state.map.once('style.load', () => {
+        state.mapReady = true;
+        addGeoSources();
+        renderMapMarkers();
+        $('#mapFallback').hidden = true;
+        document.body.classList.add('minimal-map');
+        setMapStatus('Local globe mode · canonical markers remain active');
+      });
+      state.map.setStyle(minimalMapStyle());
     } catch {
       showMapFallback();
     }

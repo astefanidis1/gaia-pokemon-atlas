@@ -24,6 +24,10 @@ The current GAIA foundation establishes:
 - twelve launch-quality flagship dossiers with founder notes and linked archive files;
 - the first Regional Field Window: New England Coastal Forest;
 - keyboard search navigation, focus management, reduced-motion support, and a mobile bottom navigation system;
+- a public census-methodology and status-key brief;
+- 24 curated Records entries, including 12 full dossiers and 12 selected core records;
+- a live surveillance ticker and a local globe mode when the external basemap fails;
+- species-specific procedural archive artwork, delayed remote-art recovery, and service-worker caching;
 - quiet fan-project and rights-holder disclosure.
 
 The original feature-rich showcase remains preserved separately and is not the product direction for the public GAIA rebuild.
@@ -37,18 +41,18 @@ python -m http.server 8000
 
 Then open `http://localhost:8000`.
 
-The app uses MapLibre and OpenFreeMap for the live basemap and remote artwork URLs for Pokémon images. Core Index, Records, regional ecology, and Field Log content remains usable if the basemap or remote artwork is unavailable.
+The app uses MapLibre and OpenFreeMap for its primary basemap and remote artwork URLs for Pokémon images. A local globe style preserves canonical markers if the external basemap fails. Species-specific procedural archive visuals appear when remote artwork is unavailable, and successful assets are cached by the service worker after first load.
 
 ## Development
 
-Readable application source lives in `src/app/*.js`. The compact browser bundle is deterministic and should always be regenerated through:
+Readable application source lives in `src/app/*.js`. The public loader is generated from the readable application modules and should be refreshed through:
 
 ```bash
 python scripts/build_public.py
 python scripts/validate_gaia.py
 ```
 
-CI fails if `public/app.js` does not match the readable source.
+CI fails if the public loader and readable source-module list diverge. The Pages workflow copies those reviewed modules into the deployable site.
 
 ## Canon architecture
 

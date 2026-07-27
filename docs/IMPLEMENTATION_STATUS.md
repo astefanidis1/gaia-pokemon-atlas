@@ -1,7 +1,7 @@
 # GAIA Atlas — Foundation Implementation Status
 
 **Branch:** `agent/gaia-foundation`  
-**Status:** Polished draft for final review  
+**Status:** Private pre-launch refinement branch  
 **Product source of truth:** `docs/GAIA_Atlas_Master_Plan.md`
 
 ## Implemented in this branch
@@ -24,15 +24,20 @@
 - Shareable species hash links with native share-sheet support where available
 - Responsive desktop and mobile presentation with bottom mobile navigation
 - Keyboard search navigation, focus restoration, modal focus containment, skip navigation, reduced-motion support, and higher-contrast adaptation
-- Basemap and artwork fallback behavior
-- Canon payload checksum validation, relationship auditing, editorial validation, regional-reference validation, and deterministic bundle checks
+- External-basemap fallback to a local marker-preserving globe mode
+- Species-specific procedural archive artwork with delayed remote recovery
+- Service-worker caching for the application shell and successfully loaded artwork
+- Live surveillance ticker for all five canonical routes
+- Public census-methodology and GAIA status-key modal
+- 24 curated Records entries: 12 full dossiers and 12 selected core records
+- Canon payload checksum validation, relationship auditing, editorial validation, regional-reference validation, and public-loader synchronization checks
 - GitHub Pages deployment workflow for `main`
 
 ## Validated locally
 
 - Canon reconciliation and foreign-key validation passed
 - All 12 flagship dossiers and the regional field window passed reference validation
-- Readable source and compact public bundle are synchronized
+- Readable source and the public module loader are synchronized
 - JavaScript syntax checks passed
 - Desktop Records, regional window, dossier, search, Live, Field Log, and Index interaction tests passed
 - Mobile dossier and fixed bottom navigation tests passed
@@ -46,10 +51,9 @@
 - Full dossier depth for every species
 - Additional regional field windows
 - Additional seasonal and environmental routes
-- Final social-preview artwork
 - Complete assistive-technology audit with physical-device testing
 - Final deployment and public-launch approval
 
 ## Review boundary
 
-This branch is a polished first public foundation, not the finished complete-Pokédex release. It is now structurally ready for final creative review, merge, and deployment before deeper species expansion begins.
+This branch remains intentionally private. The product is technically deployable, but the current phase is pre-launch refinement: improving world density, visual reliability, institutional clarity, and flagship-to-core content balance before any public release decision.

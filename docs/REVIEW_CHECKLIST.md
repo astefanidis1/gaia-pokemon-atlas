@@ -34,6 +34,8 @@ Use this checklist before merging the foundation branch.
 - [ ] Date-driven routes display the same canonical state to every visitor.
 - [ ] Discovered, Observed, and Favorite states persist locally.
 - [ ] Public records remain searchable without artificial discovery locks.
+- [ ] Records filters meaningfully separate full dossiers, live tracks, restricted files, and selected core records.
+- [ ] The census-methodology brief explains exact totals without turning into a tutorial interruption.
 - [ ] Restricted records reduce public precision without weakening internal canon.
 - [ ] The regional field window opens, links to dossiers, and focuses the globe without requesting location access.
 
@@ -42,6 +44,9 @@ Use this checklist before merging the foundation branch.
 - [ ] Desktop and mobile layouts are usable.
 - [ ] Mobile bottom navigation does not cover page or dossier content.
 - [ ] The application remains navigable when the basemap or remote artwork is unavailable.
+- [ ] Local globe mode preserves markers when the external basemap fails.
+- [ ] Procedural archive visuals remain readable and recover to remote artwork when possible.
+- [ ] The service worker caches only versioned public assets and successful artwork responses.
 - [ ] Reduced-motion, focus behavior, keyboard navigation, and contrast receive final review.
 - [ ] The legal notice remains quiet but accessible in the footer, About view, and README.
 - [ ] `src/app/*.js` and `public/app.js` are synchronized.

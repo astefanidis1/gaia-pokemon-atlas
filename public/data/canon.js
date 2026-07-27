@@ -1,7 +1,12 @@
-const gaiaPolish=document.createElement('link');
-gaiaPolish.rel='stylesheet';
-gaiaPolish.href='launch.css';
-document.head.appendChild(gaiaPolish);
+(()=>{
+  if(!document.querySelector('link[data-gaia-refinement]')){
+    const link=document.createElement('link');
+    link.rel='stylesheet';
+    link.href='refinement.css';
+    link.dataset.gaiaRefinement='true';
+    document.head.appendChild(link);
+  }
+})();
 
 window.GAIA_DATA_READY=(async()=>{
   const parts=Array.from({length:7},(_,index)=>`data/canon/chunk-${String(index+1).padStart(2,'0')}.txt`);
