@@ -1,0 +1,113 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://gaia-atlas.example/schema/species.schema.json",
+  "title": "GAIA Species Record",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "dexNumber",
+    "name",
+    "category",
+    "globalPopulation",
+    "censusVerifiedAt",
+    "knowledgeStatus",
+    "publicAccessStatus",
+    "recordStatus"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+    },
+    "dexNumber": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "scientificName": {
+      "type": ["string", "null"]
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "ordinary",
+        "rare",
+        "pseudo-legendary",
+        "legendary",
+        "mythical",
+        "ultra-beast",
+        "artificial",
+        "anomalous"
+      ]
+    },
+    "realm": {
+      "type": "string",
+      "enum": ["earth", "solar-system", "deep-space", "dimensional"]
+    },
+    "globalPopulation": {
+      "type": "integer",
+      "minimum": 0
+    },
+    "censusVerifiedAt": {
+      "type": "string",
+      "format": "date"
+    },
+    "historicPeakPopulation": {
+      "type": ["integer", "null"],
+      "minimum": 0
+    },
+    "populationTrend": {
+      "type": "string",
+      "enum": ["increasing", "stable", "declining", "unknown"]
+    },
+    "knowledgeStatus": {
+      "type": "string",
+      "enum": ["verified", "actively-tracked", "archived", "contact-lost", "anomalous"]
+    },
+    "publicAccessStatus": {
+      "type": "string",
+      "enum": ["public", "advisory", "restricted", "redacted", "sealed"]
+    },
+    "recordStatus": {
+      "type": "string",
+      "enum": ["draft", "under-review", "canon-locked", "published", "retired"]
+    },
+    "dangerClass": {
+      "type": ["string", "null"]
+    },
+    "summary": {
+      "type": "string"
+    },
+    "formIds": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "populationIds": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "individualIds": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "lineageIds": {
+      "type": "array",
+      "items": {"type": "string"},
+      "uniqueItems": true
+    },
+    "assetKey": {
+      "type": ["string", "null"]
+    },
+    "updatedAt": {
+      "type": "string",
+      "format": "date-time"
+    }
+  }
+}
