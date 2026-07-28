@@ -1,10 +1,10 @@
-const CACHE_NAME = 'gaia-shell-v1.4';
+const CACHE_NAME = 'gaia-shell-v1.5';
 const SHELL = [
   './','index.html','styles.css','refinement.css','density.css','app.js','404.html','robots.txt',
   'assets/gaia-seal.svg',
   'data/canon.js','data/canon-corrections.json',
   'data/canon/chunk-01.txt','data/canon/chunk-02.txt','data/canon/chunk-03.txt','data/canon/chunk-04.txt','data/canon/chunk-05.txt','data/canon/chunk-06.txt','data/canon/chunk-07.txt',
-  'data/editorial/chunk-01.txt','data/editorial/chunk-02.txt','data/editorial/chunk-03.txt','data/editorial/chunk-04.txt',
+  'data/editorial/chunk-01.txt','data/editorial/chunk-02.txt','data/editorial/chunk-03.txt','data/editorial/chunk-04.txt','data/editorial/phase2.txt',
   'source/01-core.js','source/02-records.js','source/02a-density.js','source/03-interface.js'
 ];
 
