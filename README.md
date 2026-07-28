@@ -21,12 +21,12 @@ The current GAIA foundation establishes:
 - exact census totals with verification dates;
 - Public, Advisory, Restricted, and Sealed access states;
 - local Discovered, Observed, and Favorite states;
-- twelve launch-quality flagship dossiers with founder notes and linked archive files;
-- the first Regional Field Window: New England Coastal Forest;
+- fifteen launch-quality flagship dossiers with founder notes and linked archive files;
+- two Regional Field Windows: New England Coastal Forest and the Aegean / Eastern Mediterranean;
 - keyboard search navigation, focus management, reduced-motion support, and a mobile bottom navigation system;
 - a public census-methodology and status-key brief;
-- 24 curated Records entries, including 12 full dossiers and 12 selected core records;
-- a live surveillance ticker and a local globe mode when the external basemap fails;
+- 27 curated Records entries, including 15 full dossiers and 12 selected core records;
+- a live surveillance ticker, a local globe mode when the external basemap fails, and the first true habitat/corridor geometry;
 - species-specific procedural archive artwork, delayed remote-art recovery, and service-worker caching;
 - quiet fan-project and rights-holder disclosure.
 
