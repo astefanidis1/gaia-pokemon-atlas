@@ -1,60 +1,52 @@
-# GAIA Atlas — Foundation Implementation Status
+# GAIA Atlas — Implementation Status
 
 **Branch:** `agent/gaia-foundation`  
-**Status:** Private world-density expansion  
+**Status:** Private ecology-integration build  
 **Product source of truth:** `docs/GAIA_Atlas_Master_Plan.md`
 
 ## Implemented in this branch
 
-- GAIA visual identity, seal, motto, agency framing, and quiet fan-project notice
+- GAIA visual identity, seal, motto, agency framing, founders, and quiet fan-project notice
 - Globe-first navigation with GAIA Live, Index, Records, and Field Log
 - Separate Species, permanent Form, Population, Location, Route, and Incident entities
-- 161 verified species records
-- 2 permanent Urshifu form records
-- 162 reconciled population records
-- 162 geographic or anomalous location records
-- 5 deterministic seasonal movement routes
-- 3 cross-referenced incident records
-- 15 full dossiers with ecology, field advisories, founder notes, and archive records
-- New England Coastal Forest field window with 12 documented presences and 4 explicit absences
-- Aegean and Eastern Mediterranean field window with 18 documented presences and 6 explicit absences
-- 4 generalized Aegean habitat polygons and 3 ecological corridors
-- Progressive map disclosure according to realm, zoom, classification, and access status
-- Earth, Solar System, Deep Space, and Dimensional views
-- Public, Advisory, Restricted, and Sealed disclosure states
+- 161 verified species records, 2 permanent Urshifu forms, 162 reconciled populations, 162 locations, 5 deterministic routes, and 3 incidents
+- Exact census totals with separate verification, knowledge, and access states
 - Discovered, Observed, and Favorite browser-local visitor states
-- Shareable species hash links with native share-sheet support where available
-- Responsive desktop and mobile presentation with bottom mobile navigation
-- Keyboard search navigation, focus restoration, modal focus containment, skip navigation, reduced-motion support, and higher-contrast adaptation
-- External-basemap fallback to a local marker-preserving globe mode
-- Species-specific procedural archive artwork with delayed remote recovery
-- Service-worker caching for the application shell and successfully loaded artwork
-- Live surveillance ticker for all five canonical routes
-- Public census-methodology and GAIA status-key modal
-- 27 curated Records entries: 15 full dossiers and 12 selected core records
-- Canon checksum, relationship auditing, editorial validation, regional-reference validation, map-geometry validation, and public-loader synchronization checks
-- GitHub Pages deployment workflow for `main`
+- **27 full dossiers** with ecology, advisories, founder notes, and archive records
+- **4 regional field windows**: New England, Aegean / Eastern Mediterranean, Pacific Northwest, and Central Honshu
+- Regional Explorer with resident, seasonal, and managed-partner comparison filters
+- **16 mapped habitat systems and 12 ecological corridors**
+- Real-calendar seasonal cycles for all four regions and intensity profiles for all mapped ecology features
+- **16 ecological relationships** covering predation, pollination, infrastructure, working partnerships, nutrient transfer, and coexistence
+- Clickable habitat and corridor layers with seasonal state, linked species, and regional navigation
+- New England habitat and corridor geometry, bringing every regional window onto the same ecology architecture
+- Responsive desktop/mobile presentation, keyboard navigation, modal focus containment, reduced-motion support, and contrast adaptations
+- Local marker-preserving globe mode, procedural artwork fallbacks, and versioned service-worker caching
+- Public census methodology and status-key brief
+- Signed Phase 3 editorial payload chained to the exact Phase 2 version
+- GitHub Pages deployment workflow gated behind all canon, editorial, ecology, syntax, and file checks
 
 ## Validated
 
 - Canon reconciliation and foreign-key validation passed
-- All 15 full dossiers and both regional windows passed reference validation
-- Habitat polygons are closed and use valid Earth coordinates
-- Ecological corridors contain valid coordinate sequences and known species references
-- Readable source and the public module loader are synchronized
-- JavaScript and service-worker syntax checks passed
-- All five routed species resolve to `Actively Tracked`
+- Phase 2 world-density validation passed
+- Phase 3 checksum, version chain, dossier, region, species, geometry, seasonality, and relationship validation passed
+- All four regions resolve to their exact final presence, absence, habitat, and corridor counts
+- All 28 geometry features have valid real-calendar season profiles
+- Readable JavaScript source and the deterministic public loader are synchronized
+- Python compilation and complete concatenated JavaScript syntax checks passed
+- Desktop and mobile browser smoke tests covered the Regional Explorer, region details, map toggles, ecology inspector, dossier navigation, and seasonal state with zero uncaught JavaScript errors
 
 ## Intentionally deferred
 
-- Public observation counters and backend
-- Complete common-species geographic ranges and density polygons
+- Broader common-species range and density coverage across additional parts of Earth
 - Full dossier depth for every species
-- Pacific Northwest and Central Honshu regional field windows
-- Additional seasonal and environmental routes
-- Complete assistive-technology audit with physical-device testing
+- Additional environmental and individual movement systems
+- Final original visual-asset and social-preview strategy
+- Complete assistive-technology and physical-device testing
+- Public observation infrastructure, only after the core experience is mature
 - Final deployment and public-launch approval
 
 ## Review boundary
 
-This branch remains intentionally private. The product is technically deployable, but the current phase is world-density expansion: building convincing regional ecosystems, habitat geometry, corridors, and deeper ordinary-species records before any public release decision.
+This branch remains intentionally private. The current phase unifies the existing regions, dossiers, map geometry, and calendar behavior into one interactive ecology system. The product is technically deployable, but no merge or public deployment should occur without a later explicit launch decision.
