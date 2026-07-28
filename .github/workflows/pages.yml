@@ -22,7 +22,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate canon, editorial, and regional data
+      - name: Validate canon, editorial, regional data, and geometry
         run: python scripts/validate_gaia.py
       - name: Verify deterministic public loader
         run: python scripts/build_public.py --check

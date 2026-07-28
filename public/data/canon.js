@@ -6,11 +6,18 @@
     link.dataset.gaiaRefinement='true';
     document.head.appendChild(link);
   }
+  if(!document.querySelector('link[data-gaia-density]')){
+    const density=document.createElement('link');
+    density.rel='stylesheet';
+    density.href='density.css';
+    density.dataset.gaiaDensity='true';
+    document.head.appendChild(density);
+  }
 })();
 
 window.GAIA_DATA_READY=(async()=>{
   const parts=Array.from({length:7},(_,index)=>`data/canon/chunk-${String(index+1).padStart(2,'0')}.txt`);
-  const editorialParts=Array.from({length:3},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
+  const editorialParts=Array.from({length:4},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const [encodedParts,correctionsResponse,editorialEncodedParts]=await Promise.all([
     Promise.all(parts.map(async path=>{
       const response=await fetch(path,{cache:'no-cache'});

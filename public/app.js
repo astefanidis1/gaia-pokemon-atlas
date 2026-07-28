@@ -1,5 +1,5 @@
 (()=>{
-  const modules=['01-core.js','02-records.js','03-interface.js'];
+  const modules=['01-core.js','02-records.js','02a-density.js','03-interface.js'];
   const roots=['source/','../src/app/'];
   (async()=>{
     const parts=[];

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Validate canon, editorial, and regional data
+      - name: Validate canon, editorial, regional data, and geometry
         run: python scripts/validate_gaia.py
       - name: Verify deterministic public loader
         run: python scripts/build_public.py --check
@@ -22,7 +22,7 @@ jobs:
         run: python -m compileall -q scripts
       - name: Check JavaScript syntax
         run: |
-          cat src/app/*.js > /tmp/gaia-app.js
+          cat src/app/01-core.js src/app/02-records.js src/app/02a-density.js src/app/03-interface.js > /tmp/gaia-app.js
           node --check /tmp/gaia-app.js
           node --check public/app.js
           node --check public/data/canon.js
@@ -32,9 +32,11 @@ jobs:
           test -f public/index.html
           test -f public/styles.css
           test -f public/refinement.css
+          test -f public/density.css
           test -f public/assets/gaia-seal.svg
           test -f public/sw.js
           test -f public/data/canon/chunk-07.txt
           test -f public/data/canon-corrections.json
-          test -f public/data/editorial/chunk-03.txt
+          test -f public/data/editorial/chunk-04.txt
+          test -f src/app/02a-density.js
           test -f scripts/build_public.py
