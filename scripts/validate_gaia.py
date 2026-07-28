@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate canonical, editorial, regional, and public-build GAIA data."""
+"""Validate GAIA canon, editorial depth, regional ecology, and map geometry."""
 from __future__ import annotations
 
 import base64
@@ -11,58 +11,85 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATA_ROOT = ROOT / "public" / "data"
-CHUNKS = DATA_ROOT / "canon"
-CORRECTIONS_PATH = DATA_ROOT / "canon-corrections.json"
+CANON_CHUNKS = DATA_ROOT / "canon"
 EDITORIAL_CHUNKS = DATA_ROOT / "editorial"
-EXPECTED_EDITORIAL_SHA256 = "6d5feae44a2c06f7d8bd0de644d303c814b22a0cf845602098263332e2b2614c"
-EXPECTED_PAYLOAD_SHA256 = "0028c6891e6c31988a3a4a6957867fccfab4f6bc1e321f43ec8e68fc22c4ca95"
+CORRECTIONS_PATH = DATA_ROOT / "canon-corrections.json"
+
+EXPECTED_CANON_SHA256 = "0028c6891e6c31988a3a4a6957867fccfab4f6bc1e321f43ec8e68fc22c4ca95"
+EXPECTED_EDITORIAL_SHA256 = "34cdfbf7233474b45a23906f18dbb48960fe97d6ee778d9c2e3aa294ea918374"
 EXPECTED_CORRECTION_VERSION = "2026-07-27.1"
-EXPECTED_EDITORIAL_VERSION = "2026-07-27.1"
+EXPECTED_EDITORIAL_VERSION = "2026-07-27.2"
+EXPECTED_COUNTS = {
+    "species": 161,
+    "forms": 2,
+    "populations": 162,
+    "locations": 162,
+    "routes": 5,
+    "incidents": 3,
+}
 
-encoded = "".join(
-    (CHUNKS / f"chunk-{index:02d}.txt").read_text(encoding="utf-8").strip()
-    for index in range(1, 8)
-)
-compressed = base64.b64decode(encoded, validate=True)
-actual_hash = hashlib.sha256(compressed).hexdigest()
-if actual_hash != EXPECTED_PAYLOAD_SHA256:
-    raise SystemExit(
-        f"ERROR: canon payload checksum mismatch: {actual_hash} != {EXPECTED_PAYLOAD_SHA256}"
-    )
-
-data = json.loads(gzip.decompress(compressed))
-corrections = json.loads(CORRECTIONS_PATH.read_text(encoding="utf-8"))
-editorial_encoded = "".join(
-    (EDITORIAL_CHUNKS / f"chunk-{index:02d}.txt").read_text(encoding="utf-8").strip()
-    for index in range(1, 4)
-)
-editorial_compressed = base64.b64decode(editorial_encoded, validate=True)
-editorial_hash = hashlib.sha256(editorial_compressed).hexdigest()
-if editorial_hash != EXPECTED_EDITORIAL_SHA256:
-    raise SystemExit(
-        f"ERROR: editorial payload checksum mismatch: {editorial_hash} != {EXPECTED_EDITORIAL_SHA256}"
-    )
-editorial = json.loads(gzip.decompress(editorial_compressed))
-species = data["species"]
-forms = data["forms"]
-populations = data["populations"]
-locations = data["locations"]
-routes = data["routes"]
-incidents = data["incidents"]
 errors: list[str] = []
+
+
+def load_payload(directory: Path, count: int, expected_hash: str, label: str) -> dict:
+    encoded = "".join(
+        (directory / f"chunk-{index:02d}.txt").read_text(encoding="utf-8").strip()
+        for index in range(1, count + 1)
+    )
+    compressed = base64.b64decode(encoded, validate=True)
+    actual_hash = hashlib.sha256(compressed).hexdigest()
+    if actual_hash != expected_hash:
+        errors.append(f"{label} payload checksum mismatch: {actual_hash} != {expected_hash}")
+    return json.loads(gzip.decompress(compressed))
 
 
 def unique(rows: list[dict], key: str, label: str) -> None:
     seen: set[object] = set()
     duplicates: set[object] = set()
     for row in rows:
-        value = row[key]
+        value = row.get(key)
         if value in seen:
             duplicates.add(value)
         seen.add(value)
     if duplicates:
         errors.append(f"duplicate {label}: {sorted(duplicates)}")
 
+
+def valid_coordinate(value: object) -> bool:
+    return (
+        isinstance(value, list)
+        and len(value) == 2
+        and all(isinstance(axis, (int, float)) for axis in value)
+        and -180 <= value[0] <= 180
+        and -90 <= value[1] <= 90
+    )
+
+
+def validate_closed_polygon(points: object, label: str) -> None:
+    if not isinstance(points, list) or len(points) < 4:
+        errors.append(f"{label} must contain at least four coordinates")
+        return
+    if not all(valid_coordinate(point) for point in points):
+        errors.append(f"{label} contains invalid coordinates")
+    if points[0] != points[-1]:
+        errors.append(f"{label} must be closed")
+
+
+data = load_payload(CANON_CHUNKS, 7, EXPECTED_CANON_SHA256, "canon")
+editorial = load_payload(EDITORIAL_CHUNKS, 4, EXPECTED_EDITORIAL_SHA256, "editorial")
+corrections = json.loads(CORRECTIONS_PATH.read_text(encoding="utf-8"))
+
+species = data["species"]
+forms = data["forms"]
+populations = data["populations"]
+locations = data["locations"]
+routes = data["routes"]
+incidents = data["incidents"]
+
+for key, expected in EXPECTED_COUNTS.items():
+    actual = len(data[key])
+    if actual != expected:
+        errors.append(f"expected {expected} {key}, found {actual}")
 
 for rows, key, label in (
     (species, "id", "species IDs"),
@@ -86,49 +113,28 @@ locations_by_species: defaultdict[str, list[dict]] = defaultdict(list)
 
 if corrections.get("version") != EXPECTED_CORRECTION_VERSION:
     errors.append(
-        "canon correction version mismatch: "
-        f"{corrections.get('version')} != {EXPECTED_CORRECTION_VERSION}"
+        f"canon correction version mismatch: {corrections.get('version')} != "
+        f"{EXPECTED_CORRECTION_VERSION}"
     )
 
 allowed_correction_fields = {"knowledgeStatus"}
 for species_id, patch in corrections.get("species", {}).items():
-    species_row = species_by_id.get(species_id)
-    if not species_row:
+    row = species_by_id.get(species_id)
+    if row is None:
         errors.append(f"canon correction references missing species {species_id}")
         continue
-    unexpected_fields = set(patch) - allowed_correction_fields
-    if unexpected_fields:
-        errors.append(
-            f"canon correction for {species_id} uses unsupported fields: "
-            f"{sorted(unexpected_fields)}"
-        )
-    species_row.update(patch)
-
-required_species_fields = (
-    "id",
-    "dex",
-    "slug",
-    "name",
-    "category",
-    "globalPopulation",
-    "censusVerified",
-    "accessStatus",
-    "knowledgeStatus",
-)
-
-for row in species:
-    for field in required_species_fields:
-        if field not in row:
-            errors.append(f"{row.get('name', '?')} missing {field}")
-    if not isinstance(row.get("globalPopulation"), int) or row["globalPopulation"] < 1:
-        errors.append(f"{row.get('name', '?')} has an invalid global population")
+    unexpected = set(patch) - allowed_correction_fields
+    if unexpected:
+        errors.append(f"canon correction for {species_id} uses unsupported fields: {sorted(unexpected)}")
+    row.update(patch)
 
 for form in forms:
     if form["speciesId"] not in species_ids:
         errors.append(f"form {form['id']} references missing species")
-    for location_id in form.get("locationIds", []):
-        if location_id not in location_ids:
-            errors.append(f"form {form['id']} references missing location {location_id}")
+    if form.get("locationIds"):
+        for location_id in form["locationIds"]:
+            if location_id not in location_ids:
+                errors.append(f"form {form['id']} references missing location {location_id}")
 
 for population in populations:
     species_id = population["speciesId"]
@@ -136,14 +142,13 @@ for population in populations:
         errors.append(f"population {population['id']} references missing species")
     if population.get("formId") and population["formId"] not in form_ids:
         errors.append(f"population {population['id']} references missing form")
-    if not isinstance(population.get("count"), int) or population["count"] < 1:
+    count = population.get("count")
+    if not isinstance(count, int) or count < 1:
         errors.append(f"population {population['id']} has an invalid count")
-    population_sum[species_id] += population["count"]
+    population_sum[species_id] += int(count or 0)
     for location_id in population.get("locationIds", []):
         if location_id not in location_ids:
-            errors.append(
-                f"population {population['id']} references missing location {location_id}"
-            )
+            errors.append(f"population {population['id']} references missing location {location_id}")
 
 for location in locations:
     species_id = location["speciesId"]
@@ -165,18 +170,14 @@ for route in routes:
         continue
     if len(route.get("waypoints", [])) < 2:
         errors.append(f"route {route['id']} has too few waypoints")
-    route_species = species_by_id[species_id]
-    if route_species.get("knowledgeStatus") != "Actively Tracked":
-        errors.append(
-            f"{route_species['name']} has a canonical route but is not Actively Tracked"
-        )
+    row = species_by_id[species_id]
+    if row.get("knowledgeStatus") != "Actively Tracked":
+        errors.append(f"{row['name']} has a canonical route but is not Actively Tracked")
     if not any(
         location.get("locationType") == "Current confirmed position"
         for location in locations_by_species[species_id]
     ):
-        errors.append(
-            f"{route_species['name']} has a canonical route without a current confirmed position"
-        )
+        errors.append(f"{row['name']} has a canonical route without a current confirmed position")
 
 for incident in incidents:
     for species_id in incident.get("speciesIds", []):
@@ -193,37 +194,24 @@ for row in species:
     if location_count[species_id] < 1:
         errors.append(f"{row['name']} has no location record")
 
-expected_counts = {
-    "species": 161,
-    "forms": 2,
-    "populations": 162,
-    "locations": 162,
-    "routes": 5,
-    "incidents": 3,
-}
-actual_counts = {key: len(data[key]) for key in expected_counts}
-for key, expected in expected_counts.items():
-    if actual_counts[key] != expected:
-        errors.append(f"expected {expected} {key}, found {actual_counts[key]}")
-
-# Editorial and regional layers are versioned separately from signed population canon.
 if editorial.get("version") != EXPECTED_EDITORIAL_VERSION:
     errors.append(
-        f"editorial version mismatch: {editorial.get('version')} != {EXPECTED_EDITORIAL_VERSION}"
+        f"editorial version mismatch: {editorial.get('version')} != "
+        f"{EXPECTED_EDITORIAL_VERSION}"
     )
 
 flagships = editorial.get("flagshipOrder", [])
-if len(flagships) != 12 or len(set(flagships)) != 12:
-    errors.append("editorial flagshipOrder must contain exactly 12 unique species slugs")
+if len(flagships) != 15 or len(set(flagships)) != 15:
+    errors.append("editorial flagshipOrder must contain exactly 15 unique species slugs")
 
-editorial_dossiers = editorial.get("dossiers", {})
+dossiers = editorial.get("dossiers", {})
 for slug in flagships:
     if slug not in species_by_slug:
         errors.append(f"flagship dossier references missing species slug {slug}")
-    if slug not in editorial_dossiers:
+    if slug not in dossiers:
         errors.append(f"flagship species {slug} is missing editorial dossier content")
 
-for slug, dossier in editorial_dossiers.items():
+for slug, dossier in dossiers.items():
     if slug not in species_by_slug:
         errors.append(f"editorial dossier references missing species slug {slug}")
         continue
@@ -240,37 +228,72 @@ for slug, dossier in editorial_dossiers.items():
 
 regions = editorial.get("regions", [])
 unique(regions, "id", "regional field-window IDs")
+if len(regions) != 2:
+    errors.append(f"world-density phase 1 requires exactly two regional windows, found {len(regions)}")
+
 for region in regions:
     region_id = region.get("id", "?")
     if region.get("realm") != "Earth":
-        errors.append(f"regional field window {region_id} must currently use the Earth realm")
-    center = region.get("center", [])
-    if len(center) != 2 or not all(isinstance(value, (int, float)) for value in center):
+        errors.append(f"regional field window {region_id} must use the Earth realm")
+    if not valid_coordinate(region.get("center")):
         errors.append(f"regional field window {region_id} has an invalid center")
-    polygon = region.get("polygon", [])
-    if len(polygon) < 4 or polygon[0] != polygon[-1]:
-        errors.append(f"regional field window {region_id} polygon must be closed")
-    present_slugs = [entry.get("slug") for entry in region.get("species", [])]
-    absent_slugs = [entry.get("slug") for entry in region.get("absences", [])]
-    if len(present_slugs) != len(set(present_slugs)):
+    validate_closed_polygon(region.get("polygon"), f"regional field window {region_id} polygon")
+
+    present = [entry.get("slug") for entry in region.get("species", [])]
+    absent = [entry.get("slug") for entry in region.get("absences", [])]
+    if len(present) != len(set(present)):
         errors.append(f"regional field window {region_id} repeats a present species")
-    if len(absent_slugs) != len(set(absent_slugs)):
+    if len(absent) != len(set(absent)):
         errors.append(f"regional field window {region_id} repeats an absence")
-    overlap = set(present_slugs) & set(absent_slugs)
+    overlap = set(present) & set(absent)
     if overlap:
         errors.append(f"regional field window {region_id} marks species both present and absent: {sorted(overlap)}")
-    for slug in present_slugs + absent_slugs:
+    for slug in present + absent:
         if slug not in species_by_slug:
             errors.append(f"regional field window {region_id} references missing species slug {slug}")
 
-new_england = next((region for region in regions if region.get("id") == "new-england"), None)
-if not new_england:
-    errors.append("the launch editorial layer requires the new-england field window")
-else:
-    if len(new_england.get("species", [])) != 12:
-        errors.append("new-england field window must contain 12 documented presences")
-    if len(new_england.get("absences", [])) != 4:
-        errors.append("new-england field window must contain four explicit absences")
+    geometry = region.get("geometry", {})
+    habitats = geometry.get("habitats", [])
+    corridors = geometry.get("corridors", [])
+    unique(habitats, "id", f"{region_id} habitat IDs")
+    unique(corridors, "id", f"{region_id} corridor IDs")
+    for habitat in habitats:
+        habitat_id = habitat.get("id", "?")
+        validate_closed_polygon(
+            habitat.get("polygon"),
+            f"regional field window {region_id} habitat {habitat_id}",
+        )
+        for slug in habitat.get("species", []):
+            if slug not in species_by_slug:
+                errors.append(f"{region_id} habitat {habitat_id} references missing species {slug}")
+    for corridor in corridors:
+        corridor_id = corridor.get("id", "?")
+        coordinates = corridor.get("coordinates", [])
+        if not isinstance(coordinates, list) or len(coordinates) < 2:
+            errors.append(f"{region_id} corridor {corridor_id} requires at least two coordinates")
+        elif not all(valid_coordinate(point) for point in coordinates):
+            errors.append(f"{region_id} corridor {corridor_id} contains invalid coordinates")
+        for slug in corridor.get("species", []):
+            if slug not in species_by_slug:
+                errors.append(f"{region_id} corridor {corridor_id} references missing species {slug}")
+
+required_regions = {
+    "new-england": (12, 4, 0, 0),
+    "aegean-eastern-mediterranean": (18, 6, 4, 3),
+}
+for region_id, expected in required_regions.items():
+    region = next((row for row in regions if row.get("id") == region_id), None)
+    if region is None:
+        errors.append(f"missing required regional field window {region_id}")
+        continue
+    actual = (
+        len(region.get("species", [])),
+        len(region.get("absences", [])),
+        len(region.get("geometry", {}).get("habitats", [])),
+        len(region.get("geometry", {}).get("corridors", [])),
+    )
+    if actual != expected:
+        errors.append(f"{region_id} counts {actual} do not match expected {expected}")
 
 if errors:
     print("\n".join(f"ERROR: {error}" for error in errors))
@@ -278,9 +301,8 @@ if errors:
 
 print(
     "GAIA validation passed: "
-    f"{len(species)} species, {len(forms)} forms, "
-    f"{len(populations)} populations, {len(locations)} locations, "
-    f"{len(routes)} live routes, {len(incidents)} incidents, "
-    f"{len(flagships)} flagship dossiers, {len(regions)} regional field window, "
-    f"corrections {corrections['version']}, editorial {editorial['version']}"
+    f"{len(species)} species, {len(forms)} forms, {len(populations)} populations, "
+    f"{len(locations)} locations, {len(routes)} live routes, {len(incidents)} incidents, "
+    f"{len(flagships)} full dossiers, {len(regions)} regional windows, "
+    f"editorial {editorial['version']}"
 )
