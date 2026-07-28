@@ -8,26 +8,24 @@ The project is operated in-universe by **GAIA — the Geospatial Anomaly Intelli
 
 **Institutional motto:** *Nothing is myth once it leaves a trace.*
 
-## Current foundation build
+## Current private build
 
-The current GAIA foundation establishes:
+The current GAIA build establishes:
 
 - the public GAIA identity and agency seal;
 - Globe, GAIA Live, Index, Records, and Field Log navigation;
-- 161 migrated species records;
-- separate species, form, population, location, route, and incident entities;
+- 161 migrated species records with separate species, form, population, location, route, and incident entities;
 - five deterministic real-calendar migration tracks;
-- progressive geographic disclosure by zoom level;
-- exact census totals with verification dates;
-- Public, Advisory, Restricted, and Sealed access states;
-- local Discovered, Observed, and Favorite states;
-- fifteen launch-quality flagship dossiers with founder notes and linked archive files;
-- two Regional Field Windows: New England Coastal Forest and the Aegean / Eastern Mediterranean;
-- keyboard search navigation, focus management, reduced-motion support, and a mobile bottom navigation system;
-- a public census-methodology and status-key brief;
-- 27 curated Records entries, including 15 full dossiers and 12 selected core records;
-- a live surveillance ticker, a local globe mode when the external basemap fails, and the first true habitat/corridor geometry;
-- species-specific procedural archive artwork, delayed remote-art recovery, and service-worker caching;
+- exact census totals with verification dates and separate knowledge/access states;
+- local Discovered, Observed, and Favorite visitor states;
+- **27 full dossiers** with founder notes, public advisories, and linked archives;
+- **four Regional Field Windows**: New England, the Aegean / Eastern Mediterranean, the Pacific Northwest, and Central Honshu;
+- a Regional Explorer for comparing residents, seasonal visitors, and managed partners;
+- **16 mapped habitat systems and 12 ecological corridors**;
+- real-calendar seasonal interpretation for every mapped ecology feature;
+- **16 ecological relationships** covering predation, pollination, infrastructure, working partnerships, and other ecosystem functions;
+- clickable habitat and corridor layers with species links and regional detail;
+- keyboard navigation, focus management, reduced-motion support, mobile navigation, and offline shell caching;
 - quiet fan-project and rights-holder disclosure.
 
 The original feature-rich showcase remains preserved separately and is not the product direction for the public GAIA rebuild.
@@ -45,14 +43,16 @@ The app uses MapLibre and OpenFreeMap for its primary basemap and remote artwork
 
 ## Development
 
-Readable application source lives in `src/app/*.js`. The public loader is generated from the readable application modules and should be refreshed through:
+Readable application source lives in `src/app/*.js`. The public loader is generated from the exact reviewed module list and should be checked through:
 
 ```bash
-python scripts/build_public.py
+python scripts/build_public.py --check
 python scripts/validate_gaia.py
+python scripts/validate_phase2.py
+python scripts/validate_phase3.py
 ```
 
-CI fails if the public loader and readable source-module list diverge. The Pages workflow copies those reviewed modules into the deployable site.
+CI also compiles the Python tooling, concatenates and syntax-checks every readable JavaScript module, and verifies all required deployable files.
 
 ## Canon architecture
 
@@ -63,10 +63,11 @@ Species / populations / individuals ↔ Incidents and Records
 Visitor state remains permanently separate from canon.
 
 Signed population canon + versioned corrections
-                         + editorial dossiers / regional field windows
+                         + signed editorial / regional expansions
+                         + seasonal ecology and relationship layers
 ```
 
-Editorial and regional layers can deepen the world without silently changing exact census totals.
+Editorial, regional, and ecology layers deepen the world without silently changing exact census totals.
 
 Urshifu demonstrates the form model: one species total of 16, split into seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 
