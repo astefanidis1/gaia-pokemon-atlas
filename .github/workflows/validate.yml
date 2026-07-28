@@ -18,6 +18,8 @@ jobs:
         run: python scripts/validate_gaia.py
       - name: Validate world-density phase 2
         run: python scripts/validate_phase2.py
+      - name: Validate ecology integration phase 3
+        run: python scripts/validate_phase3.py
       - name: Verify deterministic public loader
         run: python scripts/build_public.py --check
       - name: Check Python scripts
@@ -35,9 +37,19 @@ jobs:
           test -f public/styles.css
           test -f public/refinement.css
           test -f public/density.css
+          test -f public/ecology.css
           test -f public/assets/gaia-seal.svg
           test -f public/sw.js
           test -f public/data/canon/chunk-07.txt
           test -f public/data/canon-corrections.json
           test -f public/data/editorial/phase2.txt
+          test -f public/data/editorial/phase3-01.txt
+          test -f public/data/editorial/phase3-02.txt
+          test -f src/app/02b-ecology-a.js
+          test -f src/app/02b-ecology-b.js
+          test -f src/app/02b-ecology-c.js
+          test -f src/app/02b-ecology-d.js
           test -f scripts/build_public.py
+          test -f scripts/validate_phase3.py
+          test -f scripts/phase3_validation_data.py
+          test -f scripts/phase3_validation_checks.py

@@ -6,6 +6,13 @@
     link.dataset.gaiaRefinement='true';
     document.head.appendChild(link);
   }
+  if(!document.querySelector('link[data-gaia-ecology]')){
+    const ecology=document.createElement('link');
+    ecology.rel='stylesheet';
+    ecology.href='ecology.css';
+    ecology.dataset.gaiaEcology='true';
+    document.head.appendChild(ecology);
+  }
   if(!document.querySelector('link[data-gaia-density]')){
     const density=document.createElement('link');
     density.rel='stylesheet';
@@ -19,7 +26,8 @@ window.GAIA_DATA_READY=(async()=>{
   const parts=Array.from({length:7},(_,index)=>`data/canon/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const editorialParts=Array.from({length:4},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const phase2Path='data/editorial/phase2.txt';
-  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Response]=await Promise.all([
+  const phase3Paths=['data/editorial/phase3-01.txt','data/editorial/phase3-02.txt'];
+  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Response,phase3Responses]=await Promise.all([
     Promise.all(parts.map(async path=>{
       const response=await fetch(path,{cache:'no-cache'});
       if(!response.ok) throw new Error(`Unable to load GAIA canon payload: ${path}`);
@@ -31,10 +39,12 @@ window.GAIA_DATA_READY=(async()=>{
       if(!response.ok) throw new Error(`Unable to load GAIA editorial payload: ${path}`);
       return (await response.text()).trim();
     })),
-    fetch(phase2Path,{cache:'no-cache'})
+    fetch(phase2Path,{cache:'no-cache'}),
+    Promise.all(phase3Paths.map(path=>fetch(path,{cache:'no-cache'})))
   ]);
   if(!correctionsResponse.ok) throw new Error('Unable to load GAIA canon corrections.');
   if(!phase2Response.ok) throw new Error('Unable to load GAIA world-density expansion.');
+  if(phase3Responses.some(response=>!response.ok)) throw new Error('Unable to load GAIA ecology integration.');
   const encoded=encodedParts.join('');
   const bytes=Uint8Array.from(atob(encoded),character=>character.charCodeAt(0));
   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
@@ -51,6 +61,28 @@ window.GAIA_DATA_READY=(async()=>{
   Object.assign(editorial.dossiers,phase2.dossiers);
   editorial.regions.push(...phase2.regions);
   editorial.version=phase2.version;
+  const phase3Encoded=(await Promise.all(phase3Responses.map(response=>response.text()))).map(text=>text.trim()).join('');
+  const phase3Bytes=Uint8Array.from(atob(phase3Encoded),character=>character.charCodeAt(0));
+  const phase3Stream=new Blob([phase3Bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const phase3=JSON.parse(await new Response(phase3Stream).text());
+  if(phase3.baseVersion!==editorial.version) throw new Error(`GAIA ecology integration base mismatch: ${phase3.baseVersion} !== ${editorial.version}`);
+  editorial.flagshipOrder.push(...phase3.flagshipAdditions);
+  Object.assign(editorial.dossiers,phase3.dossiers);
+  const regionsById=new Map(editorial.regions.map(region=>[region.id,region]));
+  for(const [regionId,patch] of Object.entries(phase3.regionPatches||{})){
+    const region=regionsById.get(regionId);
+    if(!region) throw new Error(`GAIA ecology patch references missing region: ${regionId}`);
+    if(patch.speciesAdditions?.length) region.species.push(...patch.speciesAdditions);
+    if(patch.geometry){
+      region.geometry=region.geometry||{habitats:[],corridors:[]};
+      region.geometry.habitats.push(...(patch.geometry.habitats||[]));
+      region.geometry.corridors.push(...(patch.geometry.corridors||[]));
+    }
+    region.seasonalCycle=patch.seasonalCycle||[];
+    region.geometrySeasonality=patch.geometrySeasonality||{};
+  }
+  editorial.relationships=[...(editorial.relationships||[]),...(phase3.relationships||[])];
+  editorial.version=phase3.version;
   const corrections=await correctionsResponse.json();
   const speciesById=new Map(data.species.map(species=>[species.id,species]));
   for(const [speciesId,patch] of Object.entries(corrections.species||{})){
