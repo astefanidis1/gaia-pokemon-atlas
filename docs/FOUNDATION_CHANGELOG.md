@@ -1,5 +1,23 @@
 # GAIA Atlas Foundation Changelog
 
+## Atlas continuity pass — July 28, 2026
+
+### Added
+
+- Universal search across species, locations, regional windows, habitats, corridors, incidents, and linked archive records
+- Shareable deep links for species, regions, ecology features, incidents, and archive files
+- Connected World Ecology sections inside dossiers, linking species directly to their documented regions and mapped systems
+- Explicit civilian build metadata separating canon correction `2026-07-27.1` from ecology layer `2026-07-28.2`
+- Strict UTF-8 documentation and release-integrity validation in CI
+
+### Corrected
+
+- Restored the corrupted `WORLD_ECOLOGY_PHASE_3.md` as readable source-of-truth documentation
+- Replaced the stale runtime canon label with explicit canon and ecology versions
+- Removed the obsolete `public/code/` architecture description from `POLISH_PASS.md`
+- Corrected local-development instructions to serve the repository root and open `/public/`
+- Advanced the service-worker cache and deterministic loader to include the continuity module and styles
+
 ## Pre-launch refinement — July 27, 2026
 
 ### Added
