@@ -1,7 +1,7 @@
 # GAIA Atlas — Implementation Status
 
 **Branch:** `agent/gaia-foundation`  
-**Status:** Private ecology-and-continuity build  
+**Status:** Private ecology, continuity, and experience-assurance build  
 **Product source of truth:** `docs/GAIA_Atlas_Master_Plan.md`
 
 ## Implemented in this branch
@@ -23,12 +23,16 @@
 - Universal search across species, locations, regions, habitats, corridors, incidents, and archive records
 - Shareable hash links for species, regions, ecology features, incidents, and archive files
 - Dossier ecology cross-references linking species to documented regions, habitats, corridors, and relationships
+- Centralized visual asset policy `2026-07-29.1` with one replaceable artwork source and seven deterministic GAIA reconstruction profiles
+- Classification-aware natural-history, marine, active-track, mythic, anomaly, artificial, and sealed fallback imagery
 - Responsive desktop/mobile presentation, keyboard navigation, modal focus containment, reduced-motion support, and contrast adaptations
-- Local marker-preserving globe mode, procedural artwork fallbacks, and versioned service-worker caching
-- Public census methodology and status-key brief
+- Mobile fixed-bottom navigation and compact globe terminal; desktop panel-collision controls at common viewport heights
+- Local marker-preserving globe mode and versioned service-worker caching
+- Public census methodology, status-key brief, visual-evidence policy, and explicit canon/editorial/asset/assurance build metadata
 - Signed Phase 3 editorial payload chained to the exact Phase 2 version
 - Strict UTF-8 documentation and release-metadata integrity validation
-- GitHub Pages deployment workflow gated behind all canon, editorial, ecology, documentation, syntax, loader, and file checks
+- Eleven ordered readable browser modules synchronized with the deterministic public loader
+- GitHub Pages deployment workflow gated behind canon, editorial, ecology, documentation, syntax, loader, asset, accessibility, responsive-layout, and browser checks
 
 ## Validated
 
@@ -39,20 +43,25 @@
 - All 28 geometry features have valid real-calendar season profiles
 - Readable JavaScript source and the deterministic public loader are synchronized
 - Documentation is checked as strict UTF-8 and the Phase 3 report is protected against corruption
-- Release metadata identifies canon correction `2026-07-27.1` and ecology layer `2026-07-28.2`
+- Release metadata identifies canon correction `2026-07-27.1`, ecology layer `2026-07-28.2`, visual policy `2026-07-29.1`, and assurance layer `2026-07-29.1`
 - Python compilation and complete concatenated JavaScript syntax checks pass in CI
-- Desktop and mobile browser smoke tests covered the Regional Explorer, region details, map toggles, ecology inspector, dossier navigation, and seasonal state with zero uncaught JavaScript errors before the continuity pass
+- Playwright runs on desktop Chromium, desktop Firefox, mobile Chromium, mobile WebKit, and reduced-motion Chromium
+- Primary Globe and Records surfaces pass serious/critical axe-core checks in desktop Chromium and mobile WebKit
+- Species, region, ecology, incident, and archive deep links restore their intended context
+- Artwork-network failure produces an authored species-specific GAIA reconstruction rather than a broken image
+- Responsive assertions prevent desktop panel/ticker collisions, hide dense ecology controls on mobile, preserve the Regional Explorer action, and enforce fixed mobile navigation
+- CI-generated desktop and mobile captures were manually reviewed; the review found and corrected panel collisions, native light-button leakage, clipped desktop actions, and mobile composition problems before this status was declared complete
 
 ## Intentionally deferred
 
 - Broader common-species range and density coverage across additional parts of Earth
 - Full dossier depth for every species
 - Additional environmental and individual movement systems
-- Final original visual-asset and social-preview strategy
-- Complete assistive-technology and physical-device testing
+- Final original regional plates, dossier scenes, and 1200 × 630 social-preview artwork
+- Physical-device testing and qualitative screen-reader review beyond automated emulation/rule checks
 - Public observation infrastructure, only after the core experience is mature
 - Final deployment and public-launch approval
 
 ## Review boundary
 
-This branch remains intentionally unmerged and undeployed. The current build unifies the existing regions, dossiers, map geometry, calendar behavior, search, and cross-record navigation into one explorable system. It is technically deployable, but no merge or public deployment should occur without a later explicit launch decision.
+This branch remains intentionally unmerged and undeployed. The current build unifies the existing regions, dossiers, map geometry, calendar behavior, search, cross-record navigation, visual resilience, accessibility state, and responsive composition into one guarded system. It is technically deployable, but no merge or public deployment should occur without a later explicit launch decision.
