@@ -21,8 +21,8 @@ footer button{color:#8de9f5!important;text-decoration:underline;text-underline-o
 /* Desktop panels stay inside the usable globe area and never collide with the ticker. */
 .atlas-panel{max-height:calc(100% - 102px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(141,233,245,.28) transparent}
 .atlas-panel::-webkit-scrollbar{width:6px}.atlas-panel::-webkit-scrollbar-thumb{background:rgba(141,233,245,.24);border-radius:8px}
-.ecology-layer-panel{top:178px!important}
-.ecology-inspector{top:350px!important;max-height:calc(100% - 430px)!important}
+.ecology-layer-panel{top:196px!important}
+.ecology-inspector{top:370px!important;max-height:calc(100% - 450px)!important}
 
 [inert]{pointer-events:none}
 .gaia-reduced-motion *,.gaia-reduced-motion *:before,.gaia-reduced-motion *:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
