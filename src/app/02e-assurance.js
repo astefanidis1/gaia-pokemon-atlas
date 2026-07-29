@@ -13,7 +13,7 @@
   document.addEventListener('load',event=>{
     const image=event.target;
     if(image instanceof HTMLImageElement && image.dataset.gaiaAssetFallback){
-      image.dataset.assetState='archive';
+      queueMicrotask(()=>{image.dataset.assetState='archive';});
     }
   },true);
 
