@@ -1,11 +1,14 @@
 {
   "name": "gaia-pokemon-atlas",
-  "version": "0.1.0",
+  "version": "0.2.0-rc.1",
   "private": true,
-  "description": "Private browser-assurance tooling for the GAIA Atlas fan project.",
+  "description": "Release-candidate assurance tooling for the GAIA Atlas fan project.",
   "scripts": {
+    "prepare:rc": "python scripts/prepare_release_candidate.py",
+    "validate:rc": "python scripts/prepare_release_candidate.py --check && python scripts/validate_release_candidate.py",
     "test:experience": "playwright test",
-    "test:experience:chromium": "playwright test --project=desktop-chromium"
+    "test:experience:chromium": "playwright test --project=desktop-chromium",
+    "test:release": "playwright test tests/gaia-release-candidate.spec.js --project=desktop-chromium"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.10.2",
