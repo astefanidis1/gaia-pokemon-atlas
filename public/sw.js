@@ -2,10 +2,11 @@ const SHELL_CACHE = 'gaia-shell-v2.0';
 const RUNTIME_CACHE = 'gaia-runtime-v1';
 const ARTWORK_CACHE = 'gaia-artwork-v1';
 const NAVIGATION_TIMEOUT_MS = 3500;
+const SHARE_ASSETS = ['assets/gaia-social-preview.png'];
 const SHELL = [
   './','index.html','offline.html','404.html','manifest.webmanifest','robots.txt',
   'styles.css','refinement.css','density.css','ecology.css','continuity.css','assets.css','assurance.css','release-candidate.css','app.js',
-  'assets/gaia-seal.svg','assets/gaia-social-preview.png','assets/gaia-icon-192.png','assets/gaia-icon-512.png','assets/gaia-icon-maskable-512.png','assets/gaia-apple-touch-icon.png',
+  'assets/gaia-seal.svg','assets/gaia-icon-192.png','assets/gaia-icon-512.png','assets/gaia-icon-maskable-512.png','assets/gaia-apple-touch-icon.png',
   'data/canon.js','data/canon-corrections.json',
   'data/canon/chunk-01.txt','data/canon/chunk-02.txt','data/canon/chunk-03.txt','data/canon/chunk-04.txt','data/canon/chunk-05.txt','data/canon/chunk-06.txt','data/canon/chunk-07.txt',
   'data/editorial/chunk-01.txt','data/editorial/chunk-02.txt','data/editorial/chunk-03.txt','data/editorial/chunk-04.txt','data/editorial/phase2.txt','data/editorial/phase3-01.txt','data/editorial/phase3-02.txt',
@@ -15,7 +16,7 @@ const SHELL = [
 self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then(cache => Promise.allSettled(SHELL.map(path => cache.add(path))))
+      .then(cache => Promise.allSettled([...SHELL,...SHARE_ASSETS].map(path => cache.add(path))))
       .then(() => self.skipWaiting())
   );
 });
