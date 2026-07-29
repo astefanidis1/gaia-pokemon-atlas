@@ -25,6 +25,9 @@ The current GAIA build establishes:
 - real-calendar seasonal interpretation for every mapped ecology feature;
 - **16 ecological relationships** covering predation, pollination, infrastructure, working partnerships, and other ecosystem functions;
 - clickable habitat and corridor layers with species links and regional detail;
+- **Universal search** across species, locations, regional windows, habitats, corridors, incidents, and linked archive files;
+- shareable deep links for species, regions, ecology features, incidents, and archive records;
+- dossier-to-ecosystem links that connect a species directly to its documented field windows and mapped systems;
 - keyboard navigation, focus management, reduced-motion support, mobile navigation, and offline shell caching;
 - quiet fan-project and rights-holder disclosure.
 
@@ -32,12 +35,13 @@ The original feature-rich showcase remains preserved separately and is not the p
 
 ## Run locally
 
+Serve the repository root so the public loader can access the exact readable modules under `src/app/`:
+
 ```bash
-cd public
 python -m http.server 8000
 ```
 
-Then open `http://localhost:8000`.
+Then open `http://localhost:8000/public/`.
 
 The app uses MapLibre and OpenFreeMap for its primary basemap and remote artwork URLs for Pokémon images. A local globe style preserves canonical markers if the external basemap fails. Species-specific procedural archive visuals appear when remote artwork is unavailable, and successful assets are cached by the service worker after first load.
 
@@ -50,9 +54,10 @@ python scripts/build_public.py --check
 python scripts/validate_gaia.py
 python scripts/validate_phase2.py
 python scripts/validate_phase3.py
+python scripts/validate_project_integrity.py
 ```
 
-CI also compiles the Python tooling, concatenates and syntax-checks every readable JavaScript module, and verifies all required deployable files.
+CI also compiles the Python tooling, concatenates and syntax-checks every readable JavaScript module, validates all Markdown as strict UTF-8, and verifies all required deployable files.
 
 ## Canon architecture
 
@@ -65,9 +70,10 @@ Visitor state remains permanently separate from canon.
 Signed population canon + versioned corrections
                          + signed editorial / regional expansions
                          + seasonal ecology and relationship layers
+                         + public navigation and continuity layer
 ```
 
-Editorial, regional, and ecology layers deepen the world without silently changing exact census totals.
+Editorial, regional, ecology, and navigation layers deepen the world without silently changing exact census totals.
 
 Urshifu demonstrates the form model: one species total of 16, split into seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 
