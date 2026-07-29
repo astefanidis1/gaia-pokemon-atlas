@@ -1,2 +1,16 @@
 /* GAIA experience assurance and accessibility corrections */
-.skip-link{position:fixed;left:14px;top:10px;z-index:200;transform:translateY(-160%);padding:10px 14px;border:1px solid rgba(141,233,245,.55);border-radius:8px;background:#071019!important;color:#eaf1ee!important;font-weight:700;text-decoration:none;box-shadow:0 12px 30px rgba(0,0,0,.45)}.skip-link:focus{transform:translateY(0);outline:2px solid #8de9f5;outline-offset:3px}footer{color:#91a3aa!important}footer button{color:#8de9f5!important;text-decoration:underline;text-underline-offset:2px}[inert]{pointer-events:none}.gaia-reduced-motion *,.gaia-reduced-motion *:before,.gaia-reduced-motion *:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}.gaia-reduced-motion .surveillance-ticker .ticker-track{animation:none!important}.gaia-reduced-motion .loading img{animation:none!important}@media(prefers-contrast:more){footer{color:#c1ced1!important}.search-result small,.asset-source-note{color:#c1ced1!important}}
+.skip-link{position:fixed;left:14px;top:10px;z-index:200;transform:translateY(-160%);padding:10px 14px;border:1px solid rgba(141,233,245,.55);border-radius:8px;background:#071019!important;color:#eaf1ee!important;font-weight:700;text-decoration:none;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.skip-link:focus{transform:translateY(0);outline:2px solid #8de9f5;outline-offset:3px}
+footer{color:#91a3aa!important}
+footer button{color:#8de9f5!important;text-decoration:underline;text-underline-offset:2px}
+.region-card{appearance:none;-webkit-appearance:none;background:#091720!important;color:var(--ivory)!important;border:1px solid var(--line)!important}
+.region-card:hover,.region-card:focus-visible{background:#102733!important;border-color:rgba(141,233,245,.46)!important}
+.region-card p{color:#b7c5c9!important}
+.region-card>div small{color:#a8b8bd!important}
+.region-card>div small:last-child,.region-card>.eyebrow{color:#e1c98e!important}
+.region-card .region-season-inline{color:#9cebf4!important}
+[inert]{pointer-events:none}
+.gaia-reduced-motion *,.gaia-reduced-motion *:before,.gaia-reduced-motion *:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
+.gaia-reduced-motion .surveillance-ticker .ticker-track{animation:none!important}
+.gaia-reduced-motion .loading img{animation:none!important}
+@media(prefers-contrast:more){footer{color:#c1ced1!important}.search-result small,.asset-source-note{color:#c1ced1!important}.region-card p,.region-card>div small{color:#d1dcde!important}}
