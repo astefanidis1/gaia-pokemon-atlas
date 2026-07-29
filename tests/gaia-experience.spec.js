@@ -22,6 +22,7 @@ async function bootGaia(page) {
   await expect(page.locator('#app')).toBeVisible();
   await expect(page.locator('#loading')).toHaveCount(0, { timeout: 12_000 });
   await expect(page.getByRole('heading', { name: 'The world is inhabited.' })).toBeVisible();
+  await page.waitForTimeout(250);
   return { pageErrors, consoleErrors };
 }
 
@@ -32,6 +33,33 @@ async function expectNoHorizontalOverflow(page) {
   }));
   expect(overflow.document).toBeLessThanOrEqual(2);
   expect(overflow.body).toBeLessThanOrEqual(2);
+}
+
+async function visibleBox(page, selector) {
+  return page.locator(selector).evaluate(element => {
+    const style = getComputedStyle(element);
+    const rect = element.getBoundingClientRect();
+    if (style.display === 'none' || style.visibility === 'hidden' || rect.width === 0 || rect.height === 0) return null;
+    return { top:rect.top, right:rect.right, bottom:rect.bottom, left:rect.left, width:rect.width, height:rect.height };
+  });
+}
+
+async function expectVerticalSeparation(page, upperSelector, lowerSelector, gap = 6) {
+  const upper = await visibleBox(page, upperSelector);
+  const lower = await visibleBox(page, lowerSelector);
+  if (!upper || !lower) return;
+  expect(upper.bottom, `${upperSelector} overlaps ${lowerSelector}`).toBeLessThanOrEqual(lower.top - gap);
+}
+
+async function expectContained(page, childSelector, parentSelector, inset = 0) {
+  const child = await visibleBox(page, childSelector);
+  const parent = await visibleBox(page, parentSelector);
+  expect(child).not.toBeNull();
+  expect(parent).not.toBeNull();
+  expect(child.left).toBeGreaterThanOrEqual(parent.left + inset);
+  expect(child.right).toBeLessThanOrEqual(parent.right - inset);
+  expect(child.top).toBeGreaterThanOrEqual(parent.top + inset);
+  expect(child.bottom).toBeLessThanOrEqual(parent.bottom - inset);
 }
 
 async function search(page, query) {
@@ -54,6 +82,23 @@ test('core experience boots cleanly and remains within the viewport', async ({ p
   expect(assetVersion).toBe('2026-07-29.1');
   expect(errors.pageErrors).toEqual([]);
   expect(errors.consoleErrors).toEqual([]);
+
+  if (testInfo.project.name.startsWith('desktop-') || testInfo.project.name === 'reduced-motion-chromium') {
+    await expectVerticalSeparation(page, '.atlas-panel', '#surveillanceTicker', 8);
+    await expectVerticalSeparation(page, '.realm-summary', '.ecology-layer-panel', 8);
+  } else {
+    const navState = await page.locator('.primary-nav').evaluate(element => {
+      const style = getComputedStyle(element);
+      const rect = element.getBoundingClientRect();
+      return { position:style.position, bottom:Math.round(innerHeight - rect.bottom), visible:rect.height > 0 };
+    });
+    expect(navState).toEqual({ position:'fixed', bottom:0, visible:true });
+    await expect(page.locator('.ecology-layer-panel')).toBeHidden();
+    await expectContained(page, '.region-launch', '.atlas-panel', 0);
+    if (await page.locator('#mapFallback').isVisible()) {
+      await expectVerticalSeparation(page, '.atlas-panel', '#mapFallback h2', 18);
+    }
+  }
 
   const screenshotPath = testInfo.outputPath('visual-review', `${testInfo.project.name}-globe.png`);
   await page.screenshot({ path: screenshotPath, fullPage: false });
@@ -146,6 +191,13 @@ test('mobile navigation and regional dialogs remain reachable', async ({ page },
   await expect(page.locator('#closeRegion')).toBeFocused();
   await expect(page.locator('#regionContent')).toBeVisible();
   await expectNoHorizontalOverflow(page);
+  await expectContained(page, '#regionGlobeButton', '.region-modal-card', 14);
+  const actionSurface = await page.locator('#regionGlobeButton').evaluate(element => ({
+    background:getComputedStyle(element).backgroundColor,
+    color:getComputedStyle(element).color,
+  }));
+  expect(actionSurface.background).not.toBe('rgb(239, 239, 239)');
+  expect(actionSurface.color).not.toBe('rgb(239, 239, 239)');
 
   const screenshotPath = testInfo.outputPath('visual-review', `${testInfo.project.name}-region.png`);
   await page.screenshot({ path: screenshotPath, fullPage: false });
@@ -158,6 +210,7 @@ test('remote artwork failure produces an authored GAIA reconstruction', async ({
 
   const fallback = page.locator('img.gaia-authored-fallback').first();
   await expect(fallback).toBeAttached({ timeout: 10_000 });
+  await expect.poll(async () => fallback.getAttribute('data-asset-state')).toBe('archive');
   const details = await fallback.evaluate(image => ({
     src: image.getAttribute('src'),
     profile: image.dataset.assetProfile,
