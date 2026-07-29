@@ -69,6 +69,19 @@ for marker in (
     require(marker in assets, f"Asset policy module is missing marker: {marker}")
 require(len(re.findall(r"label:'[^']+'", assets)) >= 7, "Asset policy must define at least seven authored fallback profiles")
 
+assurance_path = SOURCE / "02e-assurance.js"
+assurance = read_utf8(assurance_path) if assurance_path.exists() else ""
+require(bool(assurance), "Missing src/app/02e-assurance.js")
+for marker in (
+    "GAIA_ASSURANCE_VERSION",
+    "role','combobox",
+    "aria-hidden",
+    "inert",
+    "gaia-reduced-motion",
+    "assetState='archive'",
+):
+    require(marker in assurance, f"Assurance module is missing marker: {marker}")
+
 asset_doc = texts.get(DOCS / "VISUAL_ASSET_STRATEGY.md", "")
 require(asset_doc.startswith("# GAIA Atlas — Visual Asset Strategy"), "Visual asset strategy documentation is missing")
 require("Seven visual profiles" in asset_doc, "Visual asset strategy does not describe the authored profile set")
@@ -82,11 +95,13 @@ service_worker = read_utf8(PUBLIC / "sw.js")
 for label, content in (("public/app.js", loader), ("scripts/build_public.py", build), ("public/sw.js", service_worker)):
     require("02c-continuity.js" in content, f"{label} does not include the continuity module")
     require("02d-assets.js" in content, f"{label} does not include the visual asset module")
+    require("02e-assurance.js" in content, f"{label} does not include the experience assurance module")
 require("continuity.css" in service_worker, "Service worker does not cache continuity.css")
 require("assets.css" in service_worker, "Service worker does not cache assets.css")
-require(re.search(r"gaia-shell-v1\.(8|9|[1-9][0-9])", service_worker) is not None, "Service-worker cache version was not advanced for the asset pass")
-require((PUBLIC / "continuity.css").is_file(), "Missing public/continuity.css")
-require((PUBLIC / "assets.css").is_file(), "Missing public/assets.css")
+require("assurance.css" in service_worker, "Service worker does not cache assurance.css")
+require(re.search(r"gaia-shell-v1\.(9|[1-9][0-9])", service_worker) is not None, "Service-worker cache version was not advanced for the assurance pass")
+for path in (PUBLIC / "continuity.css", PUBLIC / "assets.css", PUBLIC / "assurance.css"):
+    require(path.is_file(), f"Missing {path.relative_to(ROOT)}")
 
 package_path = ROOT / "package.json"
 require(package_path.is_file(), "Missing package.json for experience assurance")
@@ -105,7 +120,15 @@ playwright = read_utf8(ROOT / "playwright.config.js") if (ROOT / "playwright.con
 tests = read_utf8(ROOT / "tests" / "gaia-experience.spec.js") if (ROOT / "tests" / "gaia-experience.spec.js").is_file() else ""
 for project in ("desktop-chromium", "desktop-firefox", "mobile-chromium", "mobile-webkit", "reduced-motion-chromium"):
     require(project in playwright, f"Playwright matrix is missing project: {project}")
-for marker in ("AxeBuilder", "gaia-authored-fallback", "#species=lugia", "#region=new-england", "expectNoHorizontalOverflow"):
+for marker in (
+    "AxeBuilder",
+    "gaia-authored-fallback",
+    "#species=lugia",
+    "#region=new-england",
+    "expectNoHorizontalOverflow",
+    "gaia-reduced-motion",
+    "emulateMedia",
+):
     require(marker in tests, f"Experience tests are missing scenario marker: {marker}")
 
 if errors:
@@ -114,5 +137,6 @@ if errors:
 
 print(
     f"GAIA project integrity passed: {len(markdown_files)} Markdown files, continuity, "
-    "seven-profile asset policy, five-project browser matrix, and release metadata verified."
+    "seven-profile asset policy, accessibility-state assurance, five-project browser matrix, "
+    "and release metadata verified."
 )
