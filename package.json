@@ -1,0 +1,14 @@
+{
+  "name": "gaia-pokemon-atlas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Private browser-assurance tooling for the GAIA Atlas fan project.",
+  "scripts": {
+    "test:experience": "playwright test",
+    "test:experience:chromium": "playwright test --project=desktop-chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.49.1"
+  }
+}
