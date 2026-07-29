@@ -1,5 +1,35 @@
 # GAIA Atlas Foundation Changelog
 
+## Visual asset and experience-assurance phase — July 29, 2026
+
+### Added
+
+- Centralized visual asset manifest `2026-07-29.1` with one replaceable official-artwork URL policy
+- Seven authored deterministic archive-reconstruction profiles: natural history, marine, active track, mythic, anomaly, artificial, and sealed
+- Species-specific procedural silhouettes, profile motifs, retry behavior, source metadata, and About-page visual-evidence policy
+- Eleven-module readable browser architecture, including separate asset and assurance layers
+- Playwright projects for desktop Chromium, desktop Firefox, mobile Chromium, mobile WebKit, and reduced-motion Chromium
+- axe-core serious/critical accessibility checks on representative desktop and mobile surfaces
+- Automated species, region, ecology, incident, and archive deep-link restoration checks
+- Remote-artwork failure simulation and authored-fallback verification
+- Responsive composition checks covering desktop panel separation, ticker clearance, Regional Explorer containment, fixed mobile navigation, and fallback-message clearance
+- CI-uploaded browser reports, traces, failure media, and successful desktop/mobile review captures
+- Deployment gating on the complete structural and experience-assurance suite
+
+### Corrected through browser and screenshot review
+
+- Search input now exposes a valid combobox relationship to its listbox results
+- Closed dossiers and dialogs become inert so hidden controls cannot receive assistive focus
+- Skip-link, footer, regional-card, Regional Explorer, and field-window action contrast now survive browser-native button defaults
+- Reduced-motion preference changes runtime motion behavior rather than existing only as a stylesheet promise
+- Authored archive fallback state no longer races with the fallback SVG load event
+- Mobile navigation now resolves to a fixed five-destination bottom bar
+- Dense ecology controls are removed from the small-screen globe while Regional Explorer remains directly available
+- Mobile fallback and field-window layouts were re-composed around real viewport height
+- Desktop Earth-surveillance and ecology panels no longer overlap
+- The desktop civilian terminal remains clear of the surveillance ticker and keeps its Regional Explorer action fully visible at common laptop heights
+- GitHub Actions browser tooling moved to the current Node 24 runtime
+
 ## Atlas continuity pass — July 28, 2026
 
 ### Added
@@ -83,7 +113,7 @@
 
 ### Corrected during implementation
 
-- Urshifu is represented as one species with a total population of 16 and two permanent form populations: seven Single Strike adults and nine Rapid Strike adults.
+- Urshifu is represented as one species with a total population of 16 and two permanent form populations: seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 - Visitor discovery remains a personal record rather than a content lock.
 - Public access classification is distinct from GAIA knowledge status.
 - Population verification dates are distinct from continuously updated seasonal position.
