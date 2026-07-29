@@ -29,15 +29,18 @@ footer button{color:#8de9f5!important;text-decoration:underline;text-underline-o
 .gaia-reduced-motion .surveillance-ticker .ticker-track{animation:none!important}
 .gaia-reduced-motion .loading img{animation:none!important}
 
-@media(max-height:900px) and (min-width:761px){
-  .atlas-panel{padding:16px!important}
-  .atlas-panel h1{font-size:29px!important;margin:7px 0!important}
-  .atlas-panel>p{font-size:12px!important;line-height:1.4!important;margin:7px 0!important}
-  .world-metrics{margin:11px 0!important}
-  .control-label{margin:9px 0 4px!important}
-  .atlas-panel select{padding:7px 9px!important}
-  .switch-row{margin-top:9px!important}
-  .map-status{margin-top:10px!important;padding-top:9px!important}
+@media(max-height:1000px) and (min-width:761px){
+  .atlas-panel{padding:15px!important;overflow:hidden!important}
+  .atlas-panel h1{font-size:28px!important;margin:6px 0!important}
+  .atlas-panel>p{font-size:11px!important;line-height:1.35!important;margin:6px 0!important}
+  .world-metrics{margin:9px 0!important;gap:6px!important}
+  .world-metrics div{padding:7px!important}.world-metrics strong{font-size:16px!important}.world-metrics span{font-size:7px!important}
+  .control-label{font-size:8px!important;margin:7px 0 3px!important}
+  .atlas-panel select{padding:6px 8px!important;font-size:12px!important}
+  .switch-row{margin-top:7px!important}.switch-row b{font-size:11px!important}.switch-row small{font-size:8px!important}
+  .map-status{margin-top:8px!important;padding-top:7px!important;font-size:9px!important}
+  .map-legend{margin-top:5px!important}.map-legend>span{display:none!important}.legend-key{font-size:8px!important;padding:0!important}
+  .region-launch{margin-top:7px!important;min-height:42px!important;padding:7px 9px!important}.region-launch span b{font-size:11px!important}.region-launch span small{font-size:8px!important}.region-launch i{font-size:9px!important}
 }
 
 @media(max-width:760px){
