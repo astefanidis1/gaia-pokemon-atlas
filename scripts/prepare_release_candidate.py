@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Materialize GAIA Release Candidate metadata into the deployable HTML.
+"""Materialize GAIA Release Candidate metadata and generated assets.
 
 The operation is deterministic and idempotent. CI runs it before validation and
 browser assurance; local reviewers should run it once before serving /public/.
@@ -9,6 +9,8 @@ from __future__ import annotations
 import argparse
 import os
 from pathlib import Path
+
+from generate_release_assets import generate_all
 
 ROOT = Path(__file__).resolve().parents[1]
 INDEX = ROOT / "public" / "index.html"
@@ -93,6 +95,7 @@ def main() -> int:
     parser.add_argument("--public-url", default=os.environ.get("GAIA_PUBLIC_URL", DEFAULT_PUBLIC_URL))
     args = parser.parse_args()
 
+    generate_all()
     original = INDEX.read_text(encoding="utf-8")
     prepared = transform(original, args.public_url)
 
@@ -111,7 +114,7 @@ def main() -> int:
     if args.check:
         if prepared != original:
             raise SystemExit("ERROR: public/index.html has not been materialized for RC1")
-        print(f"GAIA RC1 HTML materialization verified ({args.public_url})")
+        print(f"GAIA RC1 HTML and generated assets verified ({args.public_url})")
         return 0
 
     if prepared != original:
