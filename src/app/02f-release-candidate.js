@@ -11,6 +11,11 @@
   }
 
   const rcStorageKey='gaia-rc1-priority-brief-dismissed';
+  const rcStorage={
+    get(){try{return localStorage.getItem(rcStorageKey);}catch{return null;}},
+    set(){try{localStorage.setItem(rcStorageKey,'1');}catch{}},
+    clear(){try{localStorage.removeItem(rcStorageKey);}catch{}}
+  };
   const utcDayIndex=()=>Math.floor(Date.now()/86400000);
 
   function rcSelection(){
@@ -25,10 +30,7 @@
   function rcTrackedSummary(item){
     if(!item) return {phase:'NO ACTIVE TRACK',position:'Surveillance network awaiting route data'};
     const position=livePosition(item);
-    return {
-      phase:routePhase(item),
-      position:`${position.currentLabel} → ${position.nextLabel}`
-    };
+    return {phase:routePhase(item),position:`${position.currentLabel} → ${position.nextLabel}`};
   }
 
   function rcOpenTrack(item){
@@ -38,8 +40,12 @@
   }
 
   function rcOpenRegion(region){
-    if(!region) return;
-    openRegion(region.id);
+    if(region) openRegion(region.id);
+  }
+
+  function rcOpenShortcutHash(){
+    const match=location.hash.slice(1).match(/^view=(globe|live|index|records|fieldlog)$/);
+    if(match) setView(match[1]);
   }
 
   function rcCompactLauncher(panel,selection){
@@ -50,7 +56,7 @@
     button.type='button';
     button.innerHTML='<span><b>Priority world brief</b><small>Current track and regional ecology</small></span><i>Open →</i>';
     button.addEventListener('click',()=>{
-      localStorage.removeItem(rcStorageKey);
+      rcStorage.clear();
       button.remove();
       rcRenderBrief(panel,selection,true);
     });
@@ -59,7 +65,7 @@
 
   function rcRenderBrief(panel,selection,force=false){
     if(!panel || $('#rcPriorityBrief',panel)) return;
-    if(!force && localStorage.getItem(rcStorageKey)==='1'){
+    if(!force && rcStorage.get()==='1'){
       document.documentElement.dataset.gaiaVisit='returning';
       rcCompactLauncher(panel,selection);
       return;
@@ -85,7 +91,7 @@
     $('.rc-priority-track',brief)?.addEventListener('click',()=>rcOpenTrack(item));
     $('.rc-priority-region',brief)?.addEventListener('click',()=>rcOpenRegion(region));
     $('header button',brief)?.addEventListener('click',()=>{
-      localStorage.setItem(rcStorageKey,'1');
+      rcStorage.set();
       brief.remove();
       document.documentElement.dataset.gaiaVisit='returning';
       rcCompactLauncher(panel,selection);
@@ -105,8 +111,10 @@
     const panel=$('.atlas-panel');
     rcRenderBrief(panel,rcSelection());
     rcSyncNetworkState();
+    rcOpenShortcutHash();
     addEventListener('online',rcSyncNetworkState);
     addEventListener('offline',rcSyncNetworkState);
+    addEventListener('hashchange',rcOpenShortcutHash);
 
     document.title='GAIA Atlas — The world is inhabited.';
     document.documentElement.dataset.gaiaRelease='rc1';
