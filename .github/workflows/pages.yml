@@ -20,6 +20,7 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
+    timeout-minutes: 35
     steps:
       - uses: actions/checkout@v4
       - name: Validate canon, editorial, regional data, and geometry
@@ -41,7 +42,9 @@ jobs:
           node --check public/app.js
           node --check public/data/canon.js
           node --check public/sw.js
-      - name: Check required public files
+          node --check playwright.config.js
+          node --check tests/gaia-experience.spec.js
+      - name: Check required public and assurance files
         run: |
           test -f public/index.html
           test -f public/styles.css
@@ -49,6 +52,7 @@ jobs:
           test -f public/density.css
           test -f public/ecology.css
           test -f public/continuity.css
+          test -f public/assets.css
           test -f public/assets/gaia-seal.svg
           test -f public/sw.js
           test -f public/data/canon/chunk-07.txt
@@ -61,11 +65,36 @@ jobs:
           test -f src/app/02b-ecology-c.js
           test -f src/app/02b-ecology-d.js
           test -f src/app/02c-continuity.js
+          test -f src/app/02d-assets.js
           test -f scripts/build_public.py
           test -f scripts/validate_phase3.py
           test -f scripts/phase3_validation_data.py
           test -f scripts/phase3_validation_checks.py
           test -f scripts/validate_project_integrity.py
+          test -f package.json
+          test -f playwright.config.js
+          test -f tests/gaia-experience.spec.js
+          test -f docs/VISUAL_ASSET_STRATEGY.md
+          test -f docs/EXPERIENCE_ASSURANCE_PHASE.md
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install pinned browser-assurance dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Playwright browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Run release-candidate browser assurance
+        run: npm run test:experience
+      - name: Upload release-candidate browser report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-release-experience-${{ github.run_number }}
+          path: |
+            playwright-report
+            test-results
+          if-no-files-found: warn
+          retention-days: 30
       - name: Stage readable application source
         run: |
           mkdir -p public/source
