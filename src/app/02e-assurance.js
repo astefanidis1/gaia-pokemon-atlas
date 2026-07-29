@@ -10,12 +10,23 @@
     document.head.appendChild(link);
   }
 
+  const enforceArchiveState=image=>{
+    if(image instanceof HTMLImageElement && image.dataset.gaiaAssetFallback && image.dataset.assetState!=='archive'){
+      image.dataset.assetState='archive';
+    }
+  };
   document.addEventListener('load',event=>{
     const image=event.target;
     if(image instanceof HTMLImageElement && image.dataset.gaiaAssetFallback){
-      queueMicrotask(()=>{image.dataset.assetState='archive';});
+      queueMicrotask(()=>enforceArchiveState(image));
     }
   },true);
+  const assetStateObserver=new MutationObserver(mutations=>{
+    for(const mutation of mutations){
+      if(mutation.type==='attributes' && mutation.attributeName==='data-asset-state') enforceArchiveState(mutation.target);
+    }
+  });
+  assetStateObserver.observe(document.documentElement,{subtree:true,attributes:true,attributeFilter:['data-asset-state']});
 
   const motionQuery=matchMedia('(prefers-reduced-motion: reduce)');
   const syncMotionPreference=()=>{
