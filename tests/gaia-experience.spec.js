@@ -47,6 +47,7 @@ test('core experience boots cleanly and remains within the viewport', async ({ p
   await expect(page.locator('.nav-button')).toHaveCount(5);
   await expect(page.locator('footer')).toContainText('CANON 2026-07-27.1');
   await expect(page.locator('footer')).toContainText('ECOLOGY 2026-07-28.2');
+  await expect(page.locator('footer')).toContainText('ASSETS 2026-07-29.1');
   await expectNoHorizontalOverflow(page);
 
   const assetVersion = await page.evaluate(() => window.GAIA_ASSET_POLICY?.manifest?.version);
@@ -188,8 +189,13 @@ test('primary public surfaces have no serious or critical axe violations', async
 
 test('reduced-motion preference is honored by the test surface', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'reduced-motion-chromium');
+  await page.emulateMedia({ reducedMotion: 'reduce' });
   await bootGaia(page);
-  const reduced = await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches);
-  expect(reduced).toBe(true);
+  const motion = await page.evaluate(() => ({
+    media: matchMedia('(prefers-reduced-motion: reduce)').matches,
+    classApplied: document.documentElement.classList.contains('gaia-reduced-motion'),
+    declared: document.documentElement.dataset.motionPreference,
+  }));
+  expect(motion).toEqual({ media: true, classApplied: true, declared: 'reduce' });
   await expectNoHorizontalOverflow(page);
 });
