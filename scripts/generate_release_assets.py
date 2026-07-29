@@ -158,7 +158,7 @@ def social_preview():
     c.text(116,205,'ATLAS',COLORS['ivory'],8,1)
     c.text(116,282,'THE WORLD IS INHABITED.',COLORS['cyan'],4,1)
     c.text(116,333,'GLOBAL POKEMON SURVEILLANCE AND NATURAL HISTORY',COLORS['ivory'],2,1)
-    c.text(116,363,'VERIFIED POPULATIONS - LIVE MIGRATION - LIVING ECOLOGY',COLORS['muted'],2,1)
+    c.text(116,363,'EXACT CENSUS - LIVE MIGRATION - REGIONAL ECOLOGY',COLORS['muted'],2,1)
     c.rect(110,430,670,510,COLORS['panel'],True); c.rect(110,430,670,510,(48,86,99),False,2)
     metrics=[(132,'161','VERIFIED SPECIES'),(315,'5','ACTIVE TRACKS'),(488,'4','REGIONAL ECOSYSTEMS')]
     for x,value,label in metrics:
