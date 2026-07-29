@@ -48,6 +48,10 @@
     if(match) setView(match[1]);
   }
 
+  function rcBriefHost(panel){
+    return matchMedia('(max-width: 760px)').matches ? panel : $('#view-globe');
+  }
+
   function rcCompactLauncher(panel,selection){
     if($('#rcBriefRestore',panel)) return;
     const button=document.createElement('button');
@@ -64,7 +68,7 @@
   }
 
   function rcRenderBrief(panel,selection,force=false){
-    if(!panel || $('#rcPriorityBrief',panel)) return;
+    if(!panel || $('#rcPriorityBrief')) return;
     if(!force && rcStorage.get()==='1'){
       document.documentElement.dataset.gaiaVisit='returning';
       rcCompactLauncher(panel,selection);
@@ -77,7 +81,7 @@
     const track=rcTrackedSummary(item);
     const brief=document.createElement('section');
     brief.id='rcPriorityBrief';
-    brief.className='rc-priority-brief';
+    brief.className='rc-priority-brief glass';
     brief.setAttribute('aria-label','GAIA priority world brief');
     brief.innerHTML=`
       <header><span>PRIORITY WORLD BRIEF</span><button type="button" aria-label="Dismiss priority brief">×</button></header>
@@ -86,8 +90,8 @@
         ${item?`<button type="button" class="rc-priority-track"><img src="${escapeHTML(item.image)}" alt="" data-species-slug="${escapeHTML(item.slug)}"><span><small>${escapeHTML(track.phase)}</small><b>${escapeHTML(item.name)}</b><em>${escapeHTML(track.position)}</em></span><i>Open live record →</i></button>`:''}
         ${region?`<button type="button" class="rc-priority-region"><span><small>REGIONAL ECOLOGY</small><b>${escapeHTML(region.name)}</b><em>${region.species.length} presences · ${region.geometry?.habitats?.length||0} habitats · ${region.geometry?.corridors?.length||0} corridors</em></span><i>Enter field window →</i></button>`:''}
       </div>
-      <footer>WORLD STATE SYNCHRONIZED · ${escapeHTML(currentUTCLabel())} UTC</footer>`;
-    panel.insertBefore(brief,$('#mapStatus',panel));
+      <div class="rc-brief-status">WORLD STATE SYNCHRONIZED · ${escapeHTML(currentUTCLabel())} UTC</div>`;
+    rcBriefHost(panel).appendChild(brief);
     $('.rc-priority-track',brief)?.addEventListener('click',()=>rcOpenTrack(item));
     $('.rc-priority-region',brief)?.addEventListener('click',()=>rcOpenRegion(region));
     $('header button',brief)?.addEventListener('click',()=>{
@@ -107,18 +111,31 @@
     document.documentElement.dataset.networkState=navigator.onLine?'online':'offline';
   }
 
+  async function rcRegisterServiceWorker(){
+    if(!('serviceWorker' in navigator)) return;
+    try{
+      const registration=await navigator.serviceWorker.register('sw.js',{scope:'./'});
+      window.GAIA_SERVICE_WORKER=registration;
+      document.documentElement.dataset.offlineShell='registered';
+    }catch(error){
+      document.documentElement.dataset.offlineShell='unavailable';
+      console.warn('GAIA offline archive registration unavailable.',error);
+    }
+  }
+
   queueMicrotask(()=>{
     const panel=$('.atlas-panel');
     rcRenderBrief(panel,rcSelection());
     rcSyncNetworkState();
     rcOpenShortcutHash();
+    rcRegisterServiceWorker();
     addEventListener('online',rcSyncNetworkState);
     addEventListener('offline',rcSyncNetworkState);
     addEventListener('hashchange',rcOpenShortcutHash);
 
     document.title='GAIA Atlas — The world is inhabited.';
     document.documentElement.dataset.gaiaRelease='rc1';
-    const footer=$('footer');
+    const footer=$('#app > footer');
     if(footer?.firstChild) footer.firstChild.nodeValue=`GAIA CIVILIAN ACCESS NETWORK · CANON 2026-07-27.1 · ECOLOGY 2026-07-28.2 · ASSETS 2026-07-29.1 · RC ${GAIA_RC_VERSION} · `;
     const buildMeta=$('.build-meta',$('#aboutModal'));
     if(buildMeta) buildMeta.textContent=`RELEASE CANDIDATE 1 · CANON 2026-07-27.1 · ECOLOGY 2026-07-28.2 · ASSETS 2026-07-29.1 · ASSURANCE ${window.GAIA_ASSURANCE_VERSION||'ACTIVE'} · RC ${GAIA_RC_VERSION} · 161 SPECIES · 27 FULL DOSSIERS`;
