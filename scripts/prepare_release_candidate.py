@@ -19,6 +19,9 @@ RC_VERSION = "2026-07-29.1"
 
 
 def transform(source: str, public_url: str) -> str:
+    if 'data-gaia-release-head' in source:
+        return source
+
     public_url = public_url.rstrip("/") + "/"
     image_url = public_url + "assets/gaia-social-preview.png"
 
@@ -72,7 +75,7 @@ def transform(source: str, public_url: str) -> str:
     source = source.replace(
         '<link rel="stylesheet" href="styles.css" />',
         '<link rel="stylesheet" href="styles.css" />\n'
-        '  <link rel="stylesheet" href="release-candidate.css" data-gaia-release-head />',
+        '  <link rel="stylesheet" href="release-candidate.css" data-gaia-rc data-gaia-release-head />',
     )
     source = source.replace(
         '<strong>Establishing GAIA census link</strong>',
