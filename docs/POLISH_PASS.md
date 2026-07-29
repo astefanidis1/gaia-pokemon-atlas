@@ -1,6 +1,6 @@
 # GAIA Atlas — Launch Polish Pass
 
-The foundation branch now includes the first launch-quality editorial and interaction layer without changing the signed population canon.
+The foundation branch includes the first launch-quality editorial and interaction layer without changing the signed population canon.
 
 ## Content added
 
@@ -23,6 +23,6 @@ The foundation branch now includes the first launch-quality editorial and intera
 
 ## Validation model
 
-Readable JavaScript lives under `src/app/`. The compact browser payload under `public/code/` is decompressed during CI and compared directly with that source, avoiding environment-dependent compression-byte comparisons while still proving deployed code equality.
+Readable JavaScript lives under `src/app/*.js`. `public/app.js` contains the deterministic ordered module list used by the browser. GitHub Pages stages those exact reviewed modules into `public/source/`, while repository-root local development can load the same files directly from `src/app/`.
 
-Canon, corrections, editorial dossiers, regional references, Python scripts, JavaScript syntax, and required public files are all validated before deployment.
+`scripts/build_public.py --check` confirms that the public loader and readable source-module list remain synchronized. CI then validates canon, corrections, editorial dossiers, regional references, Python scripts, concatenated JavaScript syntax, service-worker syntax, and all required deployment files before deployment is permitted.
