@@ -1,1 +1,98 @@
-# GARA!APÑ±…ÌƒŠP]½É±½±½ä%¹Ñ•É…Ñ¥½¸A¡…Í”€Ì((ŒŒAÕÉÁ½Í”()A¡…Í”€ÌÑÕÉ¹ÌÑ¡”™½ÕÈÉ•¥½¹…°™¥•±İ¥¹‘½İÌ¥¹Ñ¼½¹”¥¹Ñ•É…Ñ¥Ù”•½±½äÍåÍÑ•´¸%Ğ‘½•Ì¹½Ğ…±Ñ•ÈÑ¡”Í¥¹•±½‰…°•¹ÍÕÌ¸%Ğ…‘‘ÌÁÕ‰±¥Œ¡…‰¥Ñ…Ğ¥¹Ñ•ÉÁÉ•Ñ…Ñ¥½¸°Í•…Í½¹…°¥¹Ñ•¹Í¥Ñä°•½±½¥…°É•±…Ñ¥½¹Í¡¥ÁÌ°…¹½É‘¥¹…Éäµ±¥™”‘½ÍÍ¥•È‘•ÁÑ ½¸Ñ½À½˜Ñ¡”•á¥ÍÑ¥¹œ…¹½¸¸((ŒŒ•±¥Ù•É•((´I•¥½¹…°áÁ±½É•È½Ù•É¥¹œ9•Ü¹±…¹°Ñ¡”••…¸€¼…ÍÑ•É¸5•‘¥Ñ•ÉÉ…¹•…¸°Ñ¡”A…¥™¥Œ9½ÉÑ¡İ•ÍĞ°…¹•¹ÑÉ…°!½¹Í¡Ô(´AÉ•Í•¹”™¥±Ñ•ÉÌ™½ÈÉ•Í¥‘•¹ÑÌ°Í•…Í½¹…°Ù¥Í¥Ñ½ÉÌ°…¹µ…¹…•½ÈÁ…ÉÑ¹•ÈÁ½ÁÕ±…Ñ¥½¹Ì(´9•Ü¹±…¹¡…‰¥Ñ…Ğ…¹½ÉÉ¥‘½È•½µ•ÑÉä°‰É¥¹¥¹œ…±°™½ÕÈÉ•¥½¹Ì½¹Ñ¼Ñ¡”Í…µ”µ…À…É¡¥Ñ•ÑÕÉ”(´€ÄØ¡…‰¥Ñ…ĞÍåÍÑ•µÌ…¹€ÄÈ•½±½¥…°½ÉÉ¥‘½ÉÌ¥¸Ñ¡”½µ‰¥¹•İ½É±(´UQµ…±•¹‘…ÈÍ•…Í½¹…°å±•Ì™½È•Ù•ÉäÉ•¥½¸(´M•…Í½¹…°¥¹Ñ•¹Í¥ÑäÁÉ½™¥±•Ì™½È…±°€Èàµ…ÁÁ••½±½ä™•…ÑÕÉ•Ì(´±¥­…‰±”¡…‰¥Ñ…Ğ…¹½ÉÉ¥‘½È¥¹ÍÁ•Ñ½Èİ¥Ñ ±¥¹­•ÍÁ•¥•Ì…¹É•¥½¹…°¹…Ù¥…Ñ¥½¸(´€ÄØ•½±½¥…°É•±…Ñ¥½¹Í¡¥ÁÌ…É½ÍÌÁÉ•‘…Ñ¥½¸°Á½±±¥¹…Ñ¥½¸°¥¹™É…ÍÑÉÕÑÕÉ”°İ½É­¥¹œÁ…ÉÑ¹•ÉÍ¡¥ÁÌ°¹ÕÑÉ¥•¹ĞÑÉ…¹Í™•È°…¹½•á¥ÍÑ•¹”(´M¥à…‘‘¥Ñ¥½¹…°™Õ±°‘½ÍÍ¥•ÉÌèMå±Ù•½¸°A½±¥İÉ…Ñ °½±•´°1ÕáÉ…ä°Y…Á½É•½¸°…¹Q½•­¥ÍÌ(´€ÈÜ™Õ±°‘½ÍÍ¥•ÉÌ¥¸Ñ¡”½µ‰¥¹••‘¥Ñ½É¥…°±…å•È((ŒŒ…Ñ„‰½Õ¹‘…Éä()A¡…Í”€Ì¥Ì„Í•Á…É…Ñ•±äÍ¥¹••‘¥Ñ½É¥…°•áÁ…¹Í¥½¸¸%ÑÌÙ•ÉÍ¥½¸¡…¥¸¥Ìè()Ñ•áĞ)‘¥Ñ½É¥…°™½Õ¹‘…Ñ¥½¸€ÈÀÈØ´ÀÜ´ÈÜ¸È+ŠH]½É±•¹Í¥ÑäA¡…Í”€È€ÈÀÈØ´ÀÜ´Èà¸Ä+ŠH½±½ä%¹Ñ•É…Ñ¥½¸A¡…Í”€Ì€ÈÀÈØ´ÀÜ´Èà¸È)€()I•¥½¹…°…‘‘¥Ñ¥½¹Ì…¹•½µ•ÑÉä‘•ÍÉ¥‰”¡…‰¥Ñ…ĞÕÍ”…¹ÁÕ‰±¥Œ•½±½¥…°¥¹Ñ•ÉÁÉ•Ñ…Ñ¥½¸¸Q¡•ä‘¼¹½Ğµ½‘¥™ä•á…Ğ±½‰…°Á½ÁÕ±…Ñ¥½¸Ñ½Ñ…±Ì°…¹½¹¥…°¥¹‘¥Ù¥‘Õ…°±½…Ñ¥½¹Ì°½ÈÑ¡”™¥Ù”‘•Ñ•Éµ¥¹¥ÍÑ¥ŒÑÉ…­•É½ÕÑ•Ì¸((ŒŒY…±¥‘…Ñ¥½¸‰½Õ¹‘…Éä()¥Ñ!ÕˆÑ¥½¹ÌÙ•É¥™¥•Ìè((´…±°Í¥¹•Á…å±½…¡•­ÍÕµÌ…¹Ù•ÉÍ¥½¸±¥¹­Ìì(´Ñ¡”Í¥à¹•Ü‘½ÍÍ¥•ÉÌ…¹Ñ¡•¥È…É¡¥Ù”½™½Õ¹‘•È½…‘Ù¥Í½Éä‘•ÁÑ ì(´•á…Ğ™¥¹…°½Õ¹ÑÌ™½È…±°™½ÕÈÉ•¥½¹Ìì(´Ù…±¥…¹Õ¹¥ÅÕ”¡…‰¥Ñ…Ğ½½ÉÉ¥‘½È•½µ•ÑÉäì(´™Õ±°)…¹Õ…ÉçŠM••µ‰•ÈÍ•…Í½¹…°½Ù•É…”ì(´½¹”Í•…Í½¹…°ÁÉ½™¥±”™½È•Ù•Éäµ…ÁÁ•™•…ÑÕÉ”ì(´€ÄØÕ¹¥ÅÕ”•½±½¥…°É•±…Ñ¥½¹Í¡¥ÁÌİ¥Ñ Ù…±¥É•¥½¹…°ÍÁ•¥•ÌÉ•™•É•¹•Ìì(´Ñ¡”™¥¹…°€ÈÜµ‘½ÍÍ¥•È°€ÄØµ¡…‰¥Ñ…Ğ°…¹€ÄÈµ½ÉÉ¥‘½ÈÑ½Ñ…±Ìì(´É•…‘…‰±”µÍ½ÕÉ”½ÁÕ‰±¥Œµ±½…‘•ÈÍå¹¡É½¹¥é…Ñ¥½¸ì(´AåÑ¡½¸…¹)…Ù…MÉ¥ÁĞÍå¹Ñ…à…¹…±°É•ÅÕ¥É•‘•Á±½åµ•¹Ğ™¥±•Ì¸((ŒŒI•Ù¥•ÜÍÑ…ÑÕÌ()Q¡”‰Õ¥±É•µ…¥¹ÌÁÉ¥Ù…Ñ”½¸Ñ¡”‘É…™Ğ‰É…¹ ¸µ…¥¹€¥ÌÕ¹¡…¹•…¹¹¼ÁÕ‰±¥Œ‘•Á±½åµ•¹Ğ¥Ì…ÕÑ¡½É¥é•¸
+# GAIA Atlas â€” World Ecology Phase 3
+
+**Status:** Private ecology-integration build on `agent/gaia-foundation`  
+**Editorial base:** `2026-07-28.1`  
+**Ecology version:** `2026-07-28.2`
+
+## Purpose
+
+Phase 3 turns the four completed regional field windows into one interactive ecology system. It does not alter the signed global population canon. It adds public interpretation, real-calendar seasonality, ecological relationships, and direct navigation among the existing regions, species, habitats, corridors, and dossiers.
+
+## Delivered
+
+- Regional Explorer covering New England, the Aegean / Eastern Mediterranean, the Pacific Northwest, and Central Honshu
+- Presence filters for residents, seasonal visitors, and managed or partner populations
+- New England habitat and corridor geometry, bringing every region onto the same map architecture
+- Real-calendar seasonal cycles for all four regions
+- Intensity profiles for every mapped habitat and corridor
+- Clickable map ecology with current seasonal status, linked species, relationship context, and regional navigation
+- 16 ecological relationships covering predation, pollination, infrastructure, working partnerships, nutrient transfer, and coexistence
+- Six additional full dossiers: Sylveon, Poliwrath, Golem, Luxray, Vaporeon, and Togekiss
+
+## Final integrated counts
+
+The Phase 3 private build resolves to:
+
+- 161 species records
+- 27 full dossiers
+- 4 regional field windows
+- 16 habitat systems
+- 12 ecological corridors
+- 16 ecological relationships
+- 28 mapped ecology features with complete Januaryâ€“December seasonal interpretation
+
+## Regional totals
+
+| Region | Documented presences | Explicit absences | Habitats | Corridors |
+| --- | ---: | ---: | ---: | ---: |
+| New England | 17 | 4 | 4 | 3 |
+| Aegean / Eastern Mediterranean | 19 | 6 | 4 | 3 |
+| Pacific Northwest | 21 | 6 | 4 | 3 |
+| Central Honshu | 21 | 6 | 4 | 3 |
+
+Each region contains four validated ecological relationships.
+
+## Seasonal model
+
+Every region has a four-season cycle covering all twelve UTC calendar months. Every habitat and corridor separately defines peak, active, quiet, or dormant periods with a written ecological explanation.
+
+Layer opacity changes with the real calendar. The underlying geometry and species references remain canonical and deterministic; seasonal styling does not invent visitor activity or random events.
+
+## Map behavior
+
+The globe now supports:
+
+- habitat and corridor visibility toggles;
+- season-intensity toggling;
+- filtering ecology by region;
+- progressive corridor visibility by zoom;
+- direct selection of habitat and corridor geometry;
+- an ecology inspector showing current status, species, relationships, and the related field window;
+- preservation of ecology layers in local minimal-globe mode when external basemap tiles fail.
+
+Public geometry remains deliberately generalized around breeding sites, vulnerable refuges, dens, containment facilities, and singular anchors.
+
+## Canon boundary
+
+Phase 3 does not modify:
+
+- exact global population totals;
+- singular-individual identity;
+- permanent-form counts;
+- canonical seasonal legendary routes;
+- census verification dates;
+- public access classifications;
+- personal Discovered, Observed, or Favorite state.
+
+The Phase 3 payload is separately signed and chained to the exact Phase 2 editorial version.
+
+## Validation
+
+CI verifies:
+
+- the signed Phase 3 checksum and version chain;
+- the exact six-dossier addition set;
+- minimum dossier depth, archives, advisories, and founder notes;
+- exact final counts for all four regions;
+- valid closed habitat polygons and corridor coordinate sequences;
+- unique geometry identifiers;
+- valid species references for every habitat, corridor, and relationship;
+- complete twelve-month seasonal coverage;
+- one seasonality profile for every mapped ecology feature;
+- exactly four relationships per region;
+- the combined total of 27 unique full dossiers, 16 habitat systems, and 12 ecological corridors;
+- synchronized readable JavaScript source and public loader syntax.
+
+## Review state
+
+The phase is complete and validated on the draft branch. It remains intentionally unmerged and undeployed pending a later explicit public-launch decision.
