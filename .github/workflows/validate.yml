@@ -44,6 +44,7 @@ jobs:
           test -f public/ecology.css
           test -f public/continuity.css
           test -f public/assets.css
+          test -f public/assurance.css
           test -f public/assets/gaia-seal.svg
           test -f public/sw.js
           test -f public/data/canon/chunk-07.txt
@@ -57,6 +58,7 @@ jobs:
           test -f src/app/02b-ecology-d.js
           test -f src/app/02c-continuity.js
           test -f src/app/02d-assets.js
+          test -f src/app/02e-assurance.js
           test -f scripts/build_public.py
           test -f scripts/validate_phase3.py
           test -f scripts/phase3_validation_data.py
