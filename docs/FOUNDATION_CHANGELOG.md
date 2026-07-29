@@ -1,5 +1,46 @@
 # GAIA Atlas Foundation Changelog
 
+## Release Candidate 1 — July 29, 2026
+
+### Added
+
+- Embedded Priority World Brief pairing one UTC-synchronized canonical movement record with one complete regional ecosystem
+- Local dismissal/restoration of the briefing without a tutorial gate or canon mutation
+- Production-shaped document title, description, canonical URL, Open Graph, Twitter/X, mobile-app, and install-manifest metadata
+- Deterministically generated 1200 × 630 GAIA social-sharing card
+- Deterministically generated 192 px, 512 px, maskable, and Apple-touch install icons
+- Web-app manifest with direct shortcuts to GAIA Live, Records, and Index
+- Authored Coordinate Unresolved 404 page
+- Authored Civilian Archive Mode offline page
+- Separate shell, runtime, and artwork cache generations
+- Network-state communication through Network Active and Offline Archive treatments
+- Hard static budgets for shell weight, data weight, largest text asset, social/install assets, and service-worker complexity
+- Browser-enforced timing budgets for weak-network usability and cached offline reopening
+- RC-specific Playwright scenarios for first visit, production metadata, manifest validity, artificial network latency, and complete offline mode
+- Deterministic release-preparation and release-validation scripts
+- Release Candidate documentation and deployment evidence artifacts
+
+### Improved through RC review
+
+- Twelve readable source modules now fetch in parallel while retaining their locked execution order
+- Local development no longer produces one failed source request before every fallback module
+- The first-visit briefing moved out of the desktop civilian terminal into a separate cinematic map overlay
+- Mobile first-visit briefing was compacted below the fallback-message safety boundary
+- The application now registers its service worker rather than merely shipping one
+- Service-worker navigation uses a bounded live attempt before falling back to the cached Atlas or offline page
+- MapLibre runtime files and successful artwork requests can be reused after the network disappears
+- Regional Explorer launch typography now reads cleanly at common desktop heights
+- Fallback explanation text no longer stretches behind the civilian terminal
+- Social-card evidence copy was shortened to preserve clear separation from the GAIA seal
+
+### Validated
+
+- Static Release Candidate metadata, assets, cache structure, and performance budgets passed on the first structural run
+- Browser failures in early RC iterations exposed and corrected semantic footer misuse, desktop containment, missing service-worker registration, and a six-pixel mobile fallback collision
+- Final RC matrix passed 24 active scenarios across desktop Chromium, desktop Firefox, mobile Chromium, mobile WebKit, and reduced-motion Chromium
+- Artificial weak-network and fully offline cached-reopen scenarios passed
+- No signed population, route, dossier, incident, or ecology payload was changed
+
 ## Visual asset and experience-assurance phase — July 29, 2026
 
 ### Added
