@@ -1,11 +1,11 @@
-const CACHE_NAME = 'gaia-shell-v1.7';
+const CACHE_NAME = 'gaia-shell-v1.8';
 const SHELL = [
-  './','index.html','styles.css','refinement.css','density.css','ecology.css','continuity.css','app.js','404.html','robots.txt',
+  './','index.html','styles.css','refinement.css','density.css','ecology.css','continuity.css','assets.css','app.js','404.html','robots.txt',
   'assets/gaia-seal.svg',
   'data/canon.js','data/canon-corrections.json',
   'data/canon/chunk-01.txt','data/canon/chunk-02.txt','data/canon/chunk-03.txt','data/canon/chunk-04.txt','data/canon/chunk-05.txt','data/canon/chunk-06.txt','data/canon/chunk-07.txt',
   'data/editorial/chunk-01.txt','data/editorial/chunk-02.txt','data/editorial/chunk-03.txt','data/editorial/chunk-04.txt','data/editorial/phase2.txt','data/editorial/phase3-01.txt','data/editorial/phase3-02.txt',
-  'source/01-core.js','source/02-records.js','source/02a-density.js','source/02b-ecology-a.js','source/02b-ecology-b.js','source/02b-ecology-c.js','source/02b-ecology-d.js','source/02c-continuity.js','source/03-interface.js'
+  'source/01-core.js','source/02-records.js','source/02a-density.js','source/02b-ecology-a.js','source/02b-ecology-b.js','source/02b-ecology-c.js','source/02b-ecology-d.js','source/02c-continuity.js','source/02d-assets.js','source/03-interface.js'
 ];
 
 self.addEventListener('install', event => {
