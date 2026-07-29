@@ -117,7 +117,8 @@ if package_path.is_file():
     require(package.get("scripts", {}).get("test:experience") == "playwright test", "package.json test:experience script is incorrect")
 
 playwright = read_utf8(ROOT / "playwright.config.js") if (ROOT / "playwright.config.js").is_file() else ""
-tests = read_utf8(ROOT / "tests" / "gaia-experience.spec.js") if (ROOT / "tests" / "gaia-experience.spec.js").is_file() else ""
+experience_tests = read_utf8(ROOT / "tests" / "gaia-experience.spec.js") if (ROOT / "tests" / "gaia-experience.spec.js").is_file() else ""
+layout_tests = read_utf8(ROOT / "tests" / "gaia-layout.spec.js") if (ROOT / "tests" / "gaia-layout.spec.js").is_file() else ""
 for project in ("desktop-chromium", "desktop-firefox", "mobile-chromium", "mobile-webkit", "reduced-motion-chromium"):
     require(project in playwright, f"Playwright matrix is missing project: {project}")
 for marker in (
@@ -129,7 +130,15 @@ for marker in (
     "gaia-reduced-motion",
     "emulateMedia",
 ):
-    require(marker in tests, f"Experience tests are missing scenario marker: {marker}")
+    require(marker in experience_tests, f"Experience tests are missing scenario marker: {marker}")
+for marker in (
+    "desktop command panels expose their complete primary actions",
+    "mobile globe uses one compact terminal and fixed navigation",
+    ".region-launch",
+    ".ecology-layer-panel",
+    "#surveillanceTicker",
+):
+    require(marker in layout_tests, f"Responsive layout tests are missing scenario marker: {marker}")
 
 if errors:
     print("\n".join(f"ERROR: {error}" for error in errors))
@@ -138,5 +147,5 @@ if errors:
 print(
     f"GAIA project integrity passed: {len(markdown_files)} Markdown files, continuity, "
     "seven-profile asset policy, accessibility-state assurance, five-project browser matrix, "
-    "and release metadata verified."
+    "responsive collision guards, and release metadata verified."
 )
