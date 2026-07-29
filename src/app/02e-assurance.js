@@ -33,52 +33,21 @@
       search.setAttribute('aria-label','Search GAIA species, locations, habitats, and records');
     }
 
-    const setInteractiveState=(element,active)=>{
+    const setInteractiveState=element=>{
       if(!element) return;
+      const active=element.getAttribute('aria-hidden')==='false';
       element.toggleAttribute('inert',!active);
       try{element.inert=!active;}catch{}
     };
 
-    const dossier=$('#dossier');
-    const about=$('#aboutModal');
-    const method=$('#methodModal');
-    const region=$('#regionModal');
-    const explorer=$('#regionExplorerModal');
-    [dossier,about,method,region,explorer].forEach(element=>setInteractiveState(element,element?.getAttribute('aria-hidden')==='false'));
-
-    const baseOpenDossier=openDossier;
-    openDossier=function openAccessibleDossier(item,move=true){
-      setInteractiveState(dossier,true);
-      return baseOpenDossier(item,move);
-    };
-    const baseCloseDossier=closeDossier;
-    closeDossier=function closeAccessibleDossier(){
-      const result=baseCloseDossier();
-      setInteractiveState(dossier,false);
-      return result;
-    };
-
-    const baseOpenAbout=openAbout;
-    openAbout=function openAccessibleAbout(){setInteractiveState(about,true);return baseOpenAbout();};
-    const baseCloseAbout=closeAbout;
-    closeAbout=function closeAccessibleAbout(){const result=baseCloseAbout();setInteractiveState(about,false);return result;};
-
-    const baseOpenMethod=openMethod;
-    openMethod=function openAccessibleMethod(){setInteractiveState(method,true);return baseOpenMethod();};
-    const baseCloseMethod=closeMethod;
-    closeMethod=function closeAccessibleMethod(){const result=baseCloseMethod();setInteractiveState(method,false);return result;};
-
-    const baseOpenRegion=openRegion;
-    openRegion=function openAccessibleRegion(id){setInteractiveState(region,true);return baseOpenRegion(id);};
-    const baseCloseRegion=closeRegion;
-    closeRegion=function closeAccessibleRegion(restoreFocus=true){const result=baseCloseRegion(restoreFocus);setInteractiveState(region,false);return result;};
-
-    if(typeof openRegionExplorer==='function' && typeof closeRegionExplorer==='function'){
-      const baseOpenExplorer=openRegionExplorer;
-      openRegionExplorer=function openAccessibleExplorer(){setInteractiveState(explorer,true);return baseOpenExplorer();};
-      const baseCloseExplorer=closeRegionExplorer;
-      closeRegionExplorer=function closeAccessibleExplorer(restore=true){const result=baseCloseExplorer(restore);setInteractiveState(explorer,false);return result;};
-    }
+    const managed=[$('#dossier'),$('#aboutModal'),$('#methodModal'),$('#regionModal'),$('#regionExplorerModal')].filter(Boolean);
+    managed.forEach(setInteractiveState);
+    const stateObserver=new MutationObserver(mutations=>{
+      for(const mutation of mutations){
+        if(mutation.type==='attributes' && mutation.attributeName==='aria-hidden') setInteractiveState(mutation.target);
+      }
+    });
+    managed.forEach(element=>stateObserver.observe(element,{attributes:true,attributeFilter:['aria-hidden']}));
 
     const footer=$('footer');
     if(footer?.firstChild){
