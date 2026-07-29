@@ -28,6 +28,9 @@ The current GAIA build establishes:
 - **Universal search** across species, locations, regional windows, habitats, corridors, incidents, and linked archive files;
 - shareable deep links for species, regions, ecology features, incidents, and archive records;
 - dossier-to-ecosystem links that connect a species directly to its documented field windows and mapped systems;
+- a centralized **visual asset policy** with one replaceable artwork source, seven authored fallback profiles, deterministic species-specific silhouettes, and restricted-image treatment;
+- Playwright browser assurance across desktop Chromium, desktop Firefox, mobile Chromium, mobile WebKit, and reduced-motion Chromium;
+- axe-core serious/critical accessibility checks, viewport-overflow checks, keyboard navigation tests, deep-link tests, artwork-failure tests, and review screenshots;
 - keyboard navigation, focus management, reduced-motion support, mobile navigation, and offline shell caching;
 - quiet fan-project and rights-holder disclosure.
 
@@ -43,7 +46,7 @@ python -m http.server 8000
 
 Then open `http://localhost:8000/public/`.
 
-The app uses MapLibre and OpenFreeMap for its primary basemap and remote artwork URLs for Pokémon images. A local globe style preserves canonical markers if the external basemap fails. Species-specific procedural archive visuals appear when remote artwork is unavailable, and successful assets are cached by the service worker after first load.
+The app uses MapLibre and OpenFreeMap for its primary basemap. Pokémon subject art is resolved through the centralized policy in `src/app/02d-assets.js`. A local globe style preserves canonical markers if the external basemap fails. Classification-specific GAIA archive reconstructions appear when remote artwork is unavailable or withheld, and successful assets are cached by the service worker after first load.
 
 ## Development
 
@@ -57,7 +60,15 @@ python scripts/validate_phase3.py
 python scripts/validate_project_integrity.py
 ```
 
-CI also compiles the Python tooling, concatenates and syntax-checks every readable JavaScript module, validates all Markdown as strict UTF-8, and verifies all required deployable files.
+Install the pinned browser-assurance dependencies and run the experience matrix through:
+
+```bash
+npm install
+npx playwright install
+npm run test:experience
+```
+
+CI compiles the Python tooling, concatenates and syntax-checks every readable JavaScript module, validates all Markdown as strict UTF-8, verifies the asset and loader policy, runs the complete Playwright matrix, applies axe-core accessibility checks, and uploads browser reports plus desktop/mobile review captures.
 
 ## Canon architecture
 
@@ -71,9 +82,10 @@ Signed population canon + versioned corrections
                          + signed editorial / regional expansions
                          + seasonal ecology and relationship layers
                          + public navigation and continuity layer
+                         + replaceable visual presentation policy
 ```
 
-Editorial, regional, ecology, and navigation layers deepen the world without silently changing exact census totals.
+Editorial, regional, ecology, navigation, visual, and testing layers deepen or protect the experience without silently changing exact census totals.
 
 Urshifu demonstrates the form model: one species total of 16, split into seven Single Strike adults at Shaolin and nine Rapid Strike adults at Emei.
 
@@ -83,14 +95,22 @@ Urshifu demonstrates the form model: one species total of 16, split into seven S
 src/                          Readable application source
 public/                       Deployable GAIA application
 data/                         Versioned project data where applicable
-docs/                         Master plan, status, and review guidance
+docs/                         Master plan, status, asset, and review guidance
 scripts/                      Deterministic build and validation tools
+tests/                        Playwright experience and accessibility assurance
 archive/showcase-prototype/   Preservation boundary for the pre-GAIA prototype
 ```
 
 ## Source of truth
 
 The full specification is [`docs/GAIA_Atlas_Master_Plan.md`](docs/GAIA_Atlas_Master_Plan.md).
+
+Supporting private-build plans include:
+
+- [`docs/VISUAL_ASSET_STRATEGY.md`](docs/VISUAL_ASSET_STRATEGY.md)
+- [`docs/EXPERIENCE_ASSURANCE_PHASE.md`](docs/EXPERIENCE_ASSURANCE_PHASE.md)
+- [`docs/IMPLEMENTATION_STATUS.md`](docs/IMPLEMENTATION_STATUS.md)
+- [`docs/REVIEW_CHECKLIST.md`](docs/REVIEW_CHECKLIST.md)
 
 ## Licensing and fan-project notice
 
