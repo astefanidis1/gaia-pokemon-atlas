@@ -27,47 +27,44 @@ window.GAIA_DATA_READY=(async()=>{
   const editorialParts=Array.from({length:4},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const phase2Path='data/editorial/phase2.txt';
   const phase3Paths=['data/editorial/phase3-01.txt','data/editorial/phase3-02.txt'];
-  const phase4Paths=['data/editorial/phase4.txt','data/editorial/phase4-02.txt'];
-  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Response,phase3Responses,phase4Responses]=await Promise.all([
-    Promise.all(parts.map(async path=>{
-      const response=await fetch(path,{cache:'no-cache'});
-      if(!response.ok) throw new Error(`Unable to load GAIA canon payload: ${path}`);
-      return (await response.text()).trim();
-    })),
+  const phase4Groups=[
+    ['data/editorial/phase4.txt','data/editorial/phase4-02.txt','data/editorial/phase4-03.txt'],
+    ['data/editorial/phase4-04.txt','data/editorial/phase4-05.txt','data/editorial/phase4-06.txt']
+  ];
+  const phase4Paths=phase4Groups.flat();
+
+  async function fetchText(path,label){
+    const response=await fetch(path,{cache:'no-cache'});
+    if(!response.ok) throw new Error(`Unable to load ${label}: ${path}`);
+    return (await response.text()).trim();
+  }
+
+  async function decodeGzipJSON(encoded){
+    const bytes=Uint8Array.from(atob(encoded),character=>character.charCodeAt(0));
+    const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+    return JSON.parse(await new Response(stream).text());
+  }
+
+  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Encoded,phase3EncodedParts,phase4EncodedParts]=await Promise.all([
+    Promise.all(parts.map(path=>fetchText(path,'GAIA canon payload'))),
     fetch('data/canon-corrections.json',{cache:'no-cache'}),
-    Promise.all(editorialParts.map(async path=>{
-      const response=await fetch(path,{cache:'no-cache'});
-      if(!response.ok) throw new Error(`Unable to load GAIA editorial payload: ${path}`);
-      return (await response.text()).trim();
-    })),
-    fetch(phase2Path,{cache:'no-cache'}),
-    Promise.all(phase3Paths.map(path=>fetch(path,{cache:'no-cache'}))),
-    Promise.all(phase4Paths.map(path=>fetch(path,{cache:'no-cache'})))
+    Promise.all(editorialParts.map(path=>fetchText(path,'GAIA editorial payload'))),
+    fetchText(phase2Path,'GAIA world-density expansion'),
+    Promise.all(phase3Paths.map(path=>fetchText(path,'GAIA ecology integration'))),
+    Promise.all(phase4Paths.map(path=>fetchText(path,'GAIA World Completion Pass I'))
   ]);
   if(!correctionsResponse.ok) throw new Error('Unable to load GAIA canon corrections.');
-  if(!phase2Response.ok) throw new Error('Unable to load GAIA world-density expansion.');
-  if(phase3Responses.some(response=>!response.ok)) throw new Error('Unable to load GAIA ecology integration.');
-  if(phase4Responses.some(response=>!response.ok)) throw new Error('Unable to load GAIA World Completion Pass I.');
-  const encoded=encodedParts.join('');
-  const bytes=Uint8Array.from(atob(encoded),character=>character.charCodeAt(0));
-  const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const data=JSON.parse(await new Response(stream).text());
-  const editorialBytes=Uint8Array.from(atob(editorialEncodedParts.join('')),character=>character.charCodeAt(0));
-  const editorialStream=new Blob([editorialBytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const editorial=JSON.parse(await new Response(editorialStream).text());
-  const phase2Encoded=(await phase2Response.text()).trim();
-  const phase2Bytes=Uint8Array.from(atob(phase2Encoded),character=>character.charCodeAt(0));
-  const phase2Stream=new Blob([phase2Bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const phase2=JSON.parse(await new Response(phase2Stream).text());
+
+  const data=await decodeGzipJSON(encodedParts.join(''));
+  const editorial=await decodeGzipJSON(editorialEncodedParts.join(''));
+  const phase2=await decodeGzipJSON(phase2Encoded);
   if(phase2.baseVersion!==editorial.version) throw new Error(`GAIA editorial expansion base mismatch: ${phase2.baseVersion} !== ${editorial.version}`);
   editorial.flagshipOrder.push(...phase2.flagshipAdditions);
   Object.assign(editorial.dossiers,phase2.dossiers);
   editorial.regions.push(...phase2.regions);
   editorial.version=phase2.version;
-  const phase3Encoded=(await Promise.all(phase3Responses.map(response=>response.text()))).map(text=>text.trim()).join('');
-  const phase3Bytes=Uint8Array.from(atob(phase3Encoded),character=>character.charCodeAt(0));
-  const phase3Stream=new Blob([phase3Bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const phase3=JSON.parse(await new Response(phase3Stream).text());
+
+  const phase3=await decodeGzipJSON(phase3EncodedParts.join(''));
   if(phase3.baseVersion!==editorial.version) throw new Error(`GAIA ecology integration base mismatch: ${phase3.baseVersion} !== ${editorial.version}`);
   editorial.flagshipOrder.push(...phase3.flagshipAdditions);
   Object.assign(editorial.dossiers,phase3.dossiers);
@@ -86,15 +83,30 @@ window.GAIA_DATA_READY=(async()=>{
   }
   editorial.relationships=[...(editorial.relationships||[]),...(phase3.relationships||[])];
   editorial.version=phase3.version;
-  const phase4Encoded=(await Promise.all(phase4Responses.map(response=>response.text()))).map(text=>text.trim()).join('');
-  const phase4Bytes=Uint8Array.from(atob(phase4Encoded),character=>character.charCodeAt(0));
-  const phase4Stream=new Blob([phase4Bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
-  const phase4=JSON.parse(await new Response(phase4Stream).text());
-  if(phase4.baseVersion!==editorial.version) throw new Error(`GAIA World Completion base mismatch: ${phase4.baseVersion} !== ${editorial.version}`);
-  editorial.regions.push(...(phase4.regions||[]));
-  editorial.relationships.push(...(phase4.relationships||[]));
-  editorial.recordPolicy=phase4.recordPolicy||{};
+
+  const phase4Payloads=[];
+  let cursor=0;
+  for(const group of phase4Groups){
+    const segmentCount=group.length;
+    phase4Payloads.push(await decodeGzipJSON(phase4EncodedParts.slice(cursor,cursor+segmentCount).join('')));
+    cursor+=segmentCount;
+  }
+  for(const payload of phase4Payloads){
+    if(payload.baseVersion!==editorial.version) throw new Error(`GAIA World Completion base mismatch: ${payload.baseVersion} !== ${editorial.version}`);
+    if(payload.version!==phase4Payloads[0].version) throw new Error(`GAIA World Completion semantic payload mismatch: ${payload.version} !== ${phase4Payloads[0].version}`);
+  }
+  const phase4={
+    baseVersion:phase4Payloads[0].baseVersion,
+    version:phase4Payloads[0].version,
+    recordPolicy:phase4Payloads.find(payload=>payload.recordPolicy)?.recordPolicy||{},
+    regions:phase4Payloads.flatMap(payload=>payload.regions||[]),
+    relationships:phase4Payloads.flatMap(payload=>payload.relationships||[])
+  };
+  editorial.regions.push(...phase4.regions);
+  editorial.relationships.push(...phase4.relationships);
+  editorial.recordPolicy=phase4.recordPolicy;
   editorial.version=phase4.version;
+
   const corrections=await correctionsResponse.json();
   const speciesById=new Map(data.species.map(species=>[species.id,species]));
   for(const [speciesId,patch] of Object.entries(corrections.species||{})){
