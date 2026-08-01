@@ -15,6 +15,11 @@ footer button{color:#8de9f5!important;text-decoration:underline;text-underline-o
 .region-card>div small{color:#a8b8bd!important}
 .region-card>div small:last-child,.region-card>.eyebrow{color:#e1c98e!important}
 .region-card .region-season-inline{color:#9cebf4!important}
+.region-species-card{appearance:none;-webkit-appearance:none;background-color:#0b1822!important;color:#eaf1ee!important;border:1px solid rgba(141,233,245,.22)!important}
+.region-species-card:hover,.region-species-card:focus-visible{background-color:#102733!important;border-color:rgba(141,233,245,.5)!important}
+.region-species-card>span>b{color:#eaf1ee!important}
+.region-species-card>span>small{color:#c3d1d4!important}
+.region-species-card>i{color:#9cebf4!important}
 .primary-action{appearance:none;-webkit-appearance:none;background:#12313f!important;color:#eaf1ee!important;border:1px solid rgba(141,233,245,.46)!important;border-radius:9px!important}
 .primary-action:hover,.primary-action:focus-visible{background:#183d4d!important;border-color:#8de9f5!important}
 
