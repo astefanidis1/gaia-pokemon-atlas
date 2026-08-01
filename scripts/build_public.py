@@ -5,7 +5,7 @@ import argparse,re
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 LOADER=ROOT/'public'/'app.js';MODULE_DIR=ROOT/'src'/'app'
-EXPECTED=['01-core.js', '02-records.js', '02a-density.js', '02b-ecology-a.js', '02b-ecology-b.js', '02b-ecology-c.js', '02b-ecology-d.js', '02c-continuity.js', '02d-assets.js', '02e-assurance.js', '02f-release-candidate.js', '02g-world-completion.js', '03-interface.js']
+EXPECTED=['01-core.js', '02-records.js', '02a-density.js', '02b-ecology-a.js', '02b-ecology-b.js', '02b-ecology-c.js', '02b-ecology-d.js', '02c-continuity.js', '02d-assets.js', '02e-assurance.js', '02f-release-candidate.js', '02g-world-completion.js', '02h-systems-evidence.js', '03-interface.js']
 def main()->int:
  p=argparse.ArgumentParser();p.add_argument('--check',action='store_true');args=p.parse_args()
  loader=LOADER.read_text(encoding='utf-8');match=re.search(r"const modules=\[(.*?)\];",loader,re.S)
