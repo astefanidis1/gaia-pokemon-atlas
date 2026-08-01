@@ -17,11 +17,9 @@ async function expectNoSeriousOrCritical(page) {
 test('expanded GAIA Live and Index pass serious/critical accessibility scans', async ({ page }, testInfo) => {
   test.skip(!['desktop-chromium','mobile-webkit'].includes(testInfo.project.name));
   await boot(page);
-
   await page.locator('.nav-button[data-view="live"]').click();
   await expect(page.locator('#regionalConditionGrid .regional-condition-card')).toHaveCount(6);
   await expectNoSeriousOrCritical(page);
-
   await page.locator('.nav-button[data-view="index"]').click();
   await expect(page.locator('.index-controls select')).toHaveCount(6);
   await expectNoSeriousOrCritical(page);
@@ -29,9 +27,8 @@ test('expanded GAIA Live and Index pass serious/critical accessibility scans', a
 
 test('observation, archive, and Andes dialogs pass serious/critical accessibility scans', async ({ page }, testInfo) => {
   test.skip(!['desktop-chromium','mobile-webkit'].includes(testInfo.project.name));
-  await boot(page, './#species=squirtle');
-
-  await expect(page.locator('#dossierName')).toHaveText('Squirtle');
+  await boot(page, './#species=arcanine');
+  await expect(page.locator('#dossierName')).toHaveText('Arcanine');
   await page.locator('#observedButton').click();
   await expect(page.locator('#observationModal')).toHaveClass(/open/);
   await expectNoSeriousOrCritical(page);
