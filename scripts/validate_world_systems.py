@@ -4,7 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from phase3_validation_data import load_inputs
-from validate_gaia import load_data
+import validate_gaia
 from validate_phase4 import load_phase4, phase3_regions
 ROOT=Path(__file__).resolve().parents[1];MODULE=ROOT/'src'/'app'/'02h-systems-evidence.js';CORRECTIONS=ROOT/'src'/'app'/'02i-systems-reference-corrections.js';CSS=ROOT/'public'/'systems-evidence.css';VERSION='2026-08-01.2'
 REFERENCE_MAP={'rotom':'electivire','squirtle':'lapras','pacific-northwest':'pacific-northwest-temperate-rainforest','central-honshu':'central-honshu-urban-mountain-corridor'};errors=[]
@@ -19,7 +19,7 @@ def array_values(source,key):
     return values
 def corrected(value):return REFERENCE_MAP.get(value,value)
 def main():
-    source=MODULE.read_text(encoding='utf-8');correction_source=CORRECTIONS.read_text(encoding='utf-8');css=CSS.read_text(encoding='utf-8');canon,base,phase2,phase3=load_inputs();full_canon=load_data();phase4=load_phase4()
+    source=MODULE.read_text(encoding='utf-8');correction_source=CORRECTIONS.read_text(encoding='utf-8');css=CSS.read_text(encoding='utf-8');canon,base,phase2,phase3=load_inputs();full_canon=validate_gaia.data;phase4=load_phase4()
     system_source=segment(source,'const gaiaWorldSystems=[','const gaiaEvidenceRecords=[');evidence_source=segment(source,'const gaiaEvidenceRecords=[','const gaiaLineagePilots=[');lineage_source=segment(source,'const gaiaLineagePilots=[','const gaiaSystemIncidentDrafts=[');incident_source=segment(source,'const gaiaSystemIncidentDrafts=[','const gaiaSystemIncidents=')
     system_ids=re.findall(r"\bid:'([^']+)'",system_source);evidence_ids=re.findall(r"\bid:'([^']+)'",evidence_source);lineage_ids=re.findall(r"\bid:'([^']+)'",lineage_source);incident_ids=re.findall(r"\bid:'([^']+)'",incident_source)
     require(f"GAIA_WORLD_SYSTEMS_VERSION='{VERSION}'" in source,'World Systems version marker is missing');require(f"GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION='{VERSION}'" in correction_source,'Systems reference correction version is missing')
