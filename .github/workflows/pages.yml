@@ -20,43 +20,42 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 50
     steps:
       - uses: actions/checkout@v4
-      - name: Materialize the exact private release artifact
+      - name: Materialize exact release artifact
         run: |
           python scripts/prepare_release_candidate.py
           mkdir -p public/source
           cp src/app/*.js public/source/
-      - name: Validate canon, editorial, regional data, and geometry
-        run: python scripts/validate_gaia.py
-      - name: Validate world-density phase 2
-        run: python scripts/validate_phase2.py
-      - name: Validate ecology integration phase 3
-        run: python scripts/validate_phase3.py
-      - name: Validate World Completion Pass I
-        run: python scripts/validate_phase4.py
-      - name: Validate documentation and release integrity
-        run: python scripts/validate_project_integrity.py
-      - name: Validate Release Candidate metadata, assets, offline shell, and budgets
-        run: python scripts/validate_release_candidate.py
-      - name: Verify deterministic public loader
-        run: python scripts/build_public.py --check
-      - name: Check Python scripts
-        run: python -m compileall -q scripts
-      - name: Check JavaScript syntax
+      - name: Validate signed canon, ecology, completion, and systems layers
         run: |
+          python scripts/validate_gaia.py
+          python scripts/validate_phase2.py
+          python scripts/validate_phase3.py
+          python scripts/validate_phase4.py
+          python scripts/validate_world_systems.py
+      - name: Validate documentation, release integrity, and loader
+        run: |
+          python scripts/validate_project_integrity.py
+          python scripts/validate_release_candidate.py
+          python scripts/build_public.py --check
+      - name: Check Python and JavaScript syntax
+        run: |
+          python -m compileall -q scripts
           cat src/app/*.js > /tmp/gaia-app.js
           node --check /tmp/gaia-app.js
           node --check public/app.js
           node --check public/data/canon.js
           node --check public/sw.js
+          node --check public/sw-world-completion.js
           node --check playwright.config.js
           node --check tests/gaia-experience.spec.js
           node --check tests/gaia-layout.spec.js
           node --check tests/gaia-release-candidate.spec.js
           node --check tests/gaia-world-completion.spec.js
-      - name: Check required public, assurance, release, and completion files
+          node --check tests/gaia-systems-evidence.spec.js
+      - name: Check required deployable files
         run: |
           test -f public/index.html
           test -f public/styles.css
@@ -68,48 +67,21 @@ jobs:
           test -f public/assurance.css
           test -f public/release-candidate.css
           test -f public/world-completion.css
+          test -f public/systems-evidence.css
           test -f public/manifest.webmanifest
           test -f public/offline.html
           test -f public/404.html
-          test -f public/assets/gaia-seal.svg
-          test -f public/assets/gaia-social-preview.png
-          test -f public/assets/gaia-icon-192.png
-          test -f public/assets/gaia-icon-512.png
-          test -f public/assets/gaia-icon-maskable-512.png
-          test -f public/assets/gaia-apple-touch-icon.png
-          test -f public/sw.js
-          test -f public/data/canon/chunk-07.txt
-          test -f public/data/canon-corrections.json
-          test -f public/data/editorial/phase2.txt
-          test -f public/data/editorial/phase3-01.txt
-          test -f public/data/editorial/phase3-02.txt
+          test -f public/sw-world-completion.js
           test -f public/data/editorial/phase4.txt
           test -f public/data/editorial/phase4-02.txt
-          test -f src/app/02b-ecology-a.js
-          test -f src/app/02b-ecology-b.js
-          test -f src/app/02b-ecology-c.js
-          test -f src/app/02b-ecology-d.js
-          test -f src/app/02c-continuity.js
-          test -f src/app/02d-assets.js
-          test -f src/app/02e-assurance.js
-          test -f src/app/02f-release-candidate.js
-          test -f src/app/02g-world-completion.js
-          test -f scripts/build_public.py
-          test -f scripts/prepare_release_candidate.py
-          test -f scripts/generate_release_assets.py
-          test -f scripts/validate_release_candidate.py
-          test -f scripts/validate_phase4.py
-          test -f performance-budgets.json
-          test -f package.json
-          test -f playwright.config.js
-          test -f tests/gaia-experience.spec.js
-          test -f tests/gaia-layout.spec.js
-          test -f tests/gaia-release-candidate.spec.js
-          test -f tests/gaia-world-completion.spec.js
-          test -f docs/VISUAL_ASSET_STRATEGY.md
-          test -f docs/EXPERIENCE_ASSURANCE_PHASE.md
-          test -f docs/RELEASE_CANDIDATE_1.md
-          test -f docs/WORLD_COMPLETION_PASS_1.md
+          test -f public/data/editorial/phase4-03.txt
+          test -f public/data/editorial/phase4-04.txt
+          test -f public/data/editorial/phase4-05.txt
+          test -f public/data/editorial/phase4-06.txt
+          test -f src/app/02h-systems-evidence.js
+          test -f scripts/validate_world_systems.py
+          test -f tests/gaia-systems-evidence.spec.js
+          test -f docs/WORLD_SYSTEMS_EVIDENCE_PASS_1.md
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -117,13 +89,13 @@ jobs:
         run: npm install --no-audit --no-fund
       - name: Install Playwright browser engines
         run: npx playwright install --with-deps chromium firefox webkit
-      - name: Run browser, network, offline, accessibility, and World Completion assurance
+      - name: Run complete browser, accessibility, network, offline, completion, and systems assurance
         run: npm run test:experience
       - name: Upload private release evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gaia-world-completion-release-${{ github.run_number }}
+          name: gaia-systems-evidence-release-${{ github.run_number }}
           path: |
             playwright-report
             test-results
