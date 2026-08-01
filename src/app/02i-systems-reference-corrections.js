@@ -84,8 +84,11 @@
 
   gaiaSystemIncidents.forEach(record=>{
     record.speciesIds=record.species.map(slug=>findBySlug(slug)?.id).filter(Boolean);
+    const archiveIndex=incidents.findIndex(row=>row.id===record.id);
+    if(archiveIndex>=0)incidents[archiveIndex]=record;
   });
 
+  window.GAIA_INCIDENTS=incidents;
   window.GAIA_WORLD_SYSTEMS=gaiaWorldSystems;
   window.GAIA_EVIDENCE_RECORDS=gaiaEvidenceRecords;
   window.GAIA_LINEAGE_PILOTS=gaiaLineagePilots;
