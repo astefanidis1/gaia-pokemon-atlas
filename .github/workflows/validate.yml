@@ -146,14 +146,15 @@ jobs:
       - name: Install focused browser engines
         run: npx playwright install --with-deps chromium webkit
       - name: Run focused Systems behavior, layout, and accessibility smoke tests
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-report/results.json
         run: |
           npx playwright test \
             tests/gaia-systems-evidence.spec.js \
             tests/gaia-systems-evidence-layout.spec.js \
             tests/gaia-systems-evidence-accessibility.spec.js \
             --project=desktop-chromium \
-            --project=mobile-webkit \
-            --reporter=line,json
+            --project=mobile-webkit
       - name: Upload compact Systems smoke summary
         if: always()
         uses: actions/upload-artifact@v4
@@ -162,15 +163,27 @@ jobs:
           path: |
             playwright-report/results.json
             test-results/**/error-context.md
-            test-results/**/*.png
-            test-results/**/*.zip
           if-no-files-found: warn
           retention-days: 14
 
   experience:
     needs: systems-smoke
     runs-on: ubuntu-latest
-    timeout-minutes: 50
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: desktop-chromium
+            engine: chromium
+          - project: desktop-firefox
+            engine: firefox
+          - project: mobile-chromium
+            engine: chromium
+          - project: mobile-webkit
+            engine: webkit
+          - project: reduced-motion-chromium
+            engine: chromium
     steps:
       - uses: actions/checkout@v4
         with:
@@ -185,30 +198,30 @@ jobs:
           node-version: 24
       - name: Install pinned browser-assurance dependencies
         run: npm install --no-audit --no-fund
-      - name: Install Playwright browser engines
-        run: npx playwright install --with-deps chromium firefox webkit
-      - name: Run complete browser, accessibility, network, offline, completion, and systems assurance
-        run: npm run test:experience
-      - name: Upload compact browser summary
+      - name: Install required browser engine
+        run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Run ${{ matrix.project }} assurance
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-report/results.json
+        run: npx playwright test --project=${{ matrix.project }}
+      - name: Upload compact ${{ matrix.project }} summary
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gaia-browser-summary-${{ github.run_number }}
+          name: gaia-browser-summary-${{ matrix.project }}-${{ github.run_number }}
           path: |
             playwright-report/results.json
             test-results/**/error-context.md
-            test-results/**/*.png
-            test-results/**/*.zip
           if-no-files-found: warn
           retention-days: 14
-      - name: Upload full browser reports and review captures
+      - name: Upload ${{ matrix.project }} visual review evidence
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: gaia-systems-evidence-review-${{ github.run_number }}
+          name: gaia-browser-evidence-${{ matrix.project }}-${{ github.run_number }}
           path: |
-            playwright-report/html
-            test-results
+            test-results/**/visual-review/*.png
+            test-results/**/test-failed-*.png
             public/assets/gaia-social-preview.png
           if-no-files-found: warn
           retention-days: 14
