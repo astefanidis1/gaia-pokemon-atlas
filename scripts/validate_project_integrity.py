@@ -94,7 +94,7 @@ require(experience_doc.startswith("# GAIA Atlas — Experience Assurance Phase")
 require("Playwright" in experience_doc and "axe-core" in experience_doc, "Experience assurance documentation is incomplete")
 rc_doc = texts.get(DOCS / "RELEASE_CANDIDATE_1.md", "")
 require(rc_doc.startswith("# GAIA Atlas — Release Candidate 1"), "RC1 documentation is missing")
-for marker in ("Priority World Brief", "performance-budgets.json", "Civilian Archive Mode", "release candidate, not a release"):
+for marker in ("Priority World Brief", "performance-budgets.json", "Civilian Archive Mode", "private development build, not a promoted release"):
     require(marker.lower() in rc_doc.lower(), f"RC1 documentation is missing: {marker}")
 
 loader = read_utf8(PUBLIC / "app.js")
@@ -103,12 +103,19 @@ service_worker = read_utf8(PUBLIC / "sw.js")
 for label, content in (("public/app.js", loader), ("scripts/build_public.py", build), ("public/sw.js", service_worker)):
     for module in ("02c-continuity.js", "02d-assets.js", "02e-assurance.js", "02f-release-candidate.js", "02g-world-completion.js"):
         require(module in content, f"{label} does not include {module}")
-for asset in ("continuity.css", "assets.css", "assurance.css", "release-candidate.css", "world-completion.css", "offline.html", "manifest.webmanifest", "data/editorial/phase4.txt"):
+for asset in (
+    "continuity.css", "assets.css", "assurance.css", "release-candidate.css", "world-completion.css",
+    "offline.html", "manifest.webmanifest", "data/editorial/phase4.txt", "data/editorial/phase4-02.txt"
+):
     require(asset in service_worker, f"Service worker does not cache {asset}")
-require("gaia-shell-v2.1" in service_worker, "Service-worker cache version was not advanced for World Completion Pass I")
+require("gaia-shell-v2.2" in service_worker, "Service-worker cache version was not advanced for the split World Completion payload")
 for path in (PUBLIC / "continuity.css", PUBLIC / "assets.css", PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css"):
     require(path.is_file(), f"Missing {path.relative_to(ROOT)}")
-require((PUBLIC / "data" / "editorial" / "phase4.txt").is_file(), "Missing World Completion phase 4 payload")
+for path in (
+    PUBLIC / "data" / "editorial" / "phase4.txt",
+    PUBLIC / "data" / "editorial" / "phase4-02.txt",
+):
+    require(path.is_file(), f"Missing World Completion payload chunk: {path.relative_to(ROOT)}")
 require((ROOT / "scripts" / "validate_phase4.py").is_file(), "Missing World Completion phase 4 validator")
 
 package_path = ROOT / "package.json"
@@ -126,6 +133,7 @@ if package_path.is_file():
     require(scripts.get("test:experience") == "playwright test", "package.json test:experience script is incorrect")
     require("prepare_release_candidate.py" in scripts.get("prepare:rc", ""), "package.json prepare:rc script is incorrect")
     require("validate_release_candidate.py" in scripts.get("validate:rc", ""), "package.json validate:rc script is incorrect")
+    require("validate_phase4.py" in scripts.get("validate:world", ""), "package.json validate:world script is incorrect")
 
 playwright = read_utf8(ROOT / "playwright.config.js") if (ROOT / "playwright.config.js").is_file() else ""
 experience_tests = read_utf8(ROOT / "tests" / "gaia-experience.spec.js") if (ROOT / "tests" / "gaia-experience.spec.js").is_file() else ""
@@ -156,5 +164,5 @@ if errors:
 
 print(
     f"GAIA project integrity passed: {len(markdown_files)} Markdown files, continuity, seven-profile asset policy, "
-    "accessibility assurance, RC1 release gates, and World Completion Pass I records, regions, observations, archives, Live, and Index wiring verified."
+    "accessibility assurance, RC1 release gates, and split World Completion records, regions, observations, archives, Live, and Index wiring verified."
 )
