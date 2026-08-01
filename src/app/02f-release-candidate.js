@@ -114,9 +114,10 @@
   async function rcRegisterServiceWorker(){
     if(!('serviceWorker' in navigator)) return;
     try{
-      const registration=await navigator.serviceWorker.register('sw.js',{scope:'./'});
+      const registration=await navigator.serviceWorker.register('sw-world-completion.js',{scope:'./'});
       window.GAIA_SERVICE_WORKER=registration;
       document.documentElement.dataset.offlineShell='registered';
+      document.documentElement.dataset.offlineWorker='world-completion';
     }catch(error){
       document.documentElement.dataset.offlineShell='unavailable';
       console.warn('GAIA offline archive registration unavailable.',error);
