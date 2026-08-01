@@ -84,6 +84,7 @@ jobs:
           test -f public/data/editorial/phase3-01.txt
           test -f public/data/editorial/phase3-02.txt
           test -f public/data/editorial/phase4.txt
+          test -f public/data/editorial/phase4-02.txt
           test -f src/app/02b-ecology-a.js
           test -f src/app/02b-ecology-b.js
           test -f src/app/02b-ecology-c.js
