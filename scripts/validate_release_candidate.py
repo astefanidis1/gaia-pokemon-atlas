@@ -67,8 +67,10 @@ for path, marker in (
     (PUBLIC / "404.html", "COORDINATE UNRESOLVED"),
     (PUBLIC / "release-candidate.css", ".rc-priority-brief"),
     (PUBLIC / "world-completion.css", ".world-state-feed"),
+    (PUBLIC / "systems-evidence.css", ".world-systems-grid"),
     (SOURCE / "02f-release-candidate.js", "PRIORITY WORLD BRIEF"),
     (SOURCE / "02g-world-completion.js", "CIVILIAN SUMMARY RECORD"),
+    (SOURCE / "02h-systems-evidence.js", "GAIA EVIDENCE ARCHIVE"),
 ):
     require(path.is_file(), f"Missing release file: {path.relative_to(ROOT)}")
     if path.is_file():
@@ -85,7 +87,7 @@ require(text(phase4_paths[3]).startswith("H4sI"), "Second World Completion seman
 critical_paths = [
     PUBLIC / "index.html", PUBLIC / "app.js", PUBLIC / "styles.css", PUBLIC / "refinement.css",
     PUBLIC / "density.css", PUBLIC / "ecology.css", PUBLIC / "continuity.css", PUBLIC / "assets.css",
-    PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css",
+    PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css", PUBLIC / "systems-evidence.css",
     PUBLIC / "data" / "canon.js", *sorted(SOURCE.glob("*.js")),
 ]
 critical_kb = kb(critical_paths)
@@ -100,15 +102,23 @@ if text_assets:
     largest = max(text_assets, key=lambda path: path.stat().st_size)
     require(largest.stat().st_size / 1024 <= BUDGETS["largest_text_asset_max_kb"], f"Largest text asset exceeds budget: {largest.relative_to(ROOT)}")
 
-sw = text(PUBLIC / "sw.js")
-for marker in ("offline.html", "gaia-social-preview.png", "02f-release-candidate.js", "02g-world-completion.js", "gaia-shell-v2.3"):
-    require(marker in sw, f"Service worker is missing: {marker}")
+worker_path = PUBLIC / "sw-world-completion.js"
+require(worker_path.is_file(), "Missing dedicated World Completion service worker")
+worker = text(worker_path) if worker_path.is_file() else ""
+for marker in (
+    "offline.html", "gaia-social-preview.png", "02f-release-candidate.js", "02g-world-completion.js",
+    "02h-systems-evidence.js", "systems-evidence.css", "gaia-world-shell-v2"
+):
+    require(marker in worker, f"World service worker is missing: {marker}")
 for path in phase4_paths:
-    require(f"data/editorial/{path.name}" in sw, f"Service worker does not cache {path.name}")
-match = re.search(r"const SHELL\s*=\s*\[(.*?)\];", sw, re.S)
+    require(f"data/editorial/{path.name}" in worker, f"World service worker does not cache {path.name}")
+match = re.search(r"const SHELL\s*=\s*\[(.*?)\];", worker, re.S)
 entries = re.findall(r"['\"]([^'\"]+)['\"]", match.group(1)) if match else []
-require(bool(entries), "Service-worker shell could not be parsed")
-require(len(entries) <= BUDGETS["service_worker_shell_entries_max"], f"Service-worker shell has {len(entries)} entries, over budget")
+require(bool(entries), "World service-worker shell could not be parsed")
+require(len(entries) <= BUDGETS["service_worker_shell_entries_max"], f"World service-worker shell has {len(entries)} entries, over budget")
+
+release_module = text(SOURCE / "02f-release-candidate.js")
+require("serviceWorker.register('sw-world-completion.js'" in release_module, "Runtime does not register the dedicated world worker")
 
 if errors:
     print("\n".join(f"ERROR: {error}" for error in errors))
@@ -116,5 +126,5 @@ if errors:
 
 print(
     f"GAIA private artifact passed: critical shell {critical_kb:.1f} KB, data {data_kb:.1f} KB, "
-    f"{len(entries)} offline entries, six transport files, two signed semantic payloads, metadata, and generated assets verified."
+    f"{len(entries)} offline entries, signed World Completion transport, Systems and Evidence module, metadata, and generated assets verified."
 )
