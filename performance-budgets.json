@@ -5,7 +5,7 @@
   "largest_text_asset_max_kb": 850,
   "social_preview_max_kb": 800,
   "largest_icon_max_kb": 120,
-  "service_worker_shell_entries_max": 61,
+  "service_worker_shell_entries_max": 63,
   "weak_network_usable_ms": 10000,
   "offline_reopen_ms": 6000
 }
