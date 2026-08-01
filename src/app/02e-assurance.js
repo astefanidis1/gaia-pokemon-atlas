@@ -44,6 +44,11 @@
       search.setAttribute('aria-label','Search GAIA species, locations, habitats, and records');
     }
 
+    const indexCategory=$('#indexCategory');
+    if(indexCategory) indexCategory.setAttribute('aria-label','Filter GAIA Index by classification');
+    const indexRealm=$('#indexRealm');
+    if(indexRealm) indexRealm.setAttribute('aria-label','Filter GAIA Index by realm');
+
     const setInteractiveState=element=>{
       if(!element) return;
       const active=element.getAttribute('aria-hidden')==='false';
