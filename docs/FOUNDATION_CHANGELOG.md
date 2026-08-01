@@ -1,5 +1,44 @@
 # GAIA Atlas Foundation Changelog
 
+## World Completion Pass I — August 1, 2026
+
+### Added
+
+- Separately checksummed editorial layer `2026-08-01.1`, chained to exact ecology version `2026-07-28.2`
+- Central Andes Cloud-Forest Corridor field window with 18 presences, 5 explicit limits, 4 habitats, 3 corridors, and complete Southern Hemisphere seasonality
+- East African Rift Highland Mosaic field window with 18 presences, 5 explicit limits, 4 habitats, 3 corridors, and long-rain / dry-season / short-rain interpretation
+- Eight new causal ecological relationships across Andean and Rift highland systems
+- Final Pass I totals of 6 regional windows, 24 habitats, 18 corridors, and 24 relationships without changing any exact population
+- Complete Civilian Summary Record publication tier for every species without a full GAIA dossier
+- Publication-tier labels distinguishing Full GAIA Dossiers from complete civilian summaries
+- Expanded GAIA Live world state covering five routes, six regional conditions, active ecology systems, and rotating causal relationships
+- Canonical-location observation modal with current route zones, automatic date, update/remove behavior, and browser-local storage
+- Observation blocking for sealed, non-Earth, archived, contact-lost, and fully withheld records
+- Field Log observation cards containing canonical location, location type, and observation date
+- In-universe archive-document reader with code, classification, abstract, cross-reference facts, previous/next navigation, dossier return, and shareable links
+- GAIA Index filters for danger, mobility, and publication depth plus population, danger, and name sorting
+- World Completion browser scenarios for summary records, world-state Live, observations, archive reading, Index behavior, and new-region search
+- Restrained ZANDROS music credit inside Alex’s founder biography with a protected external link
+
+### Corrected
+
+- Removed the public sentence saying that a complete flagship dossier had not yet been published
+- Reframed shallow records as intentional publication products rather than incomplete versions of full dossiers
+- Rebuilt Observed from a species-level checkbox into a canonical-location personal record
+- Expanded GAIA Live beyond the misleading implication that only five tracked entities constituted the current world state
+- Shortened the mobile search placeholder to remain readable on small screens
+- Advanced the readable application architecture to thirteen ordered modules
+- Advanced the offline shell to include World Completion code, styling, and editorial data
+- Updated deterministic social-card metrics from four to six regional ecosystems
+- Removed stale static version labels and obsolete ecology-time footer replacement logic
+
+### Validation boundary
+
+- Phase 4 validation protects the new payload checksum, version chain, counts, coordinates, species references, full January–December seasonality, and relationships
+- Existing signed population canon, permanent forms, routes, dossiers, incidents, and Phase 3 ecology remain unchanged
+- Future deployment remains gated on the complete structural, browser, accessibility, weak-network, offline, and World Completion suite
+- Repository visibility is separate from launch status: the branch remains unmerged, undeployed, and unpromoted
+
 ## Release Candidate 1 — July 29, 2026
 
 ### Added
