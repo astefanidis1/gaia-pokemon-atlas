@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate GAIA documentation, continuity, assets, assurance, and RC1 wiring."""
+"""Validate GAIA documentation, continuity, assets, assurance, RC1, and World Completion wiring."""
 from __future__ import annotations
 
 import json
@@ -39,6 +39,11 @@ require(phase3.startswith("# GAIA Atlas — World Ecology Phase 3"), "Phase 3 do
 for marker in ("27 full dossiers", "16 habitat systems", "12 ecological corridors", "16 ecological relationships"):
     require(marker in phase3, f"Phase 3 documentation is missing: {marker}")
 
+completion_doc = texts.get(DOCS / "WORLD_COMPLETION_PASS_1.md", "")
+require(completion_doc.startswith("# GAIA Atlas — World Completion Pass I"), "World Completion Pass I documentation is missing")
+for marker in ("Civilian Summary Record", "Central Andes", "East African Rift", "canonical location", "archive reader", "24 habitat systems", "18 ecological corridors", "24 ecological relationships"):
+    require(marker.lower() in completion_doc.lower(), f"World Completion documentation is missing: {marker}")
+
 polish = texts.get(DOCS / "POLISH_PASS.md", "")
 require("public/code/" not in polish, "POLISH_PASS.md still references the obsolete public/code payload")
 require("src/app/*.js" in polish, "POLISH_PASS.md does not describe the readable source-module architecture")
@@ -48,6 +53,7 @@ require("http://localhost:8000/public/" in readme, "README local-run URL must se
 require("Universal search" in readme, "README does not document universal atlas search")
 require("Playwright" in readme, "README does not document browser-assurance tooling")
 require("visual asset" in readme.lower(), "README does not document the visual asset policy")
+require("World Completion Pass I" in readme, "README does not document the current completion layer")
 
 continuity = read_utf8(SOURCE / "02c-continuity.js") if (SOURCE / "02c-continuity.js").exists() else ""
 require(bool(continuity), "Missing src/app/02c-continuity.js")
@@ -67,8 +73,18 @@ for marker in ("GAIA_ASSURANCE_VERSION", "role','combobox", "aria-hidden", "iner
 
 release = read_utf8(SOURCE / "02f-release-candidate.js") if (SOURCE / "02f-release-candidate.js").exists() else ""
 require(bool(release), "Missing src/app/02f-release-candidate.js")
-for marker in ("GAIA_RC_VERSION", "PRIORITY WORLD BRIEF", "rcStorageKey", "OFFLINE ARCHIVE", "gaiaRelease='rc1'"):
+for marker in ("GAIA_RC_VERSION", "PRIORITY WORLD BRIEF", "rcStorageKey", "OFFLINE ARCHIVE", "gaiaRelease='rc1'", "https://zandros.fanlink.tv/ZANDROS"):
     require(marker in release, f"Release-candidate module is missing marker: {marker}")
+
+completion = read_utf8(SOURCE / "02g-world-completion.js") if (SOURCE / "02g-world-completion.js").exists() else ""
+require(bool(completion), "Missing src/app/02g-world-completion.js")
+for marker in (
+    "GAIA_WORLD_COMPLETION_VERSION", "Civilian Summary Record", "gaia-field-observations-v2",
+    "canonical public location", "Current world state", "regionalConditionGrid", "archiveReaderModal",
+    "indexDanger", "indexMobility", "indexDepth", "indexSort"
+):
+    require(marker.lower() in completion.lower(), f"World Completion module is missing marker: {marker}")
+require("not yet published" not in completion.lower(), "World Completion module reintroduces unfinished-content language")
 
 asset_doc = texts.get(DOCS / "VISUAL_ASSET_STRATEGY.md", "")
 require(asset_doc.startswith("# GAIA Atlas — Visual Asset Strategy"), "Visual asset strategy documentation is missing")
@@ -85,13 +101,15 @@ loader = read_utf8(PUBLIC / "app.js")
 build = read_utf8(ROOT / "scripts" / "build_public.py")
 service_worker = read_utf8(PUBLIC / "sw.js")
 for label, content in (("public/app.js", loader), ("scripts/build_public.py", build), ("public/sw.js", service_worker)):
-    for module in ("02c-continuity.js", "02d-assets.js", "02e-assurance.js", "02f-release-candidate.js"):
+    for module in ("02c-continuity.js", "02d-assets.js", "02e-assurance.js", "02f-release-candidate.js", "02g-world-completion.js"):
         require(module in content, f"{label} does not include {module}")
-for asset in ("continuity.css", "assets.css", "assurance.css", "release-candidate.css", "offline.html", "manifest.webmanifest"):
+for asset in ("continuity.css", "assets.css", "assurance.css", "release-candidate.css", "world-completion.css", "offline.html", "manifest.webmanifest", "data/editorial/phase4.txt"):
     require(asset in service_worker, f"Service worker does not cache {asset}")
-require("gaia-shell-v2.0" in service_worker, "Service-worker cache version was not advanced for RC1")
-for path in (PUBLIC / "continuity.css", PUBLIC / "assets.css", PUBLIC / "assurance.css", PUBLIC / "release-candidate.css"):
+require("gaia-shell-v2.1" in service_worker, "Service-worker cache version was not advanced for World Completion Pass I")
+for path in (PUBLIC / "continuity.css", PUBLIC / "assets.css", PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css"):
     require(path.is_file(), f"Missing {path.relative_to(ROOT)}")
+require((PUBLIC / "data" / "editorial" / "phase4.txt").is_file(), "Missing World Completion phase 4 payload")
+require((ROOT / "scripts" / "validate_phase4.py").is_file(), "Missing World Completion phase 4 validator")
 
 package_path = ROOT / "package.json"
 require(package_path.is_file(), "Missing package.json for experience assurance")
@@ -113,17 +131,24 @@ playwright = read_utf8(ROOT / "playwright.config.js") if (ROOT / "playwright.con
 experience_tests = read_utf8(ROOT / "tests" / "gaia-experience.spec.js") if (ROOT / "tests" / "gaia-experience.spec.js").is_file() else ""
 layout_tests = read_utf8(ROOT / "tests" / "gaia-layout.spec.js") if (ROOT / "tests" / "gaia-layout.spec.js").is_file() else ""
 release_tests = read_utf8(ROOT / "tests" / "gaia-release-candidate.spec.js") if (ROOT / "tests" / "gaia-release-candidate.spec.js").is_file() else ""
+completion_tests = read_utf8(ROOT / "tests" / "gaia-world-completion.spec.js") if (ROOT / "tests" / "gaia-world-completion.spec.js").is_file() else ""
 for project in ("desktop-chromium", "desktop-firefox", "mobile-chromium", "mobile-webkit", "reduced-motion-chromium"):
     require(project in playwright, f"Playwright matrix is missing project: {project}")
 for marker in ("AxeBuilder", "gaia-authored-fallback", "#species=lugia", "#region=new-england", "expectNoHorizontalOverflow", "gaia-reduced-motion", "emulateMedia"):
     require(marker in experience_tests, f"Experience tests are missing scenario marker: {marker}")
 for marker in ("desktop command panels expose their complete primary actions", "mobile globe uses one compact terminal and fixed navigation", ".region-launch", ".ecology-layer-panel", "#surveillanceTicker"):
     require(marker in layout_tests, f"Responsive layout tests are missing scenario marker: {marker}")
-for marker in ("PRIORITY WORLD BRIEF", "gaia-release", "weak network", "fully offline", "performance-budgets.json"):
+for marker in ("PRIORITY WORLD BRIEF", "gaia-release", "weak network", "fully offline", "performance-budgets.json", "Listen to ZANDROS"):
     require(marker in release_tests, f"RC1 tests are missing scenario marker: {marker}")
+for marker in ("CIVILIAN SUMMARY RECORD", "regionalConditionGrid", "gaia-field-observations-v2", "archiveReaderModal", "indexDepth", "Central Andes"):
+    require(marker in completion_tests, f"World Completion tests are missing scenario marker: {marker}")
 
-for path in (ROOT / "scripts" / "prepare_release_candidate.py", ROOT / "scripts" / "generate_release_assets.py", ROOT / "scripts" / "validate_release_candidate.py", ROOT / "performance-budgets.json"):
-    require(path.is_file(), f"Missing RC1 infrastructure: {path.relative_to(ROOT)}")
+for path in (
+    ROOT / "scripts" / "prepare_release_candidate.py", ROOT / "scripts" / "generate_release_assets.py",
+    ROOT / "scripts" / "validate_release_candidate.py", ROOT / "scripts" / "validate_phase4.py",
+    ROOT / "performance-budgets.json"
+):
+    require(path.is_file(), f"Missing release/completion infrastructure: {path.relative_to(ROOT)}")
 
 if errors:
     print("\n".join(f"ERROR: {error}" for error in errors))
@@ -131,5 +156,5 @@ if errors:
 
 print(
     f"GAIA project integrity passed: {len(markdown_files)} Markdown files, continuity, seven-profile asset policy, "
-    "accessibility assurance, responsive collision guards, RC1 first-visit/navigation wiring, generated assets, and release gates verified."
+    "accessibility assurance, RC1 release gates, and World Completion Pass I records, regions, observations, archives, Live, and Index wiring verified."
 )
