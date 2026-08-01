@@ -1,0 +1,20 @@
+{
+  "name": "gaia-pokemon-atlas",
+  "version": "0.4.0-systems.1",
+  "private": true,
+  "description": "Private release, World Completion, and World Systems assurance tooling for GAIA Atlas.",
+  "scripts": {
+    "prepare:rc": "python scripts/prepare_release_candidate.py",
+    "validate:rc": "python scripts/prepare_release_candidate.py --check && python scripts/validate_release_candidate.py",
+    "validate:world": "python scripts/validate_phase4.py && python scripts/validate_world_systems.py && python scripts/validate_project_integrity.py && python scripts/validate_release_candidate.py",
+    "test:experience": "playwright test",
+    "test:experience:chromium": "playwright test --project=desktop-chromium",
+    "test:release": "playwright test tests/gaia-release-candidate.spec.js --project=desktop-chromium",
+    "test:world": "playwright test tests/gaia-world-completion.spec.js --project=desktop-chromium",
+    "test:systems": "playwright test tests/gaia-systems-evidence.spec.js --project=desktop-chromium"
+  },
+  "devDependencies": {
+    "@axe-core/playwright": "4.10.2",
+    "@playwright/test": "1.49.1"
+  }
+}

@@ -1,0 +1,295 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="description" content="GAIA Atlas — a fan-made global Pokémon surveillance and natural-history platform." />
+  <meta name="theme-color" content="#071019" />
+  <meta property="og:title" content="GAIA Atlas" />
+  <meta property="og:description" content="The world is inhabited. Explore verified populations, live migration, ecological records, and anomalous contact points." />
+  <meta property="og:type" content="website" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="GAIA Atlas — The world is inhabited." />
+  <meta name="twitter:card" content="summary_large_image" />
+  <title>GAIA Atlas</title>
+  <link rel="icon" href="assets/gaia-seal.svg" type="image/svg+xml" />
+  <link rel="preconnect" href="https://tiles.openfreemap.org" crossorigin />
+  <link rel="stylesheet" href="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.css" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <a class="skip-link" href="#mainContent">Skip to GAIA Atlas content</a>
+  <div id="loading" class="loading" aria-live="polite">
+    <img src="assets/gaia-seal.svg" alt="" />
+    <strong>Establishing GAIA census link</strong>
+    <span id="loadingStatus">Reconciling 161 living-species records…</span>
+    <i class="loading-progress" aria-hidden="true"><b></b></i>
+  </div>
+
+  <div id="app" hidden>
+    <header class="topbar">
+      <button class="brand" id="homeButton" aria-label="Return to global overview">
+        <img src="assets/gaia-seal.svg" alt="GAIA seal" />
+        <span><b>GAIA</b><small>Geospatial Anomaly Intelligence Agency</small></span>
+      </button>
+
+      <div class="search-shell">
+        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.5-4.5m2.5-5.5a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
+        <input id="searchInput" type="search" placeholder="Search GAIA records…" autocomplete="off" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list" />
+        <kbd>/</kbd>
+        <div id="searchResults" class="search-results" role="listbox"></div>
+      </div>
+
+      <div class="header-status">
+        <span class="signal"><i></i> NETWORK ACTIVE</span>
+        <button id="aboutButton" class="icon-button" aria-label="About GAIA" aria-expanded="false">i</button>
+      </div>
+    </header>
+
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <button class="nav-button active" data-view="globe" aria-current="page"><span>◉</span>Globe</button>
+      <button class="nav-button" data-view="live"><span>⌁</span>GAIA Live <i id="liveCount">11</i></button>
+      <button class="nav-button" data-view="index"><span>☷</span>Index <i>161</i></button>
+      <button class="nav-button" data-view="records"><span>▤</span>Records</button>
+      <button class="nav-button" data-view="fieldlog"><span>◇</span>Field Log <i id="fieldCount">0</i></button>
+    </nav>
+
+    <main id="mainContent" tabindex="-1">
+      <section id="view-globe" class="view active" aria-label="Global surveillance map">
+        <div id="map" class="map"></div>
+        <div class="map-vignette" aria-hidden="true"></div>
+        <div id="mapFallback" class="map-fallback" hidden>
+          <img src="assets/gaia-seal.svg" alt="" />
+          <h2>Geospatial link unavailable</h2>
+          <p>The cached Index, Records, regional ecology, and Field Log remain available while the live basemap reconnects.</p>
+        </div>
+
+        <aside class="atlas-panel glass">
+          <div class="panel-kicker">CIVILIAN ACCESS TERMINAL</div>
+          <h1>The world is inhabited.</h1>
+          <p>Explore verified populations, tracked movement, protected ranges, and anomalous contact points.</p>
+
+          <div class="world-metrics">
+            <div><strong id="earthMetric">145</strong><span>Earth records</span></div>
+            <div><strong id="movingMetric">5</strong><span>Live tracks</span></div>
+            <div><strong id="singularMetric">0</strong><span>Singular beings</span></div>
+          </div>
+
+          <label class="control-label" for="realmFilter">Realm</label>
+          <select id="realmFilter">
+            <option value="Earth">Earth</option>
+            <option value="Solar System">Solar System</option>
+            <option value="Deep Space">Deep Space</option>
+            <option value="Dimension">Dimensional</option>
+          </select>
+
+          <label class="control-label" for="categoryFilter">Classification</label>
+          <select id="categoryFilter"><option value="all">All classifications</option></select>
+
+          <label class="control-label" for="accessFilter">Public access</label>
+          <select id="accessFilter">
+            <option value="all">All access levels</option>
+            <option>Public</option><option>Advisory</option><option>Restricted</option><option>Sealed</option>
+          </select>
+
+          <label class="switch-row"><span><b>Tracked entities only</b><small>Show active canonical positions</small></span><input id="trackedOnly" type="checkbox" /><i></i></label>
+          <label class="switch-row"><span><b>Range influence</b><small>Display habitat radius on selection</small></span><input id="rangeToggle" type="checkbox" checked /><i></i></label>
+
+          <div id="mapStatus" class="map-status"><i></i><span>Preparing surveillance layer…</span></div>
+
+          <div class="map-legend" aria-label="Map symbol legend">
+            <span><i class="legend-live"></i>Live canonical track</span>
+            <span><i class="legend-rare"></i>Rare or singular record</span>
+            <span><i class="legend-restricted"></i>Restricted precision</span>
+            <button id="statusKeyButton" class="legend-key" type="button">How to read GAIA data</button>
+          </div>
+
+          <button id="featuredRegionButton" class="region-launch" type="button">
+            <span><b>Regional field window</b><small>Six completed ecological systems</small></span>
+            <i>Explore →</i>
+          </button>
+        </aside>
+
+        <div class="realm-summary glass" id="realmSummary">
+          <span class="panel-kicker">EARTH SURVEILLANCE</span>
+          <strong id="visibleCount">145 records visible</strong>
+          <small>Rare individuals appear as tracked markers. Distributed species resolve progressively as you zoom.</small>
+        </div>
+
+        <div class="map-controls glass">
+          <button id="projectionButton" title="Toggle globe projection">◉</button>
+          <button id="fitButton" title="Fit visible records">⌖</button>
+          <button id="resetButton" title="Reset map">⌂</button>
+        </div>
+        <div class="map-help">Drag to rotate · scroll to zoom · select a marker to open its GAIA record</div>
+        <div id="surveillanceTicker" class="surveillance-ticker glass" aria-label="Current GAIA surveillance activity"></div>
+      </section>
+
+      <section id="view-live" class="view page-view" aria-label="GAIA Live">
+        <header class="page-heading">
+          <div><span class="eyebrow">GAIA LIVE</span><h2>Current world state</h2><p>Canonical movement, seasonal regional conditions, public advisories, and active ecological systems synchronized to UTC.</p></div>
+          <div class="timestamp"><span>UTC WORLD STATE</span><strong id="worldDate"></strong></div>
+        </header>
+        <div id="liveHero" class="live-hero"></div>
+        <div id="liveGrid" class="live-grid"></div>
+      </section>
+
+      <section id="view-index" class="view page-view" aria-label="GAIA Index">
+        <header class="page-heading compact">
+          <div><span class="eyebrow">GAIA INDEX</span><h2>Verified living species</h2><p>Exact present-day population records from the GAIA Global Census.</p></div>
+          <div class="index-controls">
+            <select id="indexCategory"><option value="all">All classifications</option></select>
+            <select id="indexRealm"><option value="all">All realms</option><option>Earth</option><option>Solar System</option><option>Deep Space</option><option>Dimension</option></select>
+          </div>
+        </header>
+        <div class="table-shell">
+          <table>
+            <thead><tr><th>#</th><th>Species</th><th>Classification</th><th>Primary range / position</th><th>Verified population</th><th>Access</th></tr></thead>
+            <tbody id="indexBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <section id="view-records" class="view page-view" aria-label="GAIA Records">
+        <header class="page-heading records-heading">
+          <div><span class="eyebrow">GAIA RECORDS</span><h2>Priority dossiers and incident archive</h2><p>Deeper ecological, historical, governmental, and anomalous records.</p></div>
+          <div class="record-filters" role="group" aria-label="Filter GAIA Records">
+            <button class="active" data-record-filter="all">All records</button>
+            <button data-record-filter="full">Full dossiers</button>
+            <button data-record-filter="live">Active tracks</button>
+            <button data-record-filter="restricted">Restricted</button>
+          </div>
+        </header>
+        <div id="recordSpotlight" class="record-spotlight" aria-label="Featured full dossiers"></div>
+        <div id="recordGrid" class="record-grid"></div>
+        <div class="incident-heading"><span class="eyebrow">SELECTED INCIDENT ARCHIVE</span><h3>Cross-referenced events</h3></div>
+        <div id="incidentGrid" class="incident-grid"></div>
+        <div class="regional-heading"><span class="eyebrow">REGIONAL FIELD WINDOWS</span><h3>Ordinary life, mapped seriously</h3><p>Curated ecology at human scale. Regions are selected manually; GAIA never requests your location.</p></div>
+        <div id="regionGrid" class="region-grid"></div>
+      </section>
+
+      <section id="view-fieldlog" class="view page-view" aria-label="Personal Field Log">
+        <header class="page-heading">
+          <div><span class="eyebrow">GAIA FIELD LOG</span><h2>Your exploration record</h2><p>Stored only in this browser. Personal activity never alters GAIA canon.</p></div>
+          <button id="clearFieldLog" class="secondary-button">Reset local log</button>
+        </header>
+        <div class="field-stats">
+          <div><span>Discovered</span><strong id="discoveredTotal">0</strong><small>Dossiers opened</small></div>
+          <div><span>Observed</span><strong id="observedTotal">0</strong><small>Canonical locations</small></div>
+          <div><span>Favorites</span><strong id="favoriteTotal">0</strong><small>Saved records</small></div>
+          <div><span>Completion</span><strong id="completionTotal">0%</strong><small>Of current index</small></div>
+        </div>
+        <div class="field-tabs" role="tablist">
+          <button class="active" data-field="discovered">Discovered</button>
+          <button data-field="observed">Observed</button>
+          <button data-field="favorites">Favorites</button>
+          <button data-field="undiscovered">Undiscovered</button>
+        </div>
+        <div id="fieldGrid" class="field-grid"></div>
+      </section>
+    </main>
+
+    <aside id="dossier" class="dossier" aria-live="polite" aria-label="Species dossier" aria-hidden="true" tabindex="-1">
+      <button id="closeDossier" class="dossier-close" aria-label="Close dossier">×</button>
+      <div class="dossier-visual">
+        <div id="dossierHalo" class="dossier-halo"></div>
+        <img id="dossierImage" alt="" />
+        <div class="dossier-stamp" id="dossierStamp">PUBLIC</div>
+      </div>
+      <div class="dossier-body">
+        <span id="dossierEyebrow" class="eyebrow"></span>
+        <h2 id="dossierName"></h2>
+        <p id="dossierSummary" class="dossier-summary"></p>
+
+        <div class="dossier-actions">
+          <button id="favoriteButton">☆ Favorite</button>
+          <button id="observedButton">◉ Record observation</button>
+          <button id="shareButton">↗ Copy link</button>
+        </div>
+
+        <div class="population-callout">
+          <span>VERIFIED LIVING POPULATION</span>
+          <strong id="dossierPopulation"></strong>
+          <small id="dossierCensus"></small>
+          <button id="censusMethodButton" class="method-link" type="button">How GAIA counts living organisms</button>
+        </div>
+
+        <dl class="dossier-facts">
+          <div><dt>Current / primary location</dt><dd id="dossierLocation"></dd></div>
+          <div><dt>Location status</dt><dd id="dossierLocationType"></dd></div>
+          <div><dt>Knowledge status</dt><dd id="dossierKnowledge"></dd></div>
+          <div><dt>Public access</dt><dd id="dossierAccess"></dd></div>
+          <div><dt>Conservation</dt><dd id="dossierConservation"></dd></div>
+          <div><dt>Danger</dt><dd id="dossierDanger"></dd></div>
+          <div><dt>Habitat</dt><dd id="dossierHabitat"></dd></div>
+          <div><dt>Origin</dt><dd id="dossierOrigin"></dd></div>
+        </dl>
+
+        <div id="liveBlock" class="live-block" hidden></div>
+        <div id="dossierSections" class="dossier-sections"></div>
+        <div id="dossierEditorial" class="dossier-editorial"></div>
+        <div id="relatedIncidents" class="related-incidents"></div>
+      </div>
+    </aside>
+
+    <div id="aboutModal" class="modal" role="dialog" aria-modal="true" aria-labelledby="aboutTitle" aria-hidden="true">
+      <div class="modal-card">
+        <button id="closeAbout" class="dossier-close" aria-label="Close">×</button>
+        <div class="about-brand"><img src="assets/gaia-seal.svg" alt="GAIA seal" /><div><span class="eyebrow">ABOUT THE AGENCY</span><h2 id="aboutTitle">Nothing is myth once it leaves a trace.</h2></div></div>
+        <p>GAIA is a multinational scientific and intelligence organization responsible for population census, migration tracking, anomalous-species research, public advisories, and dimensional incident response.</p>
+        <div class="founder-grid">
+          <article><b>Alex — Co-Founder</b><span>Geospatial tracking and population modeling</span><small>Companion: Umbreon</small></article>
+          <article><b>Dr. Nia Okafor — Co-Founder</b><span>Extraterrestrial biology and dimensional ecology</span><small>Companion: Xatu</small></article>
+          <article><b>Dr. Elena Varga — Co-Founder</b><span>Conservation and human–Pokémon coexistence</span><small>Companion: Meganium</small></article>
+          <article><b>Dr. Kenji Arata — Co-Founder</b><span>Mythoarchaeology and legendary records</span><small>Companion: Bronzong</small></article>
+        </div>
+        <h3>How exact populations are known</h3>
+        <p>The GAIA Global Census reconciles orbital aura-spectrum sensors, Pokédex networks, registered Poké Ball telemetry, terrestrial monitoring stations, ecological surveys, and dimensional anomaly detectors. Each independently living Pokémon produces a persistent bioenergetic signature.</p>
+        <p class="legal">GAIA Atlas is an independent, non-commercial, fan-made fictional project. Pokémon and related properties belong to their respective rights holders. This project is not affiliated with or endorsed by Nintendo, Game Freak, Creatures Inc., or The Pokémon Company.</p>
+      </div>
+    </div>
+
+    <div id="methodModal" class="modal method-modal" role="dialog" aria-modal="true" aria-labelledby="methodTitle" aria-hidden="true">
+      <div class="modal-card method-modal-card">
+        <button id="closeMethod" class="dossier-close" aria-label="Close GAIA methodology">×</button>
+        <div class="method-heading">
+          <span class="eyebrow">GAIA PUBLIC METHODOLOGY BRIEF</span>
+          <h2 id="methodTitle">How GAIA knows what is alive</h2>
+          <p>Population, position, and public precision are separate measurements. A precise census does not imply that every refuge is publicly disclosed.</p>
+        </div>
+        <div class="method-grid">
+          <article><b>01 · Persistent signature</b><p>Every independently living Pokémon produces a stable bioenergetic signature. Eggs enter the census only after hatching; temporary projections and detached cells are reconciled to their originating organism.</p></article>
+          <article><b>02 · Sensor reconciliation</b><p>Orbital aura-spectrum sensors, Pokédex networks, registered Poké Ball telemetry, ecological surveys, terrestrial stations, and dimensional detectors are compared continuously.</p></article>
+          <article><b>03 · Population audit</b><p>Conflicting readings are reviewed against movement histories, known forms, breeding records, containment logs, and anomaly signatures before a living total is certified.</p></article>
+          <article><b>04 · Public disclosure</b><p>GAIA may publish an exact living total while reducing map precision for nests, refuges, vulnerable colonies, containment facilities, and high-risk individuals.</p></article>
+        </div>
+        <section class="status-key-section">
+          <span class="eyebrow">READING GAIA STATUS</span>
+          <div class="status-key-grid">
+            <article><strong>Actively Tracked</strong><span>A current canonical position or route is maintained.</span></article>
+            <article><strong>Verified</strong><span>Existence and population are confirmed; continuous position may not be public.</span></article>
+            <article><strong>Archived / Contact Lost</strong><span>The record is valid, but a current position is unavailable.</span></article>
+            <article><strong>Public / Advisory</strong><span>Coordinates are broadly available, with safety guidance where required.</span></article>
+            <article><strong>Restricted / Sealed</strong><span>GAIA retains exact internal data while civilian precision is reduced or withheld.</span></article>
+          </div>
+        </section>
+      </div>
+    </div>
+
+    <div id="regionModal" class="modal region-modal" role="dialog" aria-modal="true" aria-labelledby="regionTitle" aria-hidden="true">
+      <div class="modal-card region-modal-card">
+        <button id="closeRegion" class="dossier-close" aria-label="Close regional field window">×</button>
+        <div id="regionContent"></div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast" role="status"></div>
+    <footer>GAIA CIVILIAN ACCESS NETWORK · CANON 2026-07-27.1 · ECOLOGY 2026-07-28.2 · WORLD 2026-08-01.1 · <button id="footerAbout">Fan-project notice</button></footer>
+  </div>
+
+  <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
+  <script src="data/canon.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

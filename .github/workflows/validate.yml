@@ -1,0 +1,227 @@
+name: Validate GAIA Foundation
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [agent/gaia-foundation]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: gaia-foundation-${{ github.event.pull_request.head.ref || github.ref_name }}
+  cancel-in-progress: true
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Materialize private release artifact
+        run: python scripts/prepare_release_candidate.py
+      - name: Validate signed canon, ecology, and corrected World Completion
+        run: |
+          python scripts/validate_gaia.py
+          python scripts/validate_phase2.py
+          python scripts/validate_phase3.py
+          python scripts/validate_phase4.py
+      - name: Validate World Systems and Evidence Pass I
+        run: python scripts/validate_world_systems.py
+      - name: Validate documentation and release integrity
+        run: |
+          python scripts/validate_project_integrity.py
+          python scripts/validate_release_candidate.py
+      - name: Verify deterministic public loader
+        run: python scripts/build_public.py --check
+      - name: Check Python scripts
+        run: python -m compileall -q scripts
+      - name: Check JavaScript syntax
+        run: |
+          cat src/app/*.js > /tmp/gaia-app.js
+          node --check /tmp/gaia-app.js
+          node --check public/app.js
+          node --check public/data/canon.js
+          node --check public/sw.js
+          node --check public/sw-world-completion.js
+          node --check playwright.config.js
+          node --check tests/gaia-experience.spec.js
+          node --check tests/gaia-layout.spec.js
+          node --check tests/gaia-release-candidate.spec.js
+          node --check tests/gaia-world-completion.spec.js
+          node --check tests/gaia-world-completion-layout.spec.js
+          node --check tests/gaia-world-completion-accessibility.spec.js
+          node --check tests/gaia-world-completion-visual.spec.js
+          node --check tests/gaia-systems-evidence.spec.js
+          node --check tests/gaia-systems-evidence-layout.spec.js
+          node --check tests/gaia-systems-evidence-accessibility.spec.js
+          node --check tests/gaia-systems-evidence-visual.spec.js
+      - name: Check required public, release, completion, and systems files
+        run: |
+          test -f public/index.html
+          test -f public/styles.css
+          test -f public/refinement.css
+          test -f public/density.css
+          test -f public/ecology.css
+          test -f public/continuity.css
+          test -f public/assets.css
+          test -f public/assurance.css
+          test -f public/release-candidate.css
+          test -f public/world-completion.css
+          test -f public/systems-evidence.css
+          test -f public/manifest.webmanifest
+          test -f public/offline.html
+          test -f public/404.html
+          test -f public/assets/gaia-seal.svg
+          test -f public/assets/gaia-social-preview.png
+          test -f public/assets/gaia-icon-192.png
+          test -f public/assets/gaia-icon-512.png
+          test -f public/assets/gaia-icon-maskable-512.png
+          test -f public/assets/gaia-apple-touch-icon.png
+          test -f public/sw.js
+          test -f public/sw-world-completion.js
+          test -f public/data/canon/chunk-07.txt
+          test -f public/data/canon-corrections.json
+          test -f public/data/editorial/phase2.txt
+          test -f public/data/editorial/phase3-01.txt
+          test -f public/data/editorial/phase3-02.txt
+          test -f public/data/editorial/phase4.txt
+          test -f public/data/editorial/phase4-02.txt
+          test -f public/data/editorial/phase4-03.txt
+          test -f public/data/editorial/phase4-04.txt
+          test -f public/data/editorial/phase4-05.txt
+          test -f public/data/editorial/phase4-06.txt
+          test -f src/app/02c-continuity.js
+          test -f src/app/02d-assets.js
+          test -f src/app/02e-assurance.js
+          test -f src/app/02f-release-candidate.js
+          test -f src/app/02g-world-completion.js
+          test -f src/app/02g0-world-reference-corrections.js
+          test -f src/app/02h-systems-evidence.js
+          test -f src/app/02i-systems-reference-corrections.js
+          test -f scripts/build_public.py
+          test -f scripts/prepare_release_candidate.py
+          test -f scripts/generate_release_assets.py
+          test -f scripts/validate_release_candidate.py
+          test -f scripts/validate_phase4.py
+          test -f scripts/validate_world_systems.py
+          test -f performance-budgets.json
+          test -f package.json
+          test -f playwright.config.js
+          test -f tests/gaia-experience.spec.js
+          test -f tests/gaia-layout.spec.js
+          test -f tests/gaia-release-candidate.spec.js
+          test -f tests/gaia-world-completion.spec.js
+          test -f tests/gaia-world-completion-layout.spec.js
+          test -f tests/gaia-world-completion-accessibility.spec.js
+          test -f tests/gaia-world-completion-visual.spec.js
+          test -f tests/gaia-systems-evidence.spec.js
+          test -f tests/gaia-systems-evidence-layout.spec.js
+          test -f tests/gaia-systems-evidence-accessibility.spec.js
+          test -f tests/gaia-systems-evidence-visual.spec.js
+          test -f docs/WORLD_COMPLETION_PASS_1.md
+          test -f docs/WORLD_COMPLETION_PAYLOAD.md
+          test -f docs/WORLD_SYSTEMS_EVIDENCE_PASS_1.md
+
+  systems-smoke:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Materialize exact private browser artifact
+        run: |
+          python scripts/prepare_release_candidate.py
+          mkdir -p public/source
+          cp src/app/*.js public/source/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install pinned browser-assurance dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install focused browser engines
+        run: npx playwright install --with-deps chromium webkit
+      - name: Run focused Systems behavior, layout, and accessibility smoke tests
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-report/results.json
+        run: |
+          npx playwright test \
+            tests/gaia-systems-evidence.spec.js \
+            tests/gaia-systems-evidence-layout.spec.js \
+            tests/gaia-systems-evidence-accessibility.spec.js \
+            --project=desktop-chromium \
+            --project=mobile-webkit
+      - name: Upload compact Systems smoke summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-systems-smoke-summary-${{ github.run_number }}
+          path: |
+            playwright-report/results.json
+            test-results/**/error-context.md
+          if-no-files-found: warn
+          retention-days: 14
+
+  experience:
+    needs: systems-smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - project: desktop-chromium
+            engine: chromium
+          - project: desktop-firefox
+            engine: firefox
+          - project: mobile-chromium
+            engine: chromium
+          - project: mobile-webkit
+            engine: webkit
+          - project: reduced-motion-chromium
+            engine: chromium
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+      - name: Materialize exact private browser artifact
+        run: |
+          python scripts/prepare_release_candidate.py
+          mkdir -p public/source
+          cp src/app/*.js public/source/
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install pinned browser-assurance dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install required browser engine
+        run: npx playwright install --with-deps ${{ matrix.engine }}
+      - name: Run ${{ matrix.project }} assurance
+        env:
+          PLAYWRIGHT_JSON_OUTPUT_FILE: playwright-report/results.json
+        run: npx playwright test --project=${{ matrix.project }}
+      - name: Upload compact ${{ matrix.project }} summary
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-browser-summary-${{ matrix.project }}-${{ github.run_number }}
+          path: |
+            playwright-report/results.json
+            test-results/**/error-context.md
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Upload ${{ matrix.project }} visual review evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-browser-evidence-${{ matrix.project }}-${{ github.run_number }}
+          path: |
+            test-results/**/visual-review/*.png
+            test-results/**/test-failed-*.png
+            public/assets/gaia-social-preview.png
+          if-no-files-found: warn
+          retention-days: 14

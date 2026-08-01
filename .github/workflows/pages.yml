@@ -1,0 +1,124 @@
+name: Deploy GAIA Atlas
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  validate-and-deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v4
+      - name: Materialize exact release artifact
+        run: |
+          python scripts/prepare_release_candidate.py
+          mkdir -p public/source
+          cp src/app/*.js public/source/
+      - name: Validate signed canon, ecology, corrected completion, and systems layers
+        run: |
+          python scripts/validate_gaia.py
+          python scripts/validate_phase2.py
+          python scripts/validate_phase3.py
+          python scripts/validate_phase4.py
+          python scripts/validate_world_systems.py
+      - name: Validate documentation, release integrity, and loader
+        run: |
+          python scripts/validate_project_integrity.py
+          python scripts/validate_release_candidate.py
+          python scripts/build_public.py --check
+      - name: Check Python and JavaScript syntax
+        run: |
+          python -m compileall -q scripts
+          cat src/app/*.js > /tmp/gaia-app.js
+          node --check /tmp/gaia-app.js
+          node --check public/app.js
+          node --check public/data/canon.js
+          node --check public/sw.js
+          node --check public/sw-world-completion.js
+          node --check playwright.config.js
+          node --check tests/gaia-experience.spec.js
+          node --check tests/gaia-layout.spec.js
+          node --check tests/gaia-release-candidate.spec.js
+          node --check tests/gaia-world-completion.spec.js
+          node --check tests/gaia-world-completion-layout.spec.js
+          node --check tests/gaia-world-completion-accessibility.spec.js
+          node --check tests/gaia-world-completion-visual.spec.js
+          node --check tests/gaia-systems-evidence.spec.js
+          node --check tests/gaia-systems-evidence-layout.spec.js
+          node --check tests/gaia-systems-evidence-accessibility.spec.js
+          node --check tests/gaia-systems-evidence-visual.spec.js
+      - name: Check required deployable files
+        run: |
+          test -f public/index.html
+          test -f public/styles.css
+          test -f public/refinement.css
+          test -f public/density.css
+          test -f public/ecology.css
+          test -f public/continuity.css
+          test -f public/assets.css
+          test -f public/assurance.css
+          test -f public/release-candidate.css
+          test -f public/world-completion.css
+          test -f public/systems-evidence.css
+          test -f public/manifest.webmanifest
+          test -f public/offline.html
+          test -f public/404.html
+          test -f public/sw-world-completion.js
+          test -f public/data/editorial/phase4.txt
+          test -f public/data/editorial/phase4-02.txt
+          test -f public/data/editorial/phase4-03.txt
+          test -f public/data/editorial/phase4-04.txt
+          test -f public/data/editorial/phase4-05.txt
+          test -f public/data/editorial/phase4-06.txt
+          test -f src/app/02g0-world-reference-corrections.js
+          test -f src/app/02h-systems-evidence.js
+          test -f src/app/02i-systems-reference-corrections.js
+          test -f scripts/validate_world_systems.py
+          test -f tests/gaia-systems-evidence.spec.js
+          test -f tests/gaia-systems-evidence-layout.spec.js
+          test -f tests/gaia-systems-evidence-accessibility.spec.js
+          test -f tests/gaia-systems-evidence-visual.spec.js
+          test -f docs/WORLD_SYSTEMS_EVIDENCE_PASS_1.md
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+      - name: Install pinned browser-assurance dependencies
+        run: npm install --no-audit --no-fund
+      - name: Install Playwright browser engines
+        run: npx playwright install --with-deps chromium firefox webkit
+      - name: Run complete browser, accessibility, network, offline, completion, and systems assurance
+        run: npm run test:experience
+      - name: Upload private release evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: gaia-systems-evidence-release-${{ github.run_number }}
+          path: |
+            playwright-report
+            test-results
+            public/assets/gaia-social-preview.png
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+      - name: Upload public site
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: public
+      - name: Deploy
+        id: deployment
+        uses: actions/deploy-pages@v4

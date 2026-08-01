@@ -1,0 +1,22 @@
+{
+  "name": "GAIA Atlas",
+  "short_name": "GAIA",
+  "description": "A global Pokémon surveillance and natural-history network. The world is inhabited.",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#050a10",
+  "theme_color": "#071019",
+  "categories": ["education", "entertainment", "reference"],
+  "icons": [
+    {"src":"assets/gaia-icon-192.png","sizes":"192x192","type":"image/png","purpose":"any"},
+    {"src":"assets/gaia-icon-512.png","sizes":"512x512","type":"image/png","purpose":"any"},
+    {"src":"assets/gaia-icon-maskable-512.png","sizes":"512x512","type":"image/png","purpose":"maskable"}
+  ],
+  "shortcuts": [
+    {"name":"GAIA Live","short_name":"Live","description":"Open current canonical movement","url":"./#view=live"},
+    {"name":"Records","short_name":"Records","description":"Open priority dossiers and incidents","url":"./#view=records"},
+    {"name":"Index","short_name":"Index","description":"Open the verified living-species index","url":"./#view=index"}
+  ]
+}

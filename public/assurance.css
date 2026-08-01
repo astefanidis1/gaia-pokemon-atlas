@@ -1,0 +1,90 @@
+/* GAIA experience assurance, accessibility corrections, and responsive collision control. */
+.skip-link{position:fixed;left:14px;top:10px;z-index:200;transform:translateY(-160%);padding:10px 14px;border:1px solid rgba(141,233,245,.55);border-radius:8px;background:#071019!important;color:#eaf1ee!important;font-weight:700;text-decoration:none;box-shadow:0 12px 30px rgba(0,0,0,.45)}
+.skip-link:focus{transform:translateY(0);outline:2px solid #8de9f5;outline-offset:3px}
+footer{color:#91a3aa!important}
+footer button{color:#8de9f5!important;text-decoration:underline;text-underline-offset:2px}
+
+/* Explicit button surfaces prevent Chromium/WebKit native light controls from leaking into GAIA. */
+.region-launch{appearance:none;-webkit-appearance:none;background:#0c202b!important;color:var(--ivory)!important;border:1px solid rgba(141,233,245,.28)!important}
+.region-launch:hover,.region-launch:focus-visible{background:#12313f!important;border-color:rgba(141,233,245,.58)!important}
+.region-launch small{color:#b9c8cc!important}
+.region-launch i{color:#9cebf4!important}
+.region-card{appearance:none;-webkit-appearance:none;background:#091720!important;color:var(--ivory)!important;border:1px solid var(--line)!important}
+.region-card:hover,.region-card:focus-visible{background:#102733!important;border-color:rgba(141,233,245,.46)!important}
+.region-card p{color:#b7c5c9!important}
+.region-card>div small{color:#a8b8bd!important}
+.region-card>div small:last-child,.region-card>.eyebrow{color:#e1c98e!important}
+.region-card .region-season-inline{color:#9cebf4!important}
+.region-species-card{appearance:none;-webkit-appearance:none;background-color:#0b1822!important;color:#eaf1ee!important;border:1px solid rgba(141,233,245,.22)!important}
+.region-species-card:hover,.region-species-card:focus-visible{background-color:#102733!important;border-color:rgba(141,233,245,.5)!important}
+.region-species-card>span>b{color:#eaf1ee!important}
+.region-species-card>span>small{color:#c3d1d4!important}
+.region-species-card>i{color:#9cebf4!important}
+.primary-action{appearance:none;-webkit-appearance:none;background:#12313f!important;color:#eaf1ee!important;border:1px solid rgba(141,233,245,.46)!important;border-radius:9px!important}
+.primary-action:hover,.primary-action:focus-visible{background:#183d4d!important;border-color:#8de9f5!important}
+
+/* Desktop panels stay inside the usable globe area and never collide with the ticker. */
+.atlas-panel{max-height:calc(100% - 102px);overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin;scrollbar-color:rgba(141,233,245,.28) transparent}
+.atlas-panel::-webkit-scrollbar{width:6px}.atlas-panel::-webkit-scrollbar-thumb{background:rgba(141,233,245,.24);border-radius:8px}
+.ecology-layer-panel{top:196px!important}
+.ecology-inspector{top:370px!important;max-height:calc(100% - 450px)!important}
+
+[inert]{pointer-events:none}
+.gaia-reduced-motion *,.gaia-reduced-motion *:before,.gaia-reduced-motion *:after{scroll-behavior:auto!important;animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;transition-delay:0s!important}
+.gaia-reduced-motion .surveillance-ticker .ticker-track{animation:none!important}
+.gaia-reduced-motion .loading img{animation:none!important}
+
+@media(max-height:1000px) and (min-width:761px){
+  .atlas-panel{padding:15px!important;overflow:hidden!important}
+  .atlas-panel h1{font-size:28px!important;margin:6px 0!important}
+  .atlas-panel>p{font-size:11px!important;line-height:1.35!important;margin:6px 0!important}
+  .world-metrics{margin:9px 0!important;gap:6px!important}
+  .world-metrics div{padding:7px!important}.world-metrics strong{font-size:16px!important}.world-metrics span{font-size:7px!important}
+  .control-label{font-size:8px!important;margin:7px 0 3px!important}
+  .atlas-panel select{padding:6px 8px!important;font-size:12px!important}
+  .switch-row{margin-top:7px!important}.switch-row b{font-size:11px!important}.switch-row small{font-size:8px!important}
+  .map-status{margin-top:8px!important;padding-top:7px!important;font-size:9px!important}
+  .map-legend{margin-top:5px!important}.map-legend>span{display:none!important}.legend-key{font-size:8px!important;padding:0!important}
+  .region-launch{margin-top:7px!important;min-height:42px!important;padding:7px 9px!important}.region-launch span b{font-size:11px!important}.region-launch span small{font-size:8px!important}.region-launch i{font-size:9px!important}
+}
+
+@media(max-width:760px){
+  body{padding-bottom:64px}
+  .primary-nav{position:fixed!important;left:0;right:0;bottom:0;top:auto!important;height:64px!important;padding:0!important;z-index:90!important;display:grid!important;grid-template-columns:repeat(5,minmax(0,1fr));background:rgba(5,12,18,.97)!important;border-top:1px solid var(--line)!important;border-bottom:0!important;backdrop-filter:blur(18px)}
+  .nav-button{min-width:0!important;padding:5px 2px!important;justify-content:center!important;flex-direction:column!important;gap:2px!important;font-size:9px!important;line-height:1!important;border:0!important;border-top:2px solid transparent!important;white-space:nowrap!important;overflow:hidden!important}
+  .nav-button.active{border-top-color:var(--gold)!important;border-bottom-color:transparent!important}
+  .nav-button>span{font-size:14px!important}.nav-button i{font-size:7px!important;padding:2px 4px!important}
+  .page-view{padding-bottom:92px!important}
+
+  #view-globe{height:calc(100svh - 64px)!important;min-height:650px!important;overflow:hidden!important}
+  .atlas-panel{top:10px!important;left:10px!important;right:10px!important;width:auto!important;max-height:none!important;overflow:visible!important;padding:14px!important;border-radius:14px!important}
+  .atlas-panel .panel-kicker{font-size:8px!important}
+  .atlas-panel h1{font-size:27px!important;line-height:1.02!important;margin:6px 0 8px!important}
+  .atlas-panel>p,.atlas-panel .control-label,.atlas-panel>select,.atlas-panel .switch-row,.atlas-panel .map-legend{display:none!important}
+  .world-metrics{grid-template-columns:repeat(3,1fr)!important;gap:6px!important;margin:9px 0!important}
+  .world-metrics div{padding:8px!important;min-width:0!important}
+  .world-metrics strong{font-size:17px!important}.world-metrics span{font-size:7px!important;line-height:1.2!important}
+  .map-status{margin:8px 0 0!important;padding:8px 0 0!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important;font-size:9px!important}
+  .region-launch{position:static!important;width:100%!important;min-height:44px!important;margin-top:8px!important;padding:8px 10px!important;display:flex!important;align-items:center!important;justify-content:space-between!important;gap:8px!important;border-radius:9px!important}
+  .region-launch span{display:grid!important;min-width:0!important;text-align:left!important}.region-launch span b{font-size:12px!important}.region-launch span small{font-size:8px!important;white-space:nowrap!important;overflow:hidden!important;text-overflow:ellipsis!important}.region-launch i{font-size:10px!important;white-space:nowrap!important}
+
+  .realm-summary,.ecology-layer-panel{display:none!important}
+  .ecology-inspector{left:10px!important;right:10px!important;top:auto!important;bottom:132px!important;width:auto!important;max-height:42vh!important}
+  .map-fallback{padding:258px 22px 142px!important;align-content:center!important;justify-content:center!important}
+  .map-fallback img{width:58px!important}.map-fallback h2{font-size:25px!important;line-height:1.1!important;margin:14px 0 8px!important}.map-fallback p{font-size:13px!important;line-height:1.45!important;max-width:330px!important;margin:0 auto!important;color:#c1ced1!important}
+  .map-help{display:none!important}.map-controls{right:10px!important;bottom:126px!important}.surveillance-ticker{bottom:72px!important;width:calc(100% - 20px)!important}
+
+  .region-modal-card,.region-explorer-card{width:calc(100% - 16px)!important;max-height:calc(100svh - 16px)!important;border-radius:16px!important}
+  .region-hero{padding:24px 20px 20px!important}.region-hero h2{font-size:31px!important;line-height:1.08!important;padding-right:44px!important}.region-hero>p{font-size:14px!important;line-height:1.55!important}.region-hero>small{display:block!important;font-size:10px!important;line-height:1.45!important}
+  .region-hero .primary-action{width:100%!important;margin-top:14px!important;padding:12px 14px!important;font-size:12px!important}
+  .region-season-panel{padding:20px!important}.region-season-panel h3{font-size:27px!important;line-height:1.05!important}.region-season-panel p{font-size:12px!important}
+  .region-modal-card>section{padding:20px!important}
+}
+
+@media(max-width:430px){
+  .atlas-panel h1{font-size:25px!important}
+  .world-metrics div{padding:7px!important}.world-metrics strong{font-size:16px!important}.world-metrics span{font-size:6.5px!important}
+  .map-fallback{padding-top:248px!important}
+}
+
+@media(prefers-contrast:more){footer{color:#c1ced1!important}.search-result small,.asset-source-note{color:#c1ced1!important}.region-card p,.region-card>div small,.region-launch small{color:#d1dcde!important}}

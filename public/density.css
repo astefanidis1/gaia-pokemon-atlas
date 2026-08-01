@@ -1,0 +1,19 @@
+/* GAIA world-density phase: regional ecology and geographic systems */
+.region-card>div{flex-wrap:wrap}
+.region-card>div small:last-child{color:var(--gold)}
+.region-geometry-section{background:linear-gradient(180deg,rgba(141,233,245,.025),transparent)}
+.geometry-intro{max-width:820px;color:var(--muted);font-size:12px;line-height:1.55;margin:9px 0 0}
+.region-geometry-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:11px;margin-top:15px}
+.geometry-card{position:relative;border:1px solid var(--line);border-radius:11px;background:#091720;padding:15px 15px 14px 20px;display:grid;grid-template-columns:8px 1fr;gap:13px;overflow:hidden}
+.geometry-card>i{--geometry-color:var(--cyan);display:block;width:4px;height:100%;min-height:86px;border-radius:999px;background:var(--geometry-color);box-shadow:0 0 18px color-mix(in srgb,var(--geometry-color) 42%,transparent)}
+.geometry-card.corridor>i{background:repeating-linear-gradient(180deg,var(--geometry-color) 0 8px,transparent 8px 13px)}
+.geometry-card span{font-size:8px;letter-spacing:.12em;color:var(--cyan)}
+.geometry-card h4{font-family:Georgia,serif;font-size:18px;margin:5px 0 7px}
+.geometry-card p{font-size:11px;line-height:1.5;color:#b7c5c9;margin:0}
+.geometry-card em{display:block;color:var(--gold);font-size:10px;line-height:1.45;font-style:normal;margin-top:8px}
+.geometry-card small{display:block;color:var(--muted);font-size:9px;line-height:1.45;margin-top:9px}
+body.minimal-map .maplibregl-canvas{background:radial-gradient(circle at 50% 42%,#16303f,#03070b 58%)}
+@media(max-width:760px){
+  .region-geometry-grid{grid-template-columns:1fr}
+  .geometry-card{grid-template-columns:6px 1fr}
+}
