@@ -22,12 +22,21 @@
   }
 
   const correctedRegionIds=new Set(['central-andes-cloud-forest-corridor','east-african-rift-highland-mosaic']);
-  regions.forEach((region,index)=>{
-    if(correctedRegionIds.has(region.id))regions[index]=gaiaCorrectWorldReferenceValue(region);
+  regions.forEach(region=>{
+    if(!correctedRegionIds.has(region.id))return;
+    const corrected=gaiaCorrectWorldReferenceValue(region);
+    Object.keys(region).forEach(key=>delete region[key]);
+    Object.assign(region,corrected);
   });
   editorial.regions=regions;
-  const correctedRelationships=(editorial.relationships||[]).map(row=>correctedRegionIds.has(row.regionId)?gaiaCorrectWorldReferenceValue(row):row);
-  (editorial.relationships||[]).splice(0,(editorial.relationships||[]).length,...correctedRelationships);
+
+  const relationshipRows=editorial.relationships||[];
+  relationshipRows.forEach(row=>{
+    if(!correctedRegionIds.has(row.regionId))return;
+    const corrected=gaiaCorrectWorldReferenceValue(row);
+    Object.keys(row).forEach(key=>delete row[key]);
+    Object.assign(row,corrected);
+  });
 
   const correctedSpecies=new Set(Object.values(GAIA_WORLD_REFERENCE_CORRECTIONS));
   for(const region of regions.filter(row=>correctedRegionIds.has(row.id))){
