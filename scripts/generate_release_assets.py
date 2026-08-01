@@ -160,11 +160,11 @@ def social_preview():
     c.text(116,333,'GLOBAL POKEMON SURVEILLANCE AND NATURAL HISTORY',COLORS['ivory'],2,1)
     c.text(116,363,'EXACT CENSUS - LIVE MIGRATION - REGIONAL ECOLOGY',COLORS['muted'],2,1)
     c.rect(110,430,670,510,COLORS['panel'],True); c.rect(110,430,670,510,(48,86,99),False,2)
-    metrics=[(132,'161','VERIFIED SPECIES'),(315,'5','ACTIVE TRACKS'),(488,'4','REGIONAL ECOSYSTEMS')]
+    metrics=[(132,'161','VERIFIED SPECIES'),(315,'5','ACTIVE TRACKS'),(488,'6','REGIONAL ECOSYSTEMS')]
     for x,value,label in metrics:
         c.text(x,446,value,COLORS['ivory'],4,1); c.text(x,486,label,COLORS['muted'],1,1)
     c.text(110,550,'GEOSPATIAL ANOMALY INTELLIGENCE AGENCY',COLORS['gold'],2,1)
-    c.text(110,580,'CIVILIAN ACCESS NETWORK - RELEASE CANDIDATE 1',COLORS['muted'],1,1)
+    c.text(110,580,'WORLD COMPLETION PASS I - PRIVATE BUILD',COLORS['muted'],1,1)
     c.png(OUT/'gaia-social-preview.png')
 
 
@@ -182,7 +182,7 @@ def generate_all():
     icon(512,'gaia-icon-512.png')
     icon(512,'gaia-icon-maskable-512.png',True)
     icon(180,'gaia-apple-touch-icon.png')
-    print('GAIA RC1 social preview and install icons generated deterministically.')
+    print('GAIA World Completion social preview and install icons generated deterministically.')
 
 
 if __name__=='__main__':
