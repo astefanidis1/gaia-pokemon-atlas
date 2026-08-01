@@ -1,4 +1,4 @@
-const SHELL_CACHE = 'gaia-world-shell-v2';
+const SHELL_CACHE = 'gaia-world-shell-v3';
 const RUNTIME_CACHE = 'gaia-world-runtime-v1';
 const ARTWORK_CACHE = 'gaia-world-artwork-v1';
 const NAVIGATION_TIMEOUT_MS = 3500;
@@ -10,7 +10,7 @@ const SHELL = [
   'data/canon.js','data/canon-corrections.json',
   'data/canon/chunk-01.txt','data/canon/chunk-02.txt','data/canon/chunk-03.txt','data/canon/chunk-04.txt','data/canon/chunk-05.txt','data/canon/chunk-06.txt','data/canon/chunk-07.txt',
   'data/editorial/chunk-01.txt','data/editorial/chunk-02.txt','data/editorial/chunk-03.txt','data/editorial/chunk-04.txt','data/editorial/phase2.txt','data/editorial/phase3-01.txt','data/editorial/phase3-02.txt','data/editorial/phase4.txt','data/editorial/phase4-02.txt','data/editorial/phase4-03.txt','data/editorial/phase4-04.txt','data/editorial/phase4-05.txt','data/editorial/phase4-06.txt',
-  'source/01-core.js','source/02-records.js','source/02a-density.js','source/02b-ecology-a.js','source/02b-ecology-b.js','source/02b-ecology-c.js','source/02b-ecology-d.js','source/02c-continuity.js','source/02d-assets.js','source/02e-assurance.js','source/02f-release-candidate.js','source/02g-world-completion.js','source/02h-systems-evidence.js','source/03-interface.js'
+  'source/01-core.js','source/02-records.js','source/02a-density.js','source/02b-ecology-a.js','source/02b-ecology-b.js','source/02b-ecology-c.js','source/02b-ecology-d.js','source/02c-continuity.js','source/02d-assets.js','source/02e-assurance.js','source/02f-release-candidate.js','source/02g-world-completion.js','source/02g0-world-reference-corrections.js','source/02h-systems-evidence.js','source/02i-systems-reference-corrections.js','source/03-interface.js'
 ];
 
 self.addEventListener('install', event => {
