@@ -56,7 +56,7 @@ module_markers = {
     "02c-continuity.js": ("searchTargets", "#ecology=", "CONNECTED WORLD ECOLOGY"),
     "02d-assets.js": ("GAIA_ASSET_POLICY", "gaiaArchiveArtwork", "Civilian redacted silhouette"),
     "02e-assurance.js": ("GAIA_ASSURANCE_VERSION", "role','combobox", "gaia-reduced-motion", "inert"),
-    "02f-release-candidate.js": ("GAIA_RC_VERSION", "PRIORITY WORLD BRIEF", "OFFLINE ARCHIVE", "https://zandros.fanlink.tv/ZANDROS"),
+    "02f-release-candidate.js": ("GAIA_RC_VERSION", "PRIORITY WORLD BRIEF", "OFFLINE ARCHIVE", "https://zandros.fanlink.tv/ZANDROS", "sw-world-completion.js"),
     "02g-world-completion.js": ("GAIA_WORLD_COMPLETION_VERSION", "Civilian Summary Record", "gaia-field-observations-v2", "regionalConditionGrid", "archiveReaderModal", "indexDepth"),
 }
 for filename, markers in module_markers.items():
@@ -70,20 +70,25 @@ require(len(re.findall(r"label:'[^']+'", read_utf8(SOURCE / "02d-assets.js"))) >
 
 loader = read_utf8(PUBLIC / "app.js")
 build = read_utf8(ROOT / "scripts" / "build_public.py")
-service_worker = read_utf8(PUBLIC / "sw.js")
-for label, content in (("public/app.js", loader), ("scripts/build_public.py", build), ("public/sw.js", service_worker)):
+world_worker_path = PUBLIC / "sw-world-completion.js"
+world_worker = read_utf8(world_worker_path) if world_worker_path.is_file() else ""
+for label, content in (("public/app.js", loader), ("scripts/build_public.py", build)):
     for module in module_markers:
         require(module in content, f"{label} does not include {module}")
-require("gaia-shell-v2.3" in service_worker, "Service-worker cache was not advanced for semantic World Completion transport")
+require(bool(world_worker), "Missing public/sw-world-completion.js")
+for module in module_markers:
+    require(module in world_worker, f"public/sw-world-completion.js does not include {module}")
+require("gaia-world-shell-v1" in world_worker, "Dedicated World Completion service-worker cache version is missing")
 
 phase4_files = [PUBLIC / "data" / "editorial" / f"phase4{suffix}.txt" for suffix in ("", "-02", "-03", "-04", "-05", "-06")]
 for path in phase4_files:
     require(path.is_file(), f"Missing World Completion transport file: {path.relative_to(ROOT)}")
-    require(path.name in service_worker, f"Service worker does not cache {path.name}")
+    require(path.name in world_worker, f"World Completion service worker does not cache {path.name}")
 for path in (PUBLIC / "continuity.css", PUBLIC / "assets.css", PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css"):
     require(path.is_file(), f"Missing {path.relative_to(ROOT)}")
 
 required_infra = (
+    PUBLIC / "sw-world-completion.js",
     ROOT / "scripts" / "validate_phase4.py",
     ROOT / "scripts" / "prepare_release_candidate.py",
     ROOT / "scripts" / "generate_release_assets.py",
@@ -137,5 +142,5 @@ if errors:
 
 print(
     f"GAIA project integrity passed: {len(markdown_files)} Markdown files, thirteen readable modules, "
-    "six-part/two-signature World Completion transport, offline shell, browser matrix, and completion scenarios verified."
+    "six-part/two-signature World Completion transport, dedicated offline worker, browser matrix, and completion scenarios verified."
 )
