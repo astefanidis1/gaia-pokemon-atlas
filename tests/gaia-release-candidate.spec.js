@@ -29,7 +29,7 @@ test('RC1 first visit offers a current track and regional ecosystem without a tu
   }
 });
 
-test('RC1 production metadata and install manifest are materialized', async ({ page }, testInfo) => {
+test('RC1 production metadata, install manifest, and founder music credit are materialized', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium');
   await boot(page);
 
@@ -39,6 +39,13 @@ test('RC1 production metadata and install manifest are materialized', async ({ p
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href','manifest.webmanifest');
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href',/gaia-apple-touch-icon\.png$/);
   await expect(page).toHaveTitle('GAIA Atlas — The world is inhabited.');
+
+  await page.locator('#aboutButton').click();
+  const musicLink = page.locator('.founder-music-credit a');
+  await expect(musicLink).toBeVisible();
+  await expect(musicLink).toHaveText(/Listen to ZANDROS/);
+  await expect(musicLink).toHaveAttribute('href','https://zandros.fanlink.tv/ZANDROS');
+  await expect(musicLink).toHaveAttribute('target','_blank');
 
   const response = await page.request.get('./manifest.webmanifest');
   expect(response.ok()).toBeTruthy();
