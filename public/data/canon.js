@@ -51,7 +51,7 @@ window.GAIA_DATA_READY=(async()=>{
     Promise.all(editorialParts.map(path=>fetchText(path,'GAIA editorial payload'))),
     fetchText(phase2Path,'GAIA world-density expansion'),
     Promise.all(phase3Paths.map(path=>fetchText(path,'GAIA ecology integration'))),
-    Promise.all(phase4Paths.map(path=>fetchText(path,'GAIA World Completion Pass I'))
+    Promise.all(phase4Paths.map(path=>fetchText(path,'GAIA World Completion Pass I')))
   ]);
   if(!correctionsResponse.ok) throw new Error('Unable to load GAIA canon corrections.');
 
