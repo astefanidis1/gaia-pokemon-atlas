@@ -29,7 +29,7 @@ test('RC1 first visit offers a current track and regional ecosystem without a tu
   }
 });
 
-test('RC1 production metadata, install manifest, and founder music credit are materialized', async ({ page }, testInfo) => {
+test('RC1 production metadata, install manifest, founder credit, and completion worker are materialized', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium');
   await boot(page);
 
@@ -39,6 +39,13 @@ test('RC1 production metadata, install manifest, and founder music credit are ma
   await expect(page.locator('link[rel="manifest"]')).toHaveAttribute('href','manifest.webmanifest');
   await expect(page.locator('link[rel="apple-touch-icon"]')).toHaveAttribute('href',/gaia-apple-touch-icon\.png$/);
   await expect(page).toHaveTitle('GAIA Atlas — The world is inhabited.');
+
+  await expect.poll(() => page.evaluate(() => document.documentElement.dataset.offlineWorker)).toBe('world-completion');
+  const workerScript = await page.evaluate(async () => {
+    const registration = await navigator.serviceWorker.ready;
+    return registration.active?.scriptURL || registration.waiting?.scriptURL || registration.installing?.scriptURL || '';
+  });
+  expect(workerScript).toMatch(/sw-world-completion\.js$/);
 
   await page.locator('#aboutButton').click();
   const musicLink = page.locator('.founder-music-credit a');
@@ -73,7 +80,7 @@ test('RC1 reaches a usable local globe under a deliberately weak network', async
   await expect(page.locator('.nav-button')).toHaveCount(5);
 });
 
-test('RC1 reopens from its cached shell while fully offline', async ({ page, context }, testInfo) => {
+test('RC1 reopens from its cached World Completion shell while fully offline', async ({ page, context }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium');
   await boot(page);
   await page.evaluate(async () => {
@@ -85,6 +92,9 @@ test('RC1 reopens from its cached shell while fully offline', async ({ page, con
     await page.reload({ waitUntil: 'domcontentloaded' });
     await expect(page.locator('#app')).toBeVisible();
   }
+
+  const scriptURL = await page.evaluate(async () => (await navigator.serviceWorker.ready).active?.scriptURL || '');
+  expect(scriptURL).toMatch(/sw-world-completion\.js$/);
 
   await context.setOffline(true);
   const started = Date.now();
