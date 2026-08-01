@@ -1,11 +1,11 @@
 {
-  "version": "2026-08-01.1",
-  "critical_shell_max_kb": 1500,
+  "version": "2026-08-01.2",
+  "critical_shell_max_kb": 1750,
   "data_payload_max_kb": 3200,
-  "largest_text_asset_max_kb": 750,
+  "largest_text_asset_max_kb": 850,
   "social_preview_max_kb": 800,
   "largest_icon_max_kb": 120,
-  "service_worker_shell_entries_max": 59,
+  "service_worker_shell_entries_max": 61,
   "weak_network_usable_ms": 10000,
   "offline_reopen_ms": 6000
 }
