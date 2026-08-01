@@ -123,12 +123,22 @@
     }
   }
 
+  function rcInstallFounderMusicCredit(){
+    const founder=[...$$('.founder-grid article')].find(card=>card.querySelector('b')?.textContent.trim().startsWith('Alex'));
+    if(!founder || $('.founder-music-credit',founder)) return;
+    const credit=document.createElement('p');
+    credit.className='founder-music-credit';
+    credit.innerHTML='Outside GAIA, Alex makes music as <strong>ZANDROS</strong> and would love for you to listen. <a href="https://zandros.fanlink.tv/ZANDROS" target="_blank" rel="noopener noreferrer external" aria-label="Listen to ZANDROS music in a new tab">Listen to ZANDROS ↗</a>';
+    founder.appendChild(credit);
+  }
+
   queueMicrotask(()=>{
     const panel=$('.atlas-panel');
     rcRenderBrief(panel,rcSelection());
     rcSyncNetworkState();
     rcOpenShortcutHash();
     rcRegisterServiceWorker();
+    rcInstallFounderMusicCredit();
     addEventListener('online',rcSyncNetworkState);
     addEventListener('offline',rcSyncNetworkState);
     addEventListener('hashchange',rcOpenShortcutHash);
