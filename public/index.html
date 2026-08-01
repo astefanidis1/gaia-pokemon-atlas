@@ -36,7 +36,7 @@
 
       <div class="search-shell">
         <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m21 21-4.5-4.5m2.5-5.5a8 8 0 1 1-16 0 8 8 0 0 1 16 0Z"/></svg>
-        <input id="searchInput" type="search" placeholder="Search species, locations, habitats, or records…" autocomplete="off" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list" />
+        <input id="searchInput" type="search" placeholder="Search GAIA records…" autocomplete="off" aria-controls="searchResults" aria-expanded="false" aria-autocomplete="list" />
         <kbd>/</kbd>
         <div id="searchResults" class="search-results" role="listbox"></div>
       </div>
@@ -49,7 +49,7 @@
 
     <nav class="primary-nav" aria-label="Primary navigation">
       <button class="nav-button active" data-view="globe" aria-current="page"><span>◉</span>Globe</button>
-      <button class="nav-button" data-view="live"><span>⌁</span>GAIA Live <i id="liveCount">5</i></button>
+      <button class="nav-button" data-view="live"><span>⌁</span>GAIA Live <i id="liveCount">11</i></button>
       <button class="nav-button" data-view="index"><span>☷</span>Index <i>161</i></button>
       <button class="nav-button" data-view="records"><span>▤</span>Records</button>
       <button class="nav-button" data-view="fieldlog"><span>◇</span>Field Log <i id="fieldCount">0</i></button>
@@ -62,7 +62,7 @@
         <div id="mapFallback" class="map-fallback" hidden>
           <img src="assets/gaia-seal.svg" alt="" />
           <h2>Geospatial link unavailable</h2>
-          <p>The Index and Records remain available while the live basemap reconnects.</p>
+          <p>The cached Index, Records, regional ecology, and Field Log remain available while the live basemap reconnects.</p>
         </div>
 
         <aside class="atlas-panel glass">
@@ -106,7 +106,7 @@
           </div>
 
           <button id="featuredRegionButton" class="region-launch" type="button">
-            <span><b>Regional field window</b><small>New England coastal forest</small></span>
+            <span><b>Regional field window</b><small>Six completed ecological systems</small></span>
             <i>Explore →</i>
           </button>
         </aside>
@@ -128,7 +128,7 @@
 
       <section id="view-live" class="view page-view" aria-label="GAIA Live">
         <header class="page-heading">
-          <div><span class="eyebrow">GAIA LIVE</span><h2>Current canonical movement</h2><p>Positions are calculated from the real calendar. Every visitor sees the same world state.</p></div>
+          <div><span class="eyebrow">GAIA LIVE</span><h2>Current world state</h2><p>Canonical movement, seasonal regional conditions, public advisories, and active ecological systems synchronized to UTC.</p></div>
           <div class="timestamp"><span>UTC WORLD STATE</span><strong id="worldDate"></strong></div>
         </header>
         <div id="liveHero" class="live-hero"></div>
@@ -176,7 +176,7 @@
         </header>
         <div class="field-stats">
           <div><span>Discovered</span><strong id="discoveredTotal">0</strong><small>Dossiers opened</small></div>
-          <div><span>Observed</span><strong id="observedTotal">0</strong><small>Personal attestations</small></div>
+          <div><span>Observed</span><strong id="observedTotal">0</strong><small>Canonical locations</small></div>
           <div><span>Favorites</span><strong id="favoriteTotal">0</strong><small>Saved records</small></div>
           <div><span>Completion</span><strong id="completionTotal">0%</strong><small>Of current index</small></div>
         </div>
@@ -204,7 +204,7 @@
 
         <div class="dossier-actions">
           <button id="favoriteButton">☆ Favorite</button>
-          <button id="observedButton">◉ I observed this</button>
+          <button id="observedButton">◉ Record observation</button>
           <button id="shareButton">↗ Copy link</button>
         </div>
 
@@ -285,7 +285,7 @@
     </div>
 
     <div id="toast" class="toast" role="status"></div>
-    <footer>GAIA CIVILIAN ACCESS NETWORK · CANON v1.3 · <button id="footerAbout">Fan-project notice</button></footer>
+    <footer>GAIA CIVILIAN ACCESS NETWORK · CANON 2026-07-27.1 · ECOLOGY 2026-07-28.2 · WORLD 2026-08-01.1 · <button id="footerAbout">Fan-project notice</button></footer>
   </div>
 
   <script src="https://unpkg.com/maplibre-gl@5.24.0/dist/maplibre-gl.js"></script>
