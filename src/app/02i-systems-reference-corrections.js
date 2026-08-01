@@ -1,5 +1,6 @@
 /* GAIA Systems reference corrections: align early drafting language with the signed 161-species census. */
   const GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION='2026-08-01.2';
+  const GAIA_REMOVED_SYSTEM_INCIDENT_REFERENCES=['gaia-i-2020-041'];
   window.GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION=GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION;
 
   const gaiaSystemReferenceMap={
@@ -32,6 +33,11 @@
   replaceArrayInPlace(gaiaEvidenceRecords);
   replaceArrayInPlace(gaiaLineagePilots);
   replaceArrayInPlace(gaiaSystemIncidents);
+
+  const knownIncidentIds=new Set(incidents.map(row=>row.id));
+  gaiaWorldSystems.forEach(system=>{
+    system.incidents=(system.incidents||[]).filter(id=>knownIncidentIds.has(id));
+  });
 
   const electricalSystem=gaiaWorldSystems.find(row=>row.id==='critical-infrastructure');
   if(electricalSystem){
@@ -84,6 +90,7 @@
   window.GAIA_EVIDENCE_RECORDS=gaiaEvidenceRecords;
   window.GAIA_LINEAGE_PILOTS=gaiaLineagePilots;
   window.GAIA_SYSTEM_INCIDENTS=gaiaSystemIncidents;
+  window.GAIA_REMOVED_SYSTEM_INCIDENT_REFERENCES=[...GAIA_REMOVED_SYSTEM_INCIDENT_REFERENCES];
   window.GAIA_SYSTEM_REFERENCE_CORRECTIONS={
     rotom:'electivire',squirtle:'lapras',lineageSquirtle:'lineage-gardevoir',
     pacificNorthwest:'pacific-northwest-temperate-rainforest',centralHonshu:'central-honshu-urban-mountain-corridor'
