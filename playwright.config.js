@@ -9,13 +9,14 @@ module.exports = defineConfig({
   retries: process.env.CI ? 1 : 0,
   reporter: [
     ['line'],
-    ['html', { outputFolder: 'playwright-report', open: 'never' }],
+    ['json', { outputFile: 'playwright-report/results.json' }],
+    ['html', { outputFolder: 'playwright-report/html', open: 'never' }],
   ],
   use: {
     baseURL: 'http://127.0.0.1:8000/public/',
     trace: 'retain-on-failure',
     screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
+    video: 'off',
     actionTimeout: 10_000,
     navigationTimeout: 20_000,
   },
