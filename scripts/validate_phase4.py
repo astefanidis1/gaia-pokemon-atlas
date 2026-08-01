@@ -23,6 +23,8 @@ PHASE4_HASHES = [
 PHASE4_MERGED_HASH = "ed2e0be29dcd699bf207fb4b4bd1fd6e5cee513b4b117b748ed906dae10deed3"
 PHASE4_VERSION = "2026-08-01.1"
 PHASE4_BASE = "2026-07-28.2"
+REFERENCE_CORRECTION_VERSION = "2026-08-01.2"
+REFERENCE_CORRECTIONS = {"rotom": "electivire", "squirtle": "lapras", "Rotom": "Electivire", "Squirtle": "Lapras"}
 REGION_COUNTS = {
     "central-andes-cloud-forest-corridor": (18, 5, 4, 3),
     "east-african-rift-highland-mosaic": (18, 5, 4, 3),
@@ -38,22 +40,40 @@ def load_payload(paths: list[Path], expected_hash: str) -> dict:
     return json.loads(gzip.decompress(raw))
 
 
+def correct_text(value: str) -> str:
+    for old, new in REFERENCE_CORRECTIONS.items():
+        value = value.replace(old, new)
+    return value
+
+
+def correct_value(value):
+    if isinstance(value, list):
+        return [correct_value(row) for row in value]
+    if isinstance(value, dict):
+        return {correct_text(str(key)): correct_value(row) for key, row in value.items()}
+    if isinstance(value, str):
+        return correct_text(value)
+    return value
+
+
 def load_phase4() -> dict:
     payloads = [load_payload(paths, checksum) for paths, checksum in zip(PHASE4_GROUPS, PHASE4_HASHES)]
     if {p.get("baseVersion") for p in payloads} != {PHASE4_BASE} or {p.get("version") for p in payloads} != {PHASE4_VERSION}:
         raise SystemExit("ERROR: Phase 4 semantic payload version mismatch")
-    merged = {
+    raw_merged = {
         "baseVersion": PHASE4_BASE,
         "version": PHASE4_VERSION,
         "recordPolicy": next((p.get("recordPolicy") for p in payloads if p.get("recordPolicy")), {}),
         "regions": [r for p in payloads for r in p.get("regions", [])],
         "relationships": [r for p in payloads for r in p.get("relationships", [])],
     }
-    compact = json.dumps(merged, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    compact = json.dumps(raw_merged, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
     actual = hashlib.sha256(compact).hexdigest()
     if actual != PHASE4_MERGED_HASH:
         raise SystemExit(f"ERROR: merged Phase 4 hash mismatch: {actual} != {PHASE4_MERGED_HASH}")
-    return merged
+    corrected = correct_value(raw_merged)
+    corrected["referenceCorrectionVersion"] = REFERENCE_CORRECTION_VERSION
+    return corrected
 
 
 def phase3_regions(base: dict, phase2: dict, phase3: dict) -> list[dict]:
@@ -145,6 +165,7 @@ def main() -> int:
     errors: list[str] = []
     canon_slugs = {row["slug"] for row in canon.get("species", [])}
 
+    if phase4.get("referenceCorrectionVersion") != REFERENCE_CORRECTION_VERSION: errors.append("Phase 4 reference correction version mismatch")
     if phase4.get("recordPolicy", {}).get("coreTier") != "Civilian Summary Record": errors.append("record policy core tier mismatch")
     if phase4.get("recordPolicy", {}).get("observationModel") != "canonical-location-specific": errors.append("observation policy mismatch")
     if {region.get("id") for region in phase4.get("regions", [])} != set(REGION_COUNTS): errors.append("Phase 4 region set mismatch")
@@ -175,7 +196,7 @@ def main() -> int:
     if errors:
         print("\n".join(f"ERROR: {error}" for error in errors))
         return 1
-    print("GAIA World Completion Pass I validated: two semantic signatures, merged hash, two regions, 36 presences, eight habitats, six corridors, eight relationships, canon unchanged")
+    print("GAIA World Completion Pass I validated: signed raw payload, correction 2026-08-01.2, two regions, 36 presences, eight habitats, six corridors, eight relationships, canon unchanged")
     return 0
 
 
