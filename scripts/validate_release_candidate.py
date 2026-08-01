@@ -89,6 +89,11 @@ for path, marker in (
     if path.is_file():
         require(marker in text(path), f"{path.relative_to(ROOT)} missing marker: {marker}")
 
+phase4_tail = PUBLIC / "data" / "editorial" / "phase4-02.txt"
+require(phase4_tail.is_file(), "Missing second World Completion editorial chunk")
+if phase4_tail.is_file():
+    require(len(text(phase4_tail).strip()) > 1000, "Second World Completion editorial chunk is unexpectedly short")
+
 critical_paths = [
     PUBLIC / "index.html", PUBLIC / "app.js", PUBLIC / "styles.css", PUBLIC / "refinement.css",
     PUBLIC / "density.css", PUBLIC / "ecology.css", PUBLIC / "continuity.css", PUBLIC / "assets.css",
@@ -113,7 +118,8 @@ require("offline.html" in sw, "Service worker does not include the offline fallb
 require("gaia-social-preview.png" in sw, "Service worker does not cache the social preview")
 require("02f-release-candidate.js" in sw, "Service worker does not cache the RC1 module")
 require("02g-world-completion.js" in sw, "Service worker does not cache the World Completion module")
-require("data/editorial/phase4.txt" in sw, "Service worker does not cache the World Completion editorial payload")
+require("data/editorial/phase4.txt" in sw, "Service worker does not cache the first World Completion editorial chunk")
+require("data/editorial/phase4-02.txt" in sw, "Service worker does not cache the second World Completion editorial chunk")
 match = re.search(r"const SHELL\s*=\s*\[(.*?)\];", sw, re.S)
 entries = re.findall(r"['\"]([^'\"]+)['\"]", match.group(1)) if match else []
 require(bool(entries), "Service-worker shell could not be parsed")
@@ -125,5 +131,5 @@ if errors:
 
 print(
     f"GAIA private release artifact passed: critical shell {critical_kb:.1f} KB, data {data_kb:.1f} KB, "
-    f"{len(entries)} offline-shell entries, metadata, World Completion, and production assets verified."
+    f"{len(entries)} offline-shell entries, metadata, split World Completion payload, and production assets verified."
 )
