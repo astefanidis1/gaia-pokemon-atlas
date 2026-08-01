@@ -34,9 +34,10 @@ test('capture Systems and Evidence mobile records and lineage', async ({ page },
   await boot(page);
   await page.locator('.nav-button[data-view="records"]').click();
   await expect(page.locator('#evidenceArchiveGrid .evidence-record-card')).toHaveCount(9);
-  await page.screenshot({ path:testInfo.outputPath('visual-review/systems-records-mobile.png'), fullPage:true });
+  await page.locator('#worldSystemsSection').screenshot({ path:testInfo.outputPath('visual-review/systems-records-mobile.png') });
+  await page.locator('#evidenceArchiveSection').screenshot({ path:testInfo.outputPath('visual-review/evidence-records-mobile.png') });
 
   await page.evaluate(() => { location.hash='lineage=lineage-gardevoir'; });
   await expect(page.locator('#worldSystemTitle')).toHaveText('Ralts Cognitive Development Line');
-  await page.screenshot({ path:testInfo.outputPath('visual-review/lineage-record-mobile.png'), fullPage:true });
+  await page.locator('#worldSystemModal .systems-modal-card').screenshot({ path:testInfo.outputPath('visual-review/lineage-record-mobile.png') });
 });
