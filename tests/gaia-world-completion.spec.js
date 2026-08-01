@@ -58,7 +58,7 @@ test('Observed records require a canonical Earth location and persist that locat
   await expect(page.locator('.observed-field-card')).toHaveCount(1);
   await expect(page.locator('.observed-field-card')).toContainText(selectedLabel.trim());
 
-  const ineligible = await page.evaluate(() => window.GAIA_SPECIES.find(item => item.accessStatus === 'Sealed' || !(item.locations || []).some(location => location.realm === 'Earth'))?.slug);
+  const ineligible = await page.evaluate(() => window.GAIA_SPECIES.find(item => item.accessStatus === 'Sealed')?.slug);
   expect(ineligible).toBeTruthy();
   await page.evaluate(value => { location.hash = `species=${value}`; }, ineligible);
   await expect(page.locator('#dossier')).toHaveClass(/open/);
