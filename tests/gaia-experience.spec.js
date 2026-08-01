@@ -75,7 +75,8 @@ test('core experience boots cleanly and remains within the viewport', async ({ p
   await expect(page.locator('.nav-button')).toHaveCount(5);
   await expect(page.locator('footer')).toContainText('CANON 2026-07-27.1');
   await expect(page.locator('footer')).toContainText('ECOLOGY 2026-07-28.2');
-  await expect(page.locator('footer')).toContainText('ASSETS 2026-07-29.1');
+  await expect(page.locator('footer')).toContainText('WORLD 2026-08-01.1');
+  await expect(page.locator('footer')).toContainText('SYSTEMS 2026-08-01.2');
   await expectNoHorizontalOverflow(page);
 
   const assetVersion = await page.evaluate(() => window.GAIA_ASSET_POLICY?.manifest?.version);
