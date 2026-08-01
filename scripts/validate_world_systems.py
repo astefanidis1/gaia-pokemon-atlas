@@ -4,6 +4,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 from phase3_validation_data import load_inputs
+from validate_gaia import load_data
 from validate_phase4 import load_phase4, phase3_regions
 ROOT=Path(__file__).resolve().parents[1];MODULE=ROOT/'src'/'app'/'02h-systems-evidence.js';CORRECTIONS=ROOT/'src'/'app'/'02i-systems-reference-corrections.js';CSS=ROOT/'public'/'systems-evidence.css';VERSION='2026-08-01.2'
 REFERENCE_MAP={'rotom':'electivire','squirtle':'lapras','pacific-northwest':'pacific-northwest-temperate-rainforest','central-honshu':'central-honshu-urban-mountain-corridor'};errors=[]
@@ -18,7 +19,7 @@ def array_values(source,key):
     return values
 def corrected(value):return REFERENCE_MAP.get(value,value)
 def main():
-    source=MODULE.read_text(encoding='utf-8');correction_source=CORRECTIONS.read_text(encoding='utf-8');css=CSS.read_text(encoding='utf-8');canon,base,phase2,phase3=load_inputs();phase4=load_phase4()
+    source=MODULE.read_text(encoding='utf-8');correction_source=CORRECTIONS.read_text(encoding='utf-8');css=CSS.read_text(encoding='utf-8');canon,base,phase2,phase3=load_inputs();full_canon=load_data();phase4=load_phase4()
     system_source=segment(source,'const gaiaWorldSystems=[','const gaiaEvidenceRecords=[');evidence_source=segment(source,'const gaiaEvidenceRecords=[','const gaiaLineagePilots=[');lineage_source=segment(source,'const gaiaLineagePilots=[','const gaiaSystemIncidentDrafts=[');incident_source=segment(source,'const gaiaSystemIncidentDrafts=[','const gaiaSystemIncidents=')
     system_ids=re.findall(r"\bid:'([^']+)'",system_source);evidence_ids=re.findall(r"\bid:'([^']+)'",evidence_source);lineage_ids=re.findall(r"\bid:'([^']+)'",lineage_source);incident_ids=re.findall(r"\bid:'([^']+)'",incident_source)
     require(f"GAIA_WORLD_SYSTEMS_VERSION='{VERSION}'" in source,'World Systems version marker is missing');require(f"GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION='{VERSION}'" in correction_source,'Systems reference correction version is missing')
@@ -29,7 +30,7 @@ def main():
     existing_regions=phase3_regions(base,phase2,phase3)+phase4.get('regions',[]);region_ids={row['id'] for row in existing_regions};region_refs=set(array_values(system_source,'regions'));region_refs.update(value for value in re.findall(r"regionId:(?:'([^']*)'|null)",evidence_source) if value);effective_regions={corrected(region_id) for region_id in region_refs};missing_regions=sorted(effective_regions-region_ids);require(not missing_regions,f'Effective World Systems references unknown regions: {missing_regions}')
     system_refs=set(array_values(evidence_source,'systemIds')+array_values(incident_source,'systemIds')+array_values(lineage_source,'systems'));require(not sorted(system_refs-set(system_ids)),f'Unknown system cross-references: {sorted(system_refs-set(system_ids))}')
     evidence_refs=set(array_values(incident_source,'evidenceIds')+array_values(lineage_source,'evidence'));require(not sorted(evidence_refs-set(evidence_ids)),f'Unknown evidence cross-references: {sorted(evidence_refs-set(evidence_ids))}')
-    incident_refs=set(array_values(system_source,'incidents'));incident_refs.update(value for value in re.findall(r"incidentId:(?:'([^']*)'|null)",evidence_source) if value);foundation_incident_ids={row['id'] for row in canon.get('incidents',[])};known_incidents=set(incident_ids)|foundation_incident_ids;require(not sorted(incident_refs-known_incidents),f'Unknown investigation cross-references: {sorted(incident_refs-known_incidents)}')
+    incident_refs=set(array_values(system_source,'incidents'));incident_refs.update(value for value in re.findall(r"incidentId:(?:'([^']*)'|null)",evidence_source) if value);foundation_incident_ids={row['id'] for row in full_canon.get('incidents',[])};known_incidents=set(incident_ids)|foundation_incident_ids;require(not sorted(incident_refs-known_incidents),f'Unknown investigation cross-references: {sorted(incident_refs-known_incidents)}')
     prohibited=('species.push(','populations.push(','locations.push(','forms.push(','routes.push(')
     for marker in prohibited:require(marker not in source and marker not in correction_source,f'World Systems must not mutate signed canon through {marker}')
     require('incidents.push(record)' in source,'System investigations are not integrated into the existing incident archive');require('Stage-specific census integration pending lineage expansion' in source,'Lineage pilots must not publish provisional stage totals');require('gaiaEvidenceSVG' in source and '<svg' in source,'Original institutional evidence renderer is missing');require('http://' not in evidence_source and 'https://' not in evidence_source,'Evidence plates must not depend on remote image URLs')
