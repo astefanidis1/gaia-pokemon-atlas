@@ -40,8 +40,11 @@ test('desktop World Completion surfaces stay balanced and contained', async ({ p
   await page.locator('.nav-button[data-view="index"]').click();
   await expect(page.locator('.index-controls select')).toHaveCount(6);
   await expectNoHorizontalOverflow(page);
-  const controlBoxes = await page.locator('.index-controls select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect()));
-  expect(controlBoxes.every(box => box.width >= 140 && box.right <= innerWidth + 1)).toBeTruthy();
+  const controlBoxes = await page.locator('.index-controls select').evaluateAll(elements => elements.map(element => {
+    const box = element.getBoundingClientRect();
+    return { width:box.width, right:box.right, viewportWidth:window.innerWidth };
+  }));
+  expect(controlBoxes.every(box => box.width >= 140 && box.right <= box.viewportWidth + 1)).toBeTruthy();
 
   await page.evaluate(() => { location.hash = 'species=arcanine'; });
   await expect(page.locator('#dossierName')).toHaveText('Arcanine');
