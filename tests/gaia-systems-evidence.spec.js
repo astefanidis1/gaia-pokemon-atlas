@@ -16,6 +16,7 @@ test('World Systems data is complete and remains inside the signed canon', async
     const systemIds = new Set(window.GAIA_WORLD_SYSTEMS.map(item => item.id));
     const evidenceIds = new Set(window.GAIA_EVIDENCE_RECORDS.map(item => item.id));
     const incidentIds = new Set(window.GAIA_SYSTEM_INCIDENTS.map(item => item.id));
+    const archiveIds = new Set(window.GAIA_INCIDENTS.map(item => item.id));
     return {
       counts:{ species:window.GAIA_SPECIES.length, systems:window.GAIA_WORLD_SYSTEMS.length, evidence:window.GAIA_EVIDENCE_RECORDS.length, investigations:window.GAIA_SYSTEM_INCIDENTS.length, lineages:window.GAIA_LINEAGE_PILOTS.length },
       missingSpecies:[...window.GAIA_WORLD_SYSTEMS.flatMap(item=>item.species),...window.GAIA_EVIDENCE_RECORDS.flatMap(item=>item.species),...window.GAIA_SYSTEM_INCIDENTS.flatMap(item=>item.species),...window.GAIA_LINEAGE_PILOTS.map(item=>item.anchorSlug)].filter(slug=>!slugs.has(slug)),
@@ -23,8 +24,11 @@ test('World Systems data is complete and remains inside the signed canon', async
       missingSystems:[...window.GAIA_EVIDENCE_RECORDS.flatMap(item=>item.systemIds),...window.GAIA_SYSTEM_INCIDENTS.flatMap(item=>item.systemIds),...window.GAIA_LINEAGE_PILOTS.flatMap(item=>item.systems)].filter(id=>!systemIds.has(id)),
       missingEvidence:[...window.GAIA_SYSTEM_INCIDENTS.flatMap(item=>item.evidenceIds),...window.GAIA_LINEAGE_PILOTS.flatMap(item=>item.evidence)].filter(id=>!evidenceIds.has(id)),
       missingIncidents:window.GAIA_EVIDENCE_RECORDS.map(item=>item.incidentId).filter(Boolean).filter(id=>!incidentIds.has(id)),
+      missingSystemIncidentRefs:window.GAIA_WORLD_SYSTEMS.flatMap(item=>item.incidents).filter(id=>!archiveIds.has(id)),
       archiveIncidentCount:window.GAIA_INCIDENTS.filter(item=>incidentIds.has(item.id)).length,
       forbidden:[...window.GAIA_WORLD_SYSTEMS.flatMap(item=>item.species),...window.GAIA_EVIDENCE_RECORDS.flatMap(item=>item.species)].filter(slug=>['rotom','squirtle'].includes(slug)),
+      removedIncidentRefs:window.GAIA_REMOVED_SYSTEM_INCIDENT_REFERENCES,
+      effectiveIncidentRefs:window.GAIA_WORLD_SYSTEMS.flatMap(item=>item.incidents),
       correctionVersions:[window.GAIA_WORLD_REFERENCE_CORRECTION_VERSION,window.GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION]
     };
   });
@@ -34,8 +38,11 @@ test('World Systems data is complete and remains inside the signed canon', async
   expect(result.missingSystems).toEqual([]);
   expect(result.missingEvidence).toEqual([]);
   expect(result.missingIncidents).toEqual([]);
+  expect(result.missingSystemIncidentRefs).toEqual([]);
   expect(result.archiveIncidentCount).toBe(8);
   expect(result.forbidden).toEqual([]);
+  expect(result.removedIncidentRefs).toEqual(['gaia-i-2020-041']);
+  expect(result.effectiveIncidentRefs).not.toContain('gaia-i-2020-041');
   expect(result.correctionVersions).toEqual(['2026-08-01.2','2026-08-01.2']);
 });
 
