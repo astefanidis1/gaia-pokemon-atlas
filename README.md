@@ -41,7 +41,7 @@ The current private build establishes:
 - **eight investigation chains** connecting an event to evidence, responsible institutions, affected species, and a documented operational consequence;
 - **three evolutionary-family pilots** for the Ralts, Dratini, and Goomy lines, establishing stage-specific ecology without inventing provisional population totals;
 - species-dossier and regional-window links into the relevant institutions, evidence, investigations, and lineages;
-- a centralized visual-asset policy with one replaceable subject-art source and seven authored archive-reconstruction profiles;
+- a centralized visual asset policy with one replaceable subject-art source and seven authored archive-reconstruction profiles;
 - deterministic GAIA social artwork, install icons, maskable icon, and Apple touch icon;
 - production canonical, Open Graph, Twitter/X, install-manifest, and mobile-app metadata;
 - authored Coordinate Unresolved and Civilian Archive Mode failure states;
