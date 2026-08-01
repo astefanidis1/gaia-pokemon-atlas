@@ -11,7 +11,10 @@ from pathlib import Path
 from phase3_validation_data import coord, load_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
-PHASE4_PATH = ROOT / "public" / "data" / "editorial" / "phase4.txt"
+PHASE4_PATHS = [
+    ROOT / "public" / "data" / "editorial" / "phase4.txt",
+    ROOT / "public" / "data" / "editorial" / "phase4-02.txt",
+]
 PHASE4_HASH = "9a7452d4e657ddc68f35fc57a20010267a9362b79ab18d540f71a9acf2d174d8"
 PHASE4_VERSION = "2026-08-01.1"
 PHASE4_BASE = "2026-07-28.2"
@@ -22,7 +25,7 @@ REGION_COUNTS = {
 
 
 def load_phase4() -> dict:
-    encoded = PHASE4_PATH.read_text(encoding="utf-8").strip()
+    encoded = "".join(path.read_text(encoding="utf-8").strip() for path in PHASE4_PATHS)
     raw = base64.b64decode(encoded, validate=True)
     actual = hashlib.sha256(raw).hexdigest()
     if actual != PHASE4_HASH:
@@ -137,7 +140,7 @@ def main() -> int:
     policy = phase4.get("recordPolicy", {})
     if policy.get("coreTier") != "Civilian Summary Record" or policy.get("observationModel") != "canonical-location-specific":
         errors.append("World Completion record policy mismatch")
-    if set(phase4.get("regions", [] )[index].get("id") for index in range(len(phase4.get("regions", [])))) != set(REGION_COUNTS):
+    if {region.get("id") for region in phase4.get("regions", [])} != set(REGION_COUNTS):
         errors.append("phase 4 must add exactly the two approved regions")
 
     for region in phase4.get("regions", []):
