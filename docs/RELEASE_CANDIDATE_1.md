@@ -1,18 +1,19 @@
 # GAIA Atlas — Release Candidate 1
 
-**Status:** Private, draft, unmerged, and undeployed  
+**Status:** Completed private release foundation; superseded in product depth by World Completion Pass I  
 **RC version:** `2026-07-29.1`  
+**Current completion layer:** `2026-08-01.1`  
 **Branch:** `agent/gaia-foundation`
 
 ## Purpose
 
-Release Candidate 1 converts the validated living-world build into a production-shaped artifact without launching it. The phase concentrates on the first sixty seconds, share presentation, install identity, startup performance, weak-network behavior, and offline recovery.
+Release Candidate 1 converted the validated living-world build into a production-shaped artifact without launching it. The phase concentrated on the first sixty seconds, share presentation, install identity, startup performance, weak-network behavior, and offline recovery.
 
-No signed population canon, regional ecology payload, dossier text, route, or incident record is changed by this phase.
+RC1 remains the release-engineering foundation beneath World Completion Pass I. No signed population canon, regional ecology payload, dossier text, route, or incident record was changed by the RC phase.
 
 ## First-visit experience
 
-The Globe now contains an embedded **Priority World Brief** rather than a tutorial modal. It presents:
+The Globe contains an embedded **Priority World Brief** rather than a tutorial modal. It presents:
 
 - one deterministic current migration record selected from the canonical five tracked routes;
 - its current UTC-synchronized movement phase and next route position;
@@ -20,6 +21,8 @@ The Globe now contains an embedded **Priority World Brief** rather than a tutori
 - direct entry into the live dossier or regional field window.
 
 The briefing can be dismissed and restored. Dismissal is stored only in the visitor's browser. It never blocks the Atlas or changes GAIA canon.
+
+World Completion Pass I later expanded the available regional set from four to six while preserving this first-visit architecture.
 
 ## Production identity
 
@@ -34,24 +37,24 @@ RC preparation deterministically materializes:
 - 192 px, 512 px, maskable, and Apple-touch icons;
 - explicit Release Candidate metadata.
 
-The social card and install icons are generated from readable Python source using only the standard library. They are not opaque design files that must be manually recreated.
+The social card and install icons are generated from readable Python source using only the standard library. They are not opaque design files that must be manually recreated. The current generated card now reports six regional ecosystems and identifies the World Completion private build.
 
 ## Failure and offline behavior
 
-- The previous redirect-only 404 has been replaced by an authored **Coordinate Unresolved** GAIA error state.
+- The previous redirect-only 404 was replaced by an authored **Coordinate Unresolved** GAIA error state.
 - A dedicated **Civilian Archive Mode** offline page explains what remains available.
-- The service worker now separates shell, runtime, and artwork caches.
+- The service worker separates shell, runtime, and artwork caches.
 - Same-origin shell assets use cache-first behavior.
-- navigation uses a bounded network attempt followed by the cached Atlas or offline page;
-- MapLibre runtime files are retained after a successful visit;
-- official artwork uses stale-while-revalidate caching;
-- old GAIA cache generations are removed during activation.
+- Navigation uses a bounded network attempt followed by the cached Atlas or offline page.
+- MapLibre runtime files are retained after a successful visit.
+- Official artwork uses stale-while-revalidate caching.
+- Old GAIA cache generations are removed during activation.
 
 The Atlas is expected to reopen after one successful visit even when the browser is placed fully offline. Live tiles and uncached remote artwork may remain unavailable, while records, regional ecology, and the local Field Log continue functioning.
 
 ## Startup improvement
 
-Readable source modules are still executed in their locked order, but they are fetched in parallel rather than through a sequential request waterfall. Local development now attempts each source root as one group instead of producing one failed request before every module fallback.
+Readable source modules execute in their locked order but fetch in parallel rather than through a sequential request waterfall. The module list has since grown from twelve to thirteen with the World Completion layer while retaining the same reviewed-loading model.
 
 ## Performance budgets
 
@@ -70,9 +73,9 @@ Readable source modules are still executed in their locked order, but they are f
 
 ## Automated RC scenarios
 
-The existing Chromium, Firefox, mobile Chromium, mobile WebKit, reduced-motion, accessibility, search, deep-link, artwork-failure, and visual-layout suites remain active.
+The Chromium, Firefox, mobile Chromium, mobile WebKit, reduced-motion, accessibility, search, deep-link, artwork-failure, and visual-layout suites remain active.
 
-RC1 adds checks that:
+RC1 added checks that:
 
 - the first visit exposes a current track and regional ecosystem without forcing a modal;
 - production Open Graph, Twitter, canonical, manifest, and touch-icon metadata exist;
@@ -81,19 +84,21 @@ RC1 adds checks that:
 - the cached Atlas reopens while the browser is fully offline;
 - the offline network state is visibly communicated.
 
-The future Pages workflow cannot deploy until all RC checks pass.
+World Completion Pass I adds a separate test file for record tiers, expanded Live, location-specific observations, archive reading, Index depth, and new regional ecology.
+
+The future Pages workflow cannot deploy until all RC and World Completion checks pass.
 
 ## Human review still required
 
-RC1 does not claim to replace:
+The release infrastructure does not claim to replace:
 
-- testing on physical phones and tablets;
+- testing on Alex’s physical devices;
 - real screen-reader narrative review;
 - older-device GPU and map-performance testing;
 - genuine weak-cellular testing outside emulation;
-- a small fresh-eye beta with people who have not been told how GAIA works;
-- the explicit decision to merge or launch.
+- original evidence-image art direction;
+- the explicit decision to merge, deploy, or promote.
 
 ## Release boundary
 
-This is a release candidate, not a release. The draft PR and `main` remain separate. Public deployment still requires an explicit later decision after RC evidence and fresh-eye feedback are reviewed.
+This remains a private development build, not a promoted release. The repository may remain publicly viewable, but the draft PR and `main` remain separate and the site remains undeployed. Promotion requires Alex’s explicit later decision.
