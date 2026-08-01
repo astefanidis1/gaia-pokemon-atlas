@@ -20,14 +20,7 @@ async function expectNoHorizontalOverflow(page) {
 async function expectContained(page, selector, margin = 1) {
   const result = await page.locator(selector).evaluate(element => {
     const box = element.getBoundingClientRect();
-    return {
-      left: box.left,
-      top: box.top,
-      right: box.right,
-      bottom: box.bottom,
-      viewportWidth: innerWidth,
-      viewportHeight: innerHeight,
-    };
+    return { left:box.left, top:box.top, right:box.right, bottom:box.bottom, viewportWidth:innerWidth, viewportHeight:innerHeight };
   });
   expect(result.left).toBeGreaterThanOrEqual(-margin);
   expect(result.top).toBeGreaterThanOrEqual(-margin);
@@ -38,7 +31,6 @@ async function expectContained(page, selector, margin = 1) {
 test('desktop World Completion surfaces stay balanced and contained', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'desktop-chromium');
   await boot(page);
-
   await page.locator('.nav-button[data-view="live"]').click();
   await expect(page.locator('#regionalConditionGrid .regional-condition-card')).toHaveCount(6);
   await expectNoHorizontalOverflow(page);
@@ -51,8 +43,8 @@ test('desktop World Completion surfaces stay balanced and contained', async ({ p
   const controlBoxes = await page.locator('.index-controls select').evaluateAll(elements => elements.map(element => element.getBoundingClientRect()));
   expect(controlBoxes.every(box => box.width >= 140 && box.right <= innerWidth + 1)).toBeTruthy();
 
-  await page.evaluate(() => { location.hash = 'species=squirtle'; });
-  await expect(page.locator('#dossierName')).toHaveText('Squirtle');
+  await page.evaluate(() => { location.hash = 'species=arcanine'; });
+  await expect(page.locator('#dossierName')).toHaveText('Arcanine');
   await page.locator('#observedButton').click();
   await expect(page.locator('#observationModal')).toHaveClass(/open/);
   await expectContained(page, '#observationModal .observation-card');
@@ -70,7 +62,6 @@ test('desktop World Completion surfaces stay balanced and contained', async ({ p
 test('mobile World Completion uses one-column world state and contained dialogs', async ({ page }, testInfo) => {
   test.skip(testInfo.project.name !== 'mobile-webkit');
   await boot(page);
-
   await page.locator('.nav-button[data-view="live"]').click();
   await expect(page.locator('#regionalConditionGrid .regional-condition-card')).toHaveCount(6);
   await expectNoHorizontalOverflow(page);
@@ -85,8 +76,8 @@ test('mobile World Completion uses one-column world state and contained dialogs'
   await expectNoHorizontalOverflow(page);
 
   await page.locator('#closeRegion').click();
-  await page.evaluate(() => { location.hash = 'species=squirtle'; });
-  await expect(page.locator('#dossierName')).toHaveText('Squirtle');
+  await page.evaluate(() => { location.hash = 'species=arcanine'; });
+  await expect(page.locator('#dossierName')).toHaveText('Arcanine');
   await page.locator('#observedButton').click();
   await expectContained(page, '#observationModal .observation-card');
   await expectNoHorizontalOverflow(page);
