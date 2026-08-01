@@ -28,7 +28,7 @@ jobs:
           python scripts/prepare_release_candidate.py
           mkdir -p public/source
           cp src/app/*.js public/source/
-      - name: Validate signed canon, ecology, completion, and systems layers
+      - name: Validate signed canon, ecology, corrected completion, and systems layers
         run: |
           python scripts/validate_gaia.py
           python scripts/validate_phase2.py
@@ -54,6 +54,9 @@ jobs:
           node --check tests/gaia-layout.spec.js
           node --check tests/gaia-release-candidate.spec.js
           node --check tests/gaia-world-completion.spec.js
+          node --check tests/gaia-world-completion-layout.spec.js
+          node --check tests/gaia-world-completion-accessibility.spec.js
+          node --check tests/gaia-world-completion-visual.spec.js
           node --check tests/gaia-systems-evidence.spec.js
       - name: Check required deployable files
         run: |
@@ -78,7 +81,9 @@ jobs:
           test -f public/data/editorial/phase4-04.txt
           test -f public/data/editorial/phase4-05.txt
           test -f public/data/editorial/phase4-06.txt
+          test -f src/app/02g0-world-reference-corrections.js
           test -f src/app/02h-systems-evidence.js
+          test -f src/app/02i-systems-reference-corrections.js
           test -f scripts/validate_world_systems.py
           test -f tests/gaia-systems-evidence.spec.js
           test -f docs/WORLD_SYSTEMS_EVIDENCE_PASS_1.md
