@@ -42,8 +42,8 @@ test('Observed records require a canonical Earth location and persist that locat
     localStorage.removeItem('gaia-field-log-v1');
     localStorage.removeItem('gaia-field-observations-v2');
   });
-  await boot(page, './#species=squirtle');
-  await expect(page.locator('#dossierName')).toHaveText('Squirtle');
+  await boot(page, './#species=arcanine');
+  await expect(page.locator('#dossierName')).toHaveText('Arcanine');
   await page.locator('#observedButton').click();
   await expect(page.locator('#observationModal')).toHaveClass(/open/);
   const selected = page.locator('input[name="observationLocation"]:checked');
@@ -103,4 +103,8 @@ test('New World Completion regions are universally searchable and open correctly
   await result.click();
   await expect(page.locator('#regionModal')).toHaveClass(/open/);
   await expect(page.locator('#regionTitle')).toHaveText('Central Andes Cloud-Forest Corridor');
+  await expect(page.locator('#regionContent')).toContainText('Electivire');
+  await expect(page.locator('#regionContent')).toContainText('Lapras');
+  await expect(page.locator('#regionContent')).not.toContainText('Rotom');
+  await expect(page.locator('#regionContent')).not.toContainText('Squirtle');
 });
