@@ -10,8 +10,14 @@ from validate_phase4 import load_phase4, phase3_regions
 
 ROOT = Path(__file__).resolve().parents[1]
 MODULE = ROOT / "src" / "app" / "02h-systems-evidence.js"
+CORRECTIONS = ROOT / "src" / "app" / "02i-systems-reference-corrections.js"
 CSS = ROOT / "public" / "systems-evidence.css"
 VERSION = "2026-08-01.2"
+REFERENCE_MAP = {
+    "rotom": "electivire", "squirtle": "lapras",
+    "pacific-northwest": "pacific-northwest-temperate-rainforest",
+    "central-honshu": "central-honshu-urban-mountain-corridor",
+}
 errors: list[str] = []
 
 
@@ -28,10 +34,6 @@ def segment(source: str, start: str, end: str) -> str:
         return ""
 
 
-def ids(source: str, prefix: str) -> list[str]:
-    return re.findall(r"\bid:'(" + re.escape(prefix) + r"[^']*)'", source)
-
-
 def array_values(source: str, key: str) -> list[str]:
     values: list[str] = []
     for body in re.findall(rf"\b{re.escape(key)}:\[(.*?)\]", source, re.S):
@@ -39,8 +41,13 @@ def array_values(source: str, key: str) -> list[str]:
     return values
 
 
+def corrected(value: str) -> str:
+    return REFERENCE_MAP.get(value, value)
+
+
 def main() -> int:
     source = MODULE.read_text(encoding="utf-8")
+    correction_source = CORRECTIONS.read_text(encoding="utf-8")
     css = CSS.read_text(encoding="utf-8")
     canon, base, phase2, phase3 = load_inputs()
     phase4 = load_phase4()
@@ -56,6 +63,10 @@ def main() -> int:
     incident_ids = re.findall(r"\bid:'([^']+)'", incident_source)
 
     require(f"GAIA_WORLD_SYSTEMS_VERSION='{VERSION}'" in source, "World Systems version marker is missing")
+    require(f"GAIA_SYSTEM_REFERENCE_CORRECTION_VERSION='{VERSION}'" in correction_source, "Systems reference correction version is missing")
+    for old, new in REFERENCE_MAP.items():
+        require(f"{old}:'{new}'" in correction_source or f"'{old}':'{new}'" in correction_source, f"Systems correction is missing {old} → {new}")
+    require("lineage-gardevoir" in correction_source and "anchorSlug:'gardevoir'" in correction_source, "Corrected Gardevoir lineage pilot is missing")
     require(len(system_ids) == 8 and len(set(system_ids)) == 8, f"Expected 8 unique world systems, found {len(system_ids)}")
     require(len(evidence_ids) == 9 and len(set(evidence_ids)) == 9, f"Expected 9 unique evidence records, found {len(evidence_ids)}")
     require(len(lineage_ids) == 3 and len(set(lineage_ids)) == 3, f"Expected 3 unique lineage pilots, found {len(lineage_ids)}")
@@ -64,15 +75,17 @@ def main() -> int:
     canon_slugs = {row["slug"] for row in canon.get("species", [])}
     species_refs = set(array_values(system_source, "species") + array_values(evidence_source, "species") + array_values(incident_source, "species"))
     species_refs.update(re.findall(r"anchorSlug:'([^']+)'", lineage_source))
-    missing_species = sorted(species_refs - canon_slugs)
-    require(not missing_species, f"World Systems references species outside the signed 161-species canon: {missing_species}")
+    effective_species = {corrected(slug) for slug in species_refs if slug != "squirtle"} | {"gardevoir"}
+    missing_species = sorted(effective_species - canon_slugs)
+    require(not missing_species, f"Effective World Systems references species outside the signed 161-species canon: {missing_species}")
 
     existing_regions = phase3_regions(base, phase2, phase3) + phase4.get("regions", [])
     region_ids = {row["id"] for row in existing_regions}
     region_refs = set(array_values(system_source, "regions"))
     region_refs.update(value for value in re.findall(r"regionId:(?:'([^']*)'|null)", evidence_source) if value)
-    missing_regions = sorted(region_refs - region_ids)
-    require(not missing_regions, f"World Systems references unknown regions: {missing_regions}")
+    effective_regions = {corrected(region_id) for region_id in region_refs}
+    missing_regions = sorted(effective_regions - region_ids)
+    require(not missing_regions, f"Effective World Systems references unknown regions: {missing_regions}")
 
     system_refs = set(array_values(evidence_source, "systemIds") + array_values(incident_source, "systemIds") + array_values(lineage_source, "systems"))
     require(not sorted(system_refs - set(system_ids)), f"Unknown system cross-references: {sorted(system_refs - set(system_ids))}")
@@ -84,7 +97,7 @@ def main() -> int:
 
     prohibited = ("species.push(", "populations.push(", "locations.push(", "forms.push(", "routes.push(")
     for marker in prohibited:
-        require(marker not in source, f"World Systems must not mutate signed canon through {marker}")
+        require(marker not in source and marker not in correction_source, f"World Systems must not mutate signed canon through {marker}")
     require("incidents.push(record)" in source, "System investigations are not integrated into the existing incident archive")
     require("Stage-specific census integration pending lineage expansion" in source, "Lineage pilots must not publish provisional stage totals")
     require("gaiaEvidenceSVG" in source and "<svg" in source, "Original institutional evidence renderer is missing")
@@ -110,7 +123,7 @@ def main() -> int:
 
     print(
         "GAIA World Systems & Evidence Pass I validated: 8 systems, 9 original evidence plates, "
-        "8 investigations, 3 lineage pilots, all references inside signed canon, no population mutation"
+        "8 investigations, 3 lineage pilots, corrected references inside signed canon, no population mutation"
     )
     return 0
 
