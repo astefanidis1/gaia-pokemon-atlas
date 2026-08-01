@@ -27,7 +27,8 @@ window.GAIA_DATA_READY=(async()=>{
   const editorialParts=Array.from({length:4},(_,index)=>`data/editorial/chunk-${String(index+1).padStart(2,'0')}.txt`);
   const phase2Path='data/editorial/phase2.txt';
   const phase3Paths=['data/editorial/phase3-01.txt','data/editorial/phase3-02.txt'];
-  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Response,phase3Responses]=await Promise.all([
+  const phase4Path='data/editorial/phase4.txt';
+  const [encodedParts,correctionsResponse,editorialEncodedParts,phase2Response,phase3Responses,phase4Response]=await Promise.all([
     Promise.all(parts.map(async path=>{
       const response=await fetch(path,{cache:'no-cache'});
       if(!response.ok) throw new Error(`Unable to load GAIA canon payload: ${path}`);
@@ -40,11 +41,13 @@ window.GAIA_DATA_READY=(async()=>{
       return (await response.text()).trim();
     })),
     fetch(phase2Path,{cache:'no-cache'}),
-    Promise.all(phase3Paths.map(path=>fetch(path,{cache:'no-cache'})))
+    Promise.all(phase3Paths.map(path=>fetch(path,{cache:'no-cache'}))),
+    fetch(phase4Path,{cache:'no-cache'})
   ]);
   if(!correctionsResponse.ok) throw new Error('Unable to load GAIA canon corrections.');
   if(!phase2Response.ok) throw new Error('Unable to load GAIA world-density expansion.');
   if(phase3Responses.some(response=>!response.ok)) throw new Error('Unable to load GAIA ecology integration.');
+  if(!phase4Response.ok) throw new Error('Unable to load GAIA World Completion Pass I.');
   const encoded=encodedParts.join('');
   const bytes=Uint8Array.from(atob(encoded),character=>character.charCodeAt(0));
   const stream=new Blob([bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
@@ -83,6 +86,15 @@ window.GAIA_DATA_READY=(async()=>{
   }
   editorial.relationships=[...(editorial.relationships||[]),...(phase3.relationships||[])];
   editorial.version=phase3.version;
+  const phase4Encoded=(await phase4Response.text()).trim();
+  const phase4Bytes=Uint8Array.from(atob(phase4Encoded),character=>character.charCodeAt(0));
+  const phase4Stream=new Blob([phase4Bytes]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const phase4=JSON.parse(await new Response(phase4Stream).text());
+  if(phase4.baseVersion!==editorial.version) throw new Error(`GAIA World Completion base mismatch: ${phase4.baseVersion} !== ${editorial.version}`);
+  editorial.regions.push(...(phase4.regions||[]));
+  editorial.relationships.push(...(phase4.relationships||[]));
+  editorial.recordPolicy=phase4.recordPolicy||{};
+  editorial.version=phase4.version;
   const corrections=await correctionsResponse.json();
   const speciesById=new Map(data.species.map(species=>[species.id,species]));
   for(const [speciesId,patch] of Object.entries(corrections.species||{})){
@@ -92,6 +104,7 @@ window.GAIA_DATA_READY=(async()=>{
   }
   data.correctionVersion=corrections.version;
   data.editorialVersion=editorial.version;
+  data.worldCompletionVersion=phase4.version;
   window.GAIA_EDITORIAL=editorial;
   window.GAIA_SPECIES=data.species;
   window.GAIA_FORMS=data.forms;
