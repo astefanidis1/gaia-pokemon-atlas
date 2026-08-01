@@ -103,6 +103,22 @@
 - Visual-review captures for desktop/mobile Records, institutional records, evidence, investigations, and lineages
 - Existing search, deep-link, responsive, weak-network, offline, artwork-failure, reduced-motion, and accessibility gates remain active
 
+## Exact-head assurance and fresh-eye review
+
+The functional source head `5ef45383fff2afba4368f1a071eb46fbaa717807` passed **Validate GAIA Foundation run #560** on August 1, 2026.
+
+The successful run used the current CI architecture:
+
+1. structural `validate` job;
+2. focused `systems-smoke` job;
+3. independent Desktop Chromium, Desktop Firefox, Mobile Chromium, Mobile WebKit, and Reduced-motion Chromium profile jobs.
+
+All seven required jobs succeeded. The exact-head repair addressed two genuine accessibility defects—missing accessible names for legacy Index filters and native light-button leakage on regional species cards—plus stale or malformed test expectations for build metadata, viewport width, observation eligibility, and oversized WebKit review capture. No canon, population, signed payload, product navigation, deployment state, or access policy changed.
+
+Fresh-eye review of the generated Globe, Live, Index, observation, archive, Systems overview, institutional record, evidence record, investigation, lineage, regional, desktop, and mobile captures found no product defect warranting another cosmetic churn pass. Very tall mobile element screenshots can show a capture-only stitching artifact where fixed navigation is composited over the long review image; ordinary viewport captures and the interaction/layout checks remain clean.
+
+This is automated browser assurance, not physical-device approval. Real live-basemap review, real network/offline review where practical, qualitative VoiceOver or NVDA review, lower-powered-device review, final owner content/visual review, and explicit authorization to merge, deploy, and promote remain required.
+
 ## Intentionally deferred
 
 - Additional ordinary ecology across South and Southeast Asia, central and western Africa, interior North America, Australia, and open oceans
