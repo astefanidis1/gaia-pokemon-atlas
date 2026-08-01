@@ -20,6 +20,12 @@ RC_VERSION = "2026-07-29.1"
 
 def transform(source: str, public_url: str) -> str:
     if 'data-gaia-release-head' in source:
+        if 'world-completion.css' not in source:
+            source = source.replace(
+                '<link rel="stylesheet" href="release-candidate.css" data-gaia-rc data-gaia-release-head />',
+                '<link rel="stylesheet" href="release-candidate.css" data-gaia-rc data-gaia-release-head />\n'
+                '  <link rel="stylesheet" href="world-completion.css" data-gaia-world-completion data-gaia-release-head />',
+            )
         return source
 
     public_url = public_url.rstrip("/") + "/"
@@ -75,7 +81,8 @@ def transform(source: str, public_url: str) -> str:
     source = source.replace(
         '<link rel="stylesheet" href="styles.css" />',
         '<link rel="stylesheet" href="styles.css" />\n'
-        '  <link rel="stylesheet" href="release-candidate.css" data-gaia-rc data-gaia-release-head />',
+        '  <link rel="stylesheet" href="release-candidate.css" data-gaia-rc data-gaia-release-head />\n'
+        '  <link rel="stylesheet" href="world-completion.css" data-gaia-world-completion data-gaia-release-head />',
     )
     source = source.replace(
         '<strong>Establishing GAIA census link</strong>',
@@ -108,6 +115,7 @@ def main() -> int:
         'gaia-social-preview.png',
         'gaia-apple-touch-icon.png',
         'release-candidate.css',
+        'world-completion.css',
         f'RC1-{RC_VERSION}',
     )
     missing = [marker for marker in required if marker not in prepared]
