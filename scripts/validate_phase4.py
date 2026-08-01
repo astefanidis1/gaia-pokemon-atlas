@@ -11,11 +11,23 @@ from pathlib import Path
 from phase3_validation_data import coord, load_inputs
 
 ROOT = Path(__file__).resolve().parents[1]
-PHASE4_PATHS = [
-    ROOT / "public" / "data" / "editorial" / "phase4.txt",
-    ROOT / "public" / "data" / "editorial" / "phase4-02.txt",
+PHASE4_GROUPS = [
+    [
+        ROOT / "public" / "data" / "editorial" / "phase4.txt",
+        ROOT / "public" / "data" / "editorial" / "phase4-02.txt",
+        ROOT / "public" / "data" / "editorial" / "phase4-03.txt",
+    ],
+    [
+        ROOT / "public" / "data" / "editorial" / "phase4-04.txt",
+        ROOT / "public" / "data" / "editorial" / "phase4-05.txt",
+        ROOT / "public" / "data" / "editorial" / "phase4-06.txt",
+    ],
 ]
-PHASE4_HASH = "9a7452d4e657ddc68f35fc57a20010267a9362b79ab18d540f71a9acf2d174d8"
+PHASE4_HASHES = [
+    "eb1754571dc7c04e3d62f802765e5148f54ef6fd13b9e4c1820f87423c4b3941",
+    "3744e928bd8b35df9e2b8a61d02e1ff7472ff07155d5458ec312d8e66ddd5937",
+]
+PHASE4_MERGED_HASH = "ed2e0be29dcd699bf207fb4b4bd1fd6e5cee513b4b117b748ed906dae10deed3"
 PHASE4_VERSION = "2026-08-01.1"
 PHASE4_BASE = "2026-07-28.2"
 REGION_COUNTS = {
@@ -24,13 +36,34 @@ REGION_COUNTS = {
 }
 
 
-def load_phase4() -> dict:
-    encoded = "".join(path.read_text(encoding="utf-8").strip() for path in PHASE4_PATHS)
+def load_semantic_payload(paths: list[Path], expected_hash: str) -> dict:
+    encoded = "".join(path.read_text(encoding="utf-8").strip() for path in paths)
     raw = base64.b64decode(encoded, validate=True)
     actual = hashlib.sha256(raw).hexdigest()
-    if actual != PHASE4_HASH:
-        raise SystemExit(f"ERROR: phase 4 checksum mismatch: {actual} != {PHASE4_HASH}")
+    if actual != expected_hash:
+        joined = ", ".join(path.name for path in paths)
+        raise SystemExit(f"ERROR: phase 4 semantic checksum mismatch for {joined}: {actual} != {expected_hash}")
     return json.loads(gzip.decompress(raw))
+
+
+def load_phase4() -> dict:
+    payloads = [load_semantic_payload(paths, expected) for paths, expected in zip(PHASE4_GROUPS, PHASE4_HASHES)]
+    base_versions = {payload.get("baseVersion") for payload in payloads}
+    versions = {payload.get("version") for payload in payloads}
+    if base_versions != {PHASE4_BASE} or versions != {PHASE4_VERSION}:
+        raise SystemExit(f"ERROR: phase 4 semantic version mismatch: bases={base_versions}, versions={versions}")
+    merged = {
+        "baseVersion": PHASE4_BASE,
+        "version": PHASE4_VERSION,
+        "recordPolicy": next((payload.get("recordPolicy") for payload in payloads if payload.get("recordPolicy")), {}),
+        "regions": [region for payload in payloads for region in payload.get("regions", [])],
+        "relationships": [row for payload in payloads for row in payload.get("relationships", [])],
+    }
+    compact = json.dumps(merged, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+    actual_merged = hashlib.sha256(compact).hexdigest()
+    if actual_merged != PHASE4_MERGED_HASH:
+        raise SystemExit(f"ERROR: merged phase 4 semantic hash mismatch: {actual_merged} != {PHASE4_MERGED_HASH}")
+    return merged
 
 
 def merged_phase3_regions(base: dict, phase2: dict, phase3: dict) -> list[dict]:
@@ -181,7 +214,7 @@ def main() -> int:
         for error in errors:
             print(f"ERROR: {error}")
         return 1
-    print("GAIA World Completion Pass I validated: 2 regions, 36 presences, 8 habitats, 6 corridors, 8 relationships, canon unchanged")
+    print("GAIA World Completion Pass I validated: 2 semantic payloads, 2 regions, 36 presences, 8 habitats, 6 corridors, 8 relationships, canon unchanged")
     return 0
 
 
