@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Validate GAIA Release Candidate 1 metadata, assets, offline behavior, and budgets."""
+"""Validate GAIA Release Candidate metadata, assets, offline behavior, World Completion, and budgets."""
 from __future__ import annotations
 
 import json
@@ -38,6 +38,7 @@ for marker in (
     'gaia-social-preview.png',
     'gaia-apple-touch-icon.png',
     'release-candidate.css',
+    'world-completion.css',
     'RC1-2026-07-29.1',
     'og:image',
     'twitter:image',
@@ -79,17 +80,20 @@ for path, marker in (
     (PUBLIC / "offline.html", "CIVILIAN ARCHIVE MODE"),
     (PUBLIC / "404.html", "COORDINATE UNRESOLVED"),
     (PUBLIC / "release-candidate.css", ".rc-priority-brief"),
+    (PUBLIC / "world-completion.css", ".world-state-feed"),
     (SOURCE / "02f-release-candidate.js", "PRIORITY WORLD BRIEF"),
+    (SOURCE / "02g-world-completion.js", "CIVILIAN SUMMARY RECORD"),
+    (PUBLIC / "data" / "editorial" / "phase4.txt", "H4sI"),
 ):
-    require(path.is_file(), f"Missing RC1 file: {path.relative_to(ROOT)}")
+    require(path.is_file(), f"Missing release/completion file: {path.relative_to(ROOT)}")
     if path.is_file():
         require(marker in text(path), f"{path.relative_to(ROOT)} missing marker: {marker}")
 
 critical_paths = [
     PUBLIC / "index.html", PUBLIC / "app.js", PUBLIC / "styles.css", PUBLIC / "refinement.css",
     PUBLIC / "density.css", PUBLIC / "ecology.css", PUBLIC / "continuity.css", PUBLIC / "assets.css",
-    PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "data" / "canon.js",
-    *sorted(SOURCE.glob("*.js")),
+    PUBLIC / "assurance.css", PUBLIC / "release-candidate.css", PUBLIC / "world-completion.css",
+    PUBLIC / "data" / "canon.js", *sorted(SOURCE.glob("*.js")),
 ]
 critical_kb = kb(critical_paths)
 require(critical_kb <= BUDGETS["critical_shell_max_kb"], f"Critical shell is {critical_kb:.1f} KB, over {BUDGETS['critical_shell_max_kb']} KB")
@@ -108,6 +112,8 @@ sw = text(PUBLIC / "sw.js")
 require("offline.html" in sw, "Service worker does not include the offline fallback")
 require("gaia-social-preview.png" in sw, "Service worker does not cache the social preview")
 require("02f-release-candidate.js" in sw, "Service worker does not cache the RC1 module")
+require("02g-world-completion.js" in sw, "Service worker does not cache the World Completion module")
+require("data/editorial/phase4.txt" in sw, "Service worker does not cache the World Completion editorial payload")
 match = re.search(r"const SHELL\s*=\s*\[(.*?)\];", sw, re.S)
 entries = re.findall(r"['\"]([^'\"]+)['\"]", match.group(1)) if match else []
 require(bool(entries), "Service-worker shell could not be parsed")
@@ -118,6 +124,6 @@ if errors:
     raise SystemExit(1)
 
 print(
-    f"GAIA RC1 passed: critical shell {critical_kb:.1f} KB, data {data_kb:.1f} KB, "
-    f"{len(entries)} offline-shell entries, metadata and production assets verified."
+    f"GAIA private release artifact passed: critical shell {critical_kb:.1f} KB, data {data_kb:.1f} KB, "
+    f"{len(entries)} offline-shell entries, metadata, World Completion, and production assets verified."
 )
