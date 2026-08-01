@@ -23,6 +23,7 @@ jobs:
           python scripts/validate_gaia.py
           python scripts/validate_phase2.py
           python scripts/validate_phase3.py
+          python scripts/diagnose_phase4_refs.py
           python scripts/validate_phase4.py
       - name: Validate World Systems and Evidence Pass I
         run: python scripts/validate_world_systems.py
